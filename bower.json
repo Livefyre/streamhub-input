@@ -1,0 +1,25 @@
+{
+  "name": "streamhub-input",
+  "version": "0.1",
+  "main": [
+    "./src/main.js"
+  ],
+  "dependencies": {
+    "cajon": "git://github.com/requirejs/cajon.git#~0.1.11",
+    "inherits": "git://github.com/Livefyre/inherits.git",
+    "jquery": "~1.10.1",
+    "requirejs-hogan-plugin": "*",
+    "stream": "git://github.com/Livefyre/stream.git#~0.1",
+    "streamhub-editor": "git://github.com/markdoten/streamhub-editor.git#c644923dd369289bda57918f0628aff9ec795784",
+    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#f78d29b4eb158a7bf62f52b9ccf076c05a695b2d",
+    "view": "git://github.com/Livefyre/view.git#~1.1"
+  },
+  "devDependencies": {
+    "jasmine": "1.3.1",
+    "jasmine-jquery": "1.6.0",
+    "almond": "~0.2.5"
+  },
+  "resolutions": {
+    "view": "~1.1"
+  }
+}

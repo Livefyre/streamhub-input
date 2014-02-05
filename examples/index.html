@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../lib/streamhub-sdk/src/css/style.css">
+    <style>
+    @import (reference) "./variables";
+
+    @charset "UTF-8";
+    
+    @font-face {
+      font-family: "fycons";
+      src:url("fycons.eot");
+      src:url("fycons.eot?#iefix") format("embedded-opentype"),
+        url("fycons.woff") format("woff"),
+        url("fycons.ttf") format("truetype"),
+        url("fycons.svg#fycons") format("svg");
+      font-weight: normal;
+      font-style: normal;
+    }
+    
+    [data-icon]:before,
+    [class^="fycon-"]:before,
+    [class*=" fycon-"]:before {
+      font-family: "fycons" !important;
+      font-style: normal !important;
+      font-weight: normal !important;
+      font-variant: normal !important;
+      text-transform: none !important;
+      speak: none;
+      line-height: inherit;
+      display: inline-block;
+      vertical-align: middle;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .btn, .btn-lg, .btn-sm {
+      [class^="fycon-"]:before,
+      [class*=" fycon-"]:before {
+        margin-top: -2px;
+      }
+    }
+    
+    .fycon-composer-photo:before {
+      content: "\e022";
+    }
+
+    #listView {
+        width:500px;
+    }
+    
+    .lf-btn {
+        display: inline-block;
+        margin-bottom: 0;
+        font-weight: 500;
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+        background-image: none;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        padding: 7px 12px;
+        font-size: 14px;
+        line-height: 1.428571429;
+        border-radius: 4px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+    }
+    
+    .lf-upload-btn, .lf-edit-btn, .lf-modal-body .editor-post-btn,
+        .lf .lf-btn-info {
+        color: #ffffff;
+        background-color: #0f98ec;
+        border-color: #0a6aa4;
+    }
+    
+    .lf-upload-btn .fycon-composer-photo {
+        font-size: 1.3em;
+        padding: 2px;
+    }
+    
+    .lf button {
+        -webkit-appearance: button;
+        cursor: pointer;
+        text-transform: none;
+        margin: 0;
+    }
+    
+    body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.428571429;
+    }
+    
+    button {
+        align-items: flex-start;
+        text-align: center;
+        cursor: default;
+        color: buttontext;
+        padding: 2px 6px 3px;
+        border: 2px outset buttonface;
+        border-image-source: initial;
+        border-image-slice: initial;
+        border-image-width: initial;
+        border-image-outset: initial;
+        border-image-repeat: initial;
+        background-color: buttonface;
+        box-sizing: border-box;
+        margin: 0em;
+        font: -webkit-small-control;
+        color: initial;
+        letter-spacing: normal;
+        word-spacing: normal;
+        text-transform: none;
+        text-indent: 0px;
+        text-shadow: none;
+        display: inline-block;
+        text-align: start;
+    }
+    
+    textarea {
+        resize: none;/* For Chrome */
+    }
+    
+    .lf * {
+        box-sizing: border-box;
+    }
+    
+    .lf-modal-content {
+        position: relative;
+        color: #2f3440;
+        background-color: #ffffff;
+        border: 0;
+        -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        -ms-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        -o-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        border-radius: 6px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        background-clip: padding-box;
+        outline: none;
+        text-align: center;
+        -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        -moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        -ms-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        -o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        box-sizing: border-box;
+        display: block;
+    }
+    
+    .lf-modal-header {
+        padding: 15px;
+        background-color: #f7f7f5;
+        border-bottom: 1px solid #ececea;
+        min-height: 16.428571429px;
+        border-top-right-radius: 6px;
+        border-top-left-radius: 6px;
+    }
+    
+    .lf-modal-body {
+        position: relative;
+        text-align: center;
+        padding: 30px 15px 15px;
+    }
+    
+    .lf-modal-footer {
+        margin-top: 0;
+        padding: 5px 15px 30px;
+        text-align: center;
+        border-top: 0;
+    }
+    
+    .hub-modal-content-view iframe, .hub-modal-content-view article {
+        position: relative;
+        margin: 50px auto 0;
+        display: block;
+        border: 0;
+    }
+    
+    .lf-modal-content {
+    /* !lf-bootstrap */
+        margin: 20px 40px;
+        width: 605px;
+    }
+    
+    .lf-modal-body {
+    /* !lf-bootstrap */
+        margin: 30px;
+        margin-bottom: 15px;
+        border: 1px solid #ececea;
+        text-align: left;
+        padding: 0;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+        -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+        -ms-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+        -o-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    }
+    
+    .lf-modal-body .btn-wrapper {
+    /* !lf-bootstrap */
+        background-color: #f8f8f8;
+        text-align: right;
+        border-top: 1px solid #ececea;
+        padding: 6px;
+        margin-top: 20px;
+    }
+    
+    .lf-modal-body .user-info, .lf-modal-body .editor-container {
+    /* !lf-bootstrap */
+        margin: 20px 30px 0;
+    }
+    
+    .lf-modal-body .editor-container {
+    /* !lf-bootstrap */
+        display: block;
+    }
+    
+    .editor-field {
+    /* !lf-bootstrap */
+        border: 0;
+        width: 100%;
+    }
+    
+    </style>
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+</head>
+    <body class="lf">
+        <div id="comment-editor"></div>
+        <!--article class="lf-modal-content">
+            <header class="lf-modal-header">Post Your Comment</header>
+            <section class="lf-modal-body">
+                <div class="user-info">
+                    <span class="name">Ron Burgandy</span>
+                    <span class="handle">@tomoleary</span>
+                </div>
+                <div class="editor-container">
+                    <textarea class="editor-field">
+Ron Burgandy. Stay classy, San Diego. Hello, Baxter? Baxter, is that you?
+Bark twice if you're in Milwaukee. Is this Wilt Chamberlain?
+                    </textarea>
+                </div>
+                <div class="btn-wrapper">
+                    <button class="lf-btn editor-post-btn">Post Comment</button>
+                </div>
+            </section>
+            <footer class="lf-modal-footer"></footer>
+        </article-->
+        <br>
+        <!--iframe id="picker" style="width:560px;height:432px;"></iframe><br>
+        <input type="filepicker" data-fp-container="picker" name="myName"/><br-->
+        <button id="top-upload">Post Your Photo <i class="fycon-composer-photo"></i></button><br>
+        <button id="top-comment">Post Your Comment</button><br>
+        <form id="write-form">
+            <p>Token:
+                <input type="text" name="lftoken" value="eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGl2ZWZ5cmUuY29tIiwgImV4cGlyZXMiOiAxMzkxOTA1MjEyLjgyMDM4NiwgInVzZXJfaWQiOiAiX3VwMTc3MDQxMSJ9.U5TTVwVqH-_1aHdkWjI6JGTmt1A3IT0Q5pMIveV0U_s" />
+            </p>
+            <input type="submit" />
+        </form>
+        <div id="listView"></div>
+        <button id="bottom-upload">Post Your Photo <i class="fycon-composer-photo"></i></button><br>
+
+        <script src="../node_modules/cajon/cajon.js" type="text/javascript"></script>
+        <script src="/requirejs.conf.js" type="text/javascript"></script>
+        <script>
+            requirejs({
+                baseUrl: "/"
+            });
+        </script>
+        <script>
+        require([
+            'streamhub-sdk/content/views/content-list-view',
+            'streamhub-sdk/collection',
+            'streamhub-sdk/content',
+            'streamhub-sdk/content/content-view-factory',
+            'streamhub-sdk/util',
+            'streamhub-sdk/auth',
+            'upload',
+            'upload/button',
+            'comment',
+            'comment/button'
+        ],function (ListView, Collection, Content, ContentViewFactory, Util, Auth, Upload, UploadButton, CommentView, CommentButton) {
+            /* var opts = {
+                "network": "labs-t402.fyre.co",
+                "siteId": "303827",
+                "articleId": "xbox-0",
+                "environment": "t402.livefyre.com"
+            }; */
+            var opts = {/* TESTING OPTS */
+                    "network": "livefyre.com",
+                    "siteId": "290596",
+                    "articleId": "177",
+                    "environment": "qa-ext.livefyre.com"
+                };
+            
+            var listView = window.view = new ListView({
+                initial: 3,
+                showMore: 2,
+                el: document.getElementById("listView")
+            });
+
+            var collection = window.collection =  new Collection(opts);
+            var onwriteFn = collection._writableState.onwrite;
+            collection._writableState.onwrite = function(err) {
+                onwriteFn(err);
+                if (err === 'FORBIDDEN') {
+                    if (Auth.getToken()) {
+                        throw 'User is not permitted to write content to this collection';
+                    }
+                    //User needs to authenticate
+                    //TODO (joao) authenticate user
+                    
+                    
+                    //TODO (joao) retry the upload?
+                }
+            }
+            
+            collection.pipe(listView);
+            
+            var archive = window.archive = collection.createArchive();
+            
+            archive.pipe(listView.more);
+            
+            Auth.setToken($('#write-form').serializeArray()[0].value);
+            
+            var $writeForm = $('#write-form');
+            $writeForm.submit(function (e) {
+                e.preventDefault();
+
+                var formArray = $writeForm.serializeArray(),
+                    lftoken = formArray[0].value;
+                if (lftoken) {
+                    Auth.setToken(lftoken);
+                }
+            });
+            
+            var editor = window.editor = new CommentView({
+                el: document.getElementById("comment-editor"),
+                collection: listView,
+                emptyText: 'EMPTY'
+            });
+            editor.render();
+            
+            var topButton = window.topUpload = new UploadButton(undefined, collection, {
+                el: document.getElementById("top-upload")
+            });
+            /* TODO (joao) Make two UploadButtons work on the same page
+            var secondUploadOpts = Upload.DEFAULT_OPTS;
+            secondUploadOpts.pick.container = 'picker2';
+            var bottomButton = window.bottomButton = new UploadButton(undefined, collection, {
+                el: document.getElementById("bottom-upload"),
+                uploadOpts: secondUploadOpts
+            }); */
+            
+            //var authDelegate = new fyre.conv.RemoteAuthDelegate();
+            
+            var topComment =  window.topComment = new CommentButton(undefined, collection, {
+                el: document.getElementById("top-comment"),
+                collection: collection,
+                emptyText: 'EMPTY'
+            });
+            
+        });
+        </script>
+    </body>
+</html>
