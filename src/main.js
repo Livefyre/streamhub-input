@@ -2,6 +2,7 @@ var inherits = require('inherits');
 var log = require('streamhub-sdk/debug')
         ('streamhub-sdk/input/main');
 var Content = require('streamhub-sdk/content');
+var EventEmitter = require('event-emitter');
 var Readable = require('stream/readable');
 var Util = require('streamhub-sdk/util');
 var View = require('streamhub-sdk/view');
@@ -12,7 +13,7 @@ var View = require('streamhub-sdk/view');
  * An Abstract for views that receive input from a user.
  * Extends Readable and is intended to be inherited parasitically by a View.
  * @param [opts] {Object}
- * @param [opts.desitnation] {Writable} The collection or other Writable that
+ * @param [opts.destination] {Writable} The collection or other Writable that
  *      will receive this input. it is recommended that this is specified.
  * @constructor
  * @extends {Readable}
@@ -25,9 +26,11 @@ var Input = function(opts) {
      * The collection or other Writable that will receive this input.
      * @protected
      */
-    this._destination = opts.desitnation;
+    this._destination = opts.destination;
 };
 inherits.parasitically(Input, Readable);
+//HACK (joao) Need to upgrade inherits.parasitically
+inherits.parasitically(Input, EventEmitter);
 
 /**
  * Uses getInput() to get the user's input data. Checks it with _validate(),
@@ -39,9 +42,9 @@ inherits.parasitically(Input, Readable);
 Input.prototype._read = function() {
     var data = this.getInput();
     if (!data || !this._validate(data)) {
-        return null;
+        return this.push(null);
     }
-    
+
     return this.push(this._inputToContent(data));
 };
 

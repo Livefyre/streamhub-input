@@ -2,27 +2,22 @@ var inherits = require('inherits');
 var log = require('streamhub-sdk/debug')
         ('modal/abstract/launchable-modal');
 var ModalView = require('streamhub-sdk/modal');
-var Util = require('streamhub-sdk/util');
+var util = require('streamhub-sdk/util');
 
 'use strict';
 
 /**
  * A view that can be displayed and interacted with in an otherwise generic modal.
- * @param [opts] {Object}
  * @constructor
  */
-var LaunchableModal = function(opts) {
-    opts = opts || {};
-};
-
-/**
- * Modal template for el
- * @override
- * @param [context] {Object}
- * @returns {!string}
- */
-LaunchableModal.prototype.modalTemplate = function (context) {
-    return this.__proto__.template.apply(this, arguments);
+var LaunchableModal = function() {
+    /**
+     * Modal template for el
+     * @override
+     * @param [context] {Object}
+     * @returns {!string}
+     */
+    this.modalTemplate = this.modalTemplate || this.template || util.abstractFunction;
 };
 
 /**
@@ -37,7 +32,7 @@ LaunchableModal.prototype.launchModal = function(callback) {
      * Function to call after a successful interaction.
      * @type {!function(err: Object, data: Object)}
      */
-    this._callback = callback || Util.nullFunction;
+    this._callback = callback || util.nullFunction;
     
     /**
      * Modal representation of this view.
@@ -53,17 +48,25 @@ LaunchableModal.prototype.launchModal = function(callback) {
  * Called when the modal view has competed its task and can be closed/hidden.
  * @param [err] {Object}
  * @param [data] {Object}
- * 
- * @protected
  */
-LaunchableModal.prototype._done = function (err, data) {
-    if (!this._modal) {
+LaunchableModal.prototype.returnModal = function (err, data) {
+    this._returnModal(err, data);
+};
+
+/**
+ * Called by returnModal to hand closing necessities.
+ * @param [err] {Object}
+ * @param [data] {Object}
+ * @private
+ */
+LaunchableModal.prototype._returnModal = function (err, data) {
+    if (!this._modal || !this._callback) {
         return;
     }
     
     this._callback(err, data);
+    this._callback = null;
     this._modal.$el.trigger('hideModal.hub');//Will _modal.hide()
-    //TODO (joao) Maybe destroy the current rendering and stuff?
 };
 
 module.exports = LaunchableModal;

@@ -1,26 +1,34 @@
 var AuthRequiredCommand = require('streamhub-sdk/ui/command/auth-required-command');
+var Command = require('streamhub-sdk/ui/command');
 var inherits = require('inherits');
 var log = require('streamhub-sdk/debug')
         ('modal/modal-input-command');
 var Input = require('input');
+var LaunchableModal = require('modal/abstract/launchable-modal');
+var util = require('streamhub-sdk/util');
 var Writable = require('stream/writable');
 
 'use strict';
 
 /**
- * @param [fn] {function} Option function to replace the default function.
+ * A command that, when executed, shows the modal version of an Input view. Requires that
+ * the view implements LaunchableModal
  * @param view {LaunchableModal} View to launch as a modal
  * @param [opts] {Object}
  * @param [opts.callback] {function(err: Object, data: Object)}
  *      Called when the modal view has accomplished its goal.
- * @param [opts.input} {Input} Input to use in-place of default construction.
+ * @param [opts.fn] {function} Option function to replace the default function.
  * @constructor
  * @extends {AuthRequiredCommand}
  */
-var ModalInputCommand = function(fn, view, opts) {
+var ModalInputCommand = function(view, opts) {
     opts = opts || {};
-    fn = fn || cmd;
-    AuthRequiredCommand.call(this, fn, opts);
+    fn = opts.fn || cmd;
+    Command.call(this, fn, opts);
+
+    if (!view) {
+        throw 'Can\'t instanciate a ModalInputCommand without specifying a view'
+    }
     
     /**
      * The Input instance that will be launched into a modal
@@ -32,15 +40,14 @@ var ModalInputCommand = function(fn, view, opts) {
     
     var self = this;
     function cmd(clbk) {
-        self.view.launchModal(clbk || self.callback || function () {});
-        //TODO (joao) Replace function () {} with a util.nullFunction
+        self.view.launchModal(clbk || self.callback || util.nullFunction);
     }
 };
-inherits(ModalInputCommand, AuthRequiredCommand);
+inherits(ModalInputCommand, Command);
 
 /** @override */
 ModalInputCommand.prototype.canExecute = function () {
-    return (AuthRequiredCommand.prototype.canExecute.apply(this, arguments)) ? new Boolean(this.view) : false;
+    return (this.view) ? true : false;
 };
 
 /**

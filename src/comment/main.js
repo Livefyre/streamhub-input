@@ -2,6 +2,7 @@ var $ = require('jquery');
 var inherits = require('inherits');
 var log = require('streamhub-sdk/debug')
         ('comment');
+var AuthRequiredCommand = require('streamhub-sdk/ui/command/auth-required-command');
 var Button = require('streamhub-sdk/ui/button');
 var Content = require('streamhub-sdk/content');
 var Editor = require('streamhub-editor/editor');
@@ -18,43 +19,31 @@ var View = require('streamhub-sdk/view');
  * A view that takes text input from a user and posts it to a collection/Writable.
  * Implements Input.
  * @param [opts] {Object}
- * @param [opts.collection] {Writable} Collection to post to.
- *      Recommended, but not required.
- * @param [opts.emptyText] {string} Suggestive text to display in an empty editor.
+ * @param [opts.destination] {Writable} The collection or other Writable that
+ *      will receive this input. it is recommended that this is specified.
+ * @param [opts.i8n.emptyText] {string} Suggestive text to display in an empty editor.
  * @constructor
  * @extends {Editor}
  */
 var Edit = function(opts) {
     opts = opts || {};
-    !opts.destination && (opts.destination = opts.collection);
     Editor.call(this, opts);
-    Input.call(this, opts);
-    LaunchableModal.call(this, opts);
+    Input.call(this, opts);//handles opts.destination
+    LaunchableModal.call(this);
     
-    /**
-     * The collection or other writable that the user's input is meant for
-     * @type {Writable=}
-     * @protected
-     */
-    this._collection = opts.collection;
-    
-    /**
-     * Suggestive text to display in an empty editor.
-     * @type {!string}
-     */
-    this.emptyText = opts.emptyText || '';
+    this._i18n = opts.i18n || this._i18n;
 };
 inherits(Edit, Editor);
 inherits.parasitically(Edit, Input);
 inherits.parasitically(Edit, LaunchableModal);
 
 /**
- * Reads the data that has been received from the user.
+ * Returns a modified version of data that has been received from the user.
  * @returns {?Object}
  * @override
  */
 Edit.prototype.getInput = function () {
-    return this.buildPostEventObj();
+    return (this.$textareaEl) ? this.buildPostEventObj() : null;
 };
 
 /**
@@ -73,7 +62,7 @@ Edit.prototype._validate = function (data) {
  * from the screen.
  */
 Edit.prototype.reset = function () {
-    this.$textareaEl && this.$textareaEl.val(this.emptyText);
+    this.$textareaEl && this.$textareaEl.val(this._i18n.emptyText);
 };
 
 /**
@@ -90,12 +79,20 @@ Edit.prototype._inputToContent = function (input) {
  * Class to be added to the view's element.
  * @type {!string}
  */
-Edit.prototype.class += ' edit';
+Edit.prototype.class += ' lf-edit';
+
+/**
+ * Displayable strings
+ * @type {Object}
+ */
+Edit.prototype._i18n = {
+    emptyText: ''
+};
 
 /** @enum {string} */
 Edit.prototype.classes = {
-        FIELD: 'editor-field',
-        POST_BTN: 'editor-post-btn'
+    FIELD: 'editor-field',
+    POST_BTN: 'editor-post-btn'
 };
 
 /**
@@ -123,7 +120,7 @@ Edit.prototype.template = function (context) {
         '</div>',
         '<div class="editor-container">',
         '<textarea class="editor-field">',
-        //this._emptyText,
+        //this._i18n.emptyText,
         'Ron Burgandy. Stay classy, San Diego. Hello, Baxter? Baxter, is that you?\n',//DEBUG (joao) Dev text
         'Bark twice if you\'re in Milwaukee. Is this Wilt Chamberlain?',//DEBUG (joao) Dev text
         '</textarea>',
@@ -150,31 +147,17 @@ Edit.prototype.modalTemplate = function (context) {
 };
 
 /**
- * Get contextual data for a template.
- * @override
- * @returns {!Object}
- */
-Edit.prototype.getTemplateContext = function () {
-    return this;
-};
-
-/**
  * If a template is set, render it in this.el
  * Subclasses will want to setElement on child views after rendering,
  *     then call .render() on those sub-elements
  */
 Edit.prototype.render = function () {
-    var context;
-    if (typeof this.template === 'function') {
-        context = this.getTemplateContext();
-        this.$el.html(this.template(context));
-    }
+    View.prototype.render.call(this);
     
-    //Just for the editor
     this.$textareaEl = this.$('.' + this.classes.FIELD);
     this.$postEl = this.$('.' + this.classes.POST_BTN);
     
-    if (this._collection) {
+    if (this._destination) {
         var self = this;
         var clbk = function (err, data) {
             if (err) {
@@ -183,14 +166,15 @@ Edit.prototype.render = function () {
                 self.handlePostSuccess(data);
             }
         };
-        
+
         var postCmd = new PostComment(
-                    undefined,//fn
                     this,//source
-                    this._collection,//destination
+                    this._destination,//destination
                     {callback: clbk});//opts
+        var authCmd = new AuthRequiredCommand(postCmd);
+        //authCmd.execute = function () {debugger; AuthRequiredCommand.prototype.execute.apply(authCmd, arguments)};
         
-        this._button = new Button(postCmd, {el: this.$postEl});
+        this._postButton = new Button(authCmd, {el: this.$postEl});
     }
 };
 
@@ -202,7 +186,7 @@ Edit.prototype.events = {};//TODO (joao) Probably shouldn't have this override
  * @param {Object} data The response data.
  */
 Edit.prototype.handlePostFailure = function (data) {
-    console.log('Post Failure');//DEBUG (joao)
+    log('Post Failure');
     
     //TODO (joao) Get msg to display from data param.
     //this.showError(msg);
@@ -213,15 +197,15 @@ Edit.prototype.handlePostFailure = function (data) {
  * @param {Object} data The response data.
  */
 Edit.prototype.handlePostSuccess = function (data) {
-    console.log('Post Success');//DEBUG (joao)
+    log('Post Success');
     
-    this._done(undefined, data);
+    this.returnModal(undefined, data);
 };
 
 /** @override */
-Edit.prototype._done = function (err, data) {
-    this.reset();
-    LaunchableModal.prototype._done.apply(this, arguments);
+Edit.prototype.returnModal = function (err, data) {
+    this.reset();//TODO (joao) Possibly move this into handlePostSuccess()
+    LaunchableModal.prototype.returnModal.apply(this, arguments);
 };
 
 /**
@@ -229,7 +213,7 @@ Edit.prototype._done = function (err, data) {
  * @param {string} msg The error message to display.
  */
 Edit.prototype.showError = function (msg) {
-    alert(msg);//DEBUG (joao)
+    log(msg);
     //TODO (joao) Real implementation. Waiting on UX.
 };
 

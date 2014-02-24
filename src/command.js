@@ -1,8 +1,7 @@
-var AuthRequiredCommand = require('streamhub-sdk/ui/command/auth-required-command');
+var Command = require('streamhub-sdk/ui/command');
 var inherits = require('inherits');
 var log = require('streamhub-sdk/debug')
         ('input/command');
-var Edit = require('comment');
 var Readable = require('stream/readable');
 var Util = require('streamhub-sdk/util');
 var Writable = require('stream/writable');
@@ -10,19 +9,20 @@ var Writable = require('stream/writable');
 'use strict';
 
 /**
- * @param [fn] {function} Optional function to replace the default function.
+ * 
  * @param source {!Readable} Object that can be read from.
  *          Function that returns comment data as Content.
  * @param destination {!Writable} The writable to post to, typically a Collection.
  * @param [opts] {Object}
  * @param [opts.callback] {function(err: Object, data: Object} Callback after attempting to post comment.
+ * @param [opts.fn] {function} Optional function to replace the default function.
  * @constructor
  * @extends {AuthRequiredCommand}
  */
-var InputCommand = function(fn, source, destination, opts) {
+var InputCommand = function(source, destination, opts) {
     opts = opts || {};
-    fn = fn || cmd;
-    AuthRequiredCommand.call(this, fn);
+    fn = opts.fn || cmd;
+    Command.call(this, fn);
     
     /**
      * The source to read() from.
@@ -39,7 +39,7 @@ var InputCommand = function(fn, source, destination, opts) {
     this._destination = destination;
     
     if (!this._destination || !this._source) {
-        this.emit('change:canExecute', this.canExecute());
+        this.disable();
         throw 'A source and destination are required when constructing a InputCommand.';
     }
     
@@ -51,11 +51,11 @@ var InputCommand = function(fn, source, destination, opts) {
         data && self._destination.write(data, clbk || self.callback || Util.nullFunction);
     }
 };
-inherits(InputCommand, AuthRequiredCommand);
+inherits(InputCommand, Command);
 
 /** @override */
 InputCommand.prototype.canExecute = function () {
-    if (!AuthRequiredCommand.prototype.canExecute.apply(this, arguments)) {
+    if (!Command.prototype.canExecute.apply(this, arguments)) {
         return false;
     }
     

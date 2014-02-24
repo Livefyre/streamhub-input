@@ -3,6 +3,8 @@ var inherits = require('inherits');
 var Content = require('streamhub-sdk/content');
 var Input = require('input');
 var LaunchableModal = require('modal/abstract/launchable-modal');
+var log = require('streamhub-sdk/debug')
+        ('upload');
 var ModalView = require('streamhub-sdk/modal');
 var Util = require('streamhub-sdk/util');
 var View = require('streamhub-sdk/view');
@@ -13,7 +15,7 @@ var View = require('streamhub-sdk/view');
  * The reference to window.filepicker is stored here once loaded.
  * @private
  */
-var _picker = null;
+var picker = null;
 
 /**
  * A view that handles the display of and data returned by FilePicker.
@@ -21,42 +23,27 @@ var _picker = null;
  * to a Writable.
  * @param [key] {string} API key to use with FilePicker.io
  * @param [opts] {Object}
- * @param [opts.api] {{key: !string, cache: !string}} If you intend to use
+ * @param [opts.filepicker] {{key: !string, cache: !string}} If you intend to use
  *      a different api key, you will also need to provide the cache url.
  * @param [opts.name] {string} Assigned to provider_name for returned data
- * @param [doc] {Element} Document element to render within
  * @constructor
  * @extends {View}
  */
-var Upload = function(opts, doc) {
+var Upload = function(opts) {
     opts = opts || Upload.DEFAULT_OPTS;
+    View.call(this, opts);
     Input.call(this, opts);
     LaunchableModal.call(this, opts);
 
-    if (opts.api) {
-        this._apiKey = opts.api.key;
-        this._cacheUrl = opts.api.cache;
+    if (opts.filepicker) {
+        this._filepickerKey = opts.filepicker.key;
+        this._cacheUrl = opts.filepicker.cache;
     }
     this.name = opts.name || this.name;
     this.opts = opts;
-    
-    var src = this.opts.src;
-    
-    if (_picker) {
-        return this;
-    }
-    
-    $.getScript(src, scriptLoadCallback);
-    
-    var self = this;
-    function scriptLoadCallback(script, status, data) {
-        if (status !== 'success') {
-            _picker = false;
-            throw 'There was an error loading ' + src;
-        }
 
-        _picker = filepicker;
-        _picker.setKey(self._apiKey);
+    if (!picker) {
+        this._initFilepicker();
     }
 };
 inherits(Upload, View);
@@ -67,13 +54,13 @@ inherits.parasitically(Upload, LaunchableModal);
  * privider_name attribute assigned to written data
  * @type {!string}
  */
-Upload.prototype.name = 'StreamhubUpload';
+Upload.prototype.name = 'Streamhub-input/Upload';
 
 /**
  * Class to be added to the view's element.
  * @type {!string}
  */
-Upload.prototype.class += ' upload';
+Upload.prototype.class += ' lf-upload';
 
 /**
  * The default element tag.
@@ -90,7 +77,8 @@ Upload.prototype.elTag = 'iframe';
 Upload.prototype.template = function (context) {
     return ['<iframe id="',
             context.container,
-            '" style="min-width:560px;min-height:432px;">',
+            //'" style="min-width:560px;min-height:432px;',
+            '">',
             '</iframe>'].join('');
 };
 
@@ -106,15 +94,21 @@ Upload.prototype.getTemplateContext = function () {
 };
 
 /**
- * If a template is set, render it in this.el
- * Subclasses will want to setElement on child views after rendering,
- *     then call .render() on those sub-elements
+ * Loads the filepicker script if picker is undefined
+ * @private
  */
-Upload.prototype.render = function () {
-    var context;
-    if (typeof this.template === 'function') {
-        context = this.getTemplateContext();
-        this.$el.html(this.template(context));
+Upload.prototype._initFilepicker = function () {
+    $.getScript(src, scriptLoadCallback);
+    
+    var self = this;
+    function scriptLoadCallback(script, status, data) {
+        if (status !== 'success') {
+            picker = false;
+            throw 'There was an error loading ' + self.opts.src;;
+        }
+
+        picker = filepicker;
+        picker.setKey(self._filepickerKey);
     }
 };
 
@@ -123,7 +117,7 @@ Upload.prototype.render = function () {
  * @type {!string}
  * @private
  */
-Upload.prototype._apiKey = 'AtvGm2B6RR9mDKb8bImIHz';
+Upload.prototype._filepickerKey = 'AtvGm2B6RR9mDKb8bImIHz';
 
 /**
  * The URL where uploads are cached
@@ -169,6 +163,7 @@ Upload.prototype._processResponse = function (err, inkBlob) {
         var content = this._inputToContent(blob);
         this.push(contents.push(content));
     }, this);
+    this.reset();
     return contents;
 };
 
@@ -181,14 +176,13 @@ Upload.prototype._processResponse = function (err, inkBlob) {
 Upload.prototype.launchModal = function(callback) {
     var self = this;
     callback = callback || this.onStore;
-    if (_picker === false) {
+    if (picker === false) {
         throw 'The FilePicker script failed to load correctly.';
     }
     
-    if (_picker === null) {
+    if (picker === null) {
     //Hasn't loaded yet
         //TODO (joao) Test this
-        debugger
         setTimeout(function() {
             self.launchModal(callback);
         }.bind(this), 150);
@@ -197,14 +191,14 @@ Upload.prototype.launchModal = function(callback) {
     
     LaunchableModal.prototype.launchModal.apply(this, arguments);
     var successFn = function(inkBlob) {
-        self._done(undefined, self._processResponse(undefined, inkBlob));
+        self.returnModal(undefined, self._processResponse(undefined, inkBlob));
     };
     var errorFn = function(err) {
         self._processResponse(err);
-        self._done(err);//TODO (joao) Maybe don't do this. Need error flow.
+        self.returnModal(err);//TODO (joao) Maybe don't do this. Need error flow.
     };
     
-    _picker.pickAndStore(this.opts.pick, this.opts.store, successFn, errorFn);
+    picker.pickAndStore(this.opts.pick, this.opts.store, successFn, errorFn);
 };
 
 /**
@@ -212,7 +206,9 @@ Upload.prototype.launchModal = function(callback) {
  * @returns {?Object}
  * @override
  */
-Upload.prototype.getInput = Util.abstractFunction;
+Upload.prototype.getInput = function () {
+    return null;
+};
 
 /**
  * Checks that the input from the user is valid.
@@ -222,14 +218,14 @@ Upload.prototype.getInput = Util.abstractFunction;
  * @protected
  * @override
  */
-Upload.prototype._validate = Util.abstractFunction;
+Upload.prototype._validate = function () {/** The filepicker validates its input */};
 
 /**
  * Resets the input display, typically by clearing out the current user input
  * from the screen.
  * @override
  */
-Upload.prototype.reset = Util.abstractFunction;
+Upload.prototype.reset = function () {/** The filepicker resets itself */};
 
 /**
  * Creates and returns a Content object based on the input.
@@ -246,6 +242,7 @@ Upload.prototype._inputToContent = function (input) {
             url: url,
             link: url,
             provider_name: this.name
+            //TODO (joao) images dimensions?
         });
         return content;
 };
@@ -255,9 +252,9 @@ Upload.prototype._inputToContent = function (input) {
  * @param msg
  * @override
  */
-Upload.prototype.showError = function (msn) {
+Upload.prototype.showError = function (msg) {
     //TODO (joao) Real implementation
-    alert(msg);//DEBUG (joao)
+    log(msg);
 };
 
 module.exports = Upload;
