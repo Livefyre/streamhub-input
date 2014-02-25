@@ -12,14 +12,13 @@ var Writable = require('stream/writable');
  * 
  * @param source {!Readable} Object that can be read from.
  *          Function that returns comment data as Content.
- * @param destination {!Writable} The writable to post to, typically a Collection.
  * @param [opts] {Object}
  * @param [opts.callback] {function(err: Object, data: Object} Callback after attempting to post comment.
  * @param [opts.fn] {function} Optional function to replace the default function.
  * @constructor
  * @extends {AuthRequiredCommand}
  */
-var InputCommand = function(source, destination, opts) {
+var InputCommand = function(source, opts) {
     opts = opts || {};
     fn = opts.fn || cmd;
     Command.call(this, fn);
@@ -31,14 +30,7 @@ var InputCommand = function(source, destination, opts) {
      */
     this._source = source;
     
-    /**
-     * The destination to write() to.
-     * @type {!Writable}
-     * @protected
-     */
-    this._destination = destination;
-    
-    if (!this._destination || !this._source) {
+    if (!this._source) {
         this.disable();
         throw 'A source and destination are required when constructing a InputCommand.';
     }
@@ -47,8 +39,8 @@ var InputCommand = function(source, destination, opts) {
     
     var self = this;
     function cmd(clbk) {
-        var data = self._source.read();
-        data && self._destination.write(data, clbk || self.callback || Util.nullFunction);
+        var data = self._source.getInput();
+        data && self._source.emit('data', data);
     }
 };
 inherits(InputCommand, Command);
@@ -59,8 +51,8 @@ InputCommand.prototype.canExecute = function () {
         return false;
     }
     
-    if (!this._source || !this._destination) {
-        log('Can\'t execute without this.source and this.destination.');
+    if (!this._source) {
+        log('Can\'t execute without this._source.');
         return false;
     }
     

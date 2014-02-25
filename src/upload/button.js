@@ -14,7 +14,6 @@ var Upload = require('upload');
  *      will receive this input. it is recommended that this is specified.
  * @param [opts.input] {Input} Input to use instead of the default Edit,
  *          incase it isn't good enough for you.
- * @param [opts.upload] {Upload} Upload instance to use in place a of default constructed Upload.
  * @param [opts.uploadOpts] {Object} Opts to pass to the default Upload on construction.
  * @constructor
  * @extends {Button}

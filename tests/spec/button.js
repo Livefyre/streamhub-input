@@ -64,7 +64,7 @@ describe('streamhub-input/button', function () {
                 expect(writable.write).toHaveBeenCalledWith('something');
             });
 
-            it('assigns opts.input to ._input and .pipe()s from it', function () {
+            it('assigns opts.input to ._input and is .pipe()\'d from it', function () {
                 expect(inputButton._input).toBe(input);
 
                 spyOn(inputButton, 'write');

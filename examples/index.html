@@ -81,6 +81,11 @@
         font-size: 1.3em;
         padding: 2px;
     }
+
+    .lf-upload {
+        min-width:560px;
+        min-height:432px;
+    }
     
     .lf button {
         -webkit-appearance: button;
@@ -341,13 +346,13 @@ Bark twice if you're in Milwaukee. Is this Wilt Chamberlain?
             
             var editor = window.editor = new CommentView({
                 el: document.getElementById("comment-editor"),
-                collection: listView,
-                emptyText: 'EMPTY'
+                destination: collection
             });
             editor.render();
             
-            var topButton = window.topUpload = new UploadButton(undefined, collection, {
-                el: document.getElementById("top-upload")
+            var topButton = window.topUpload = new UploadButton({
+                el: document.getElementById("top-upload"),
+                destination: collection
             });
             /* TODO (joao) Make two UploadButtons work on the same page
             var secondUploadOpts = Upload.DEFAULT_OPTS;
@@ -359,10 +364,9 @@ Bark twice if you're in Milwaukee. Is this Wilt Chamberlain?
             
             //var authDelegate = new fyre.conv.RemoteAuthDelegate();
             
-            var topComment =  window.topComment = new CommentButton(undefined, collection, {
+            var topComment =  window.topComment = new CommentButton({
                 el: document.getElementById("top-comment"),
-                collection: collection,
-                emptyText: 'EMPTY'
+                destination: collection
             });
             
         });

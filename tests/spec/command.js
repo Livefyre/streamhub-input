@@ -35,13 +35,19 @@ describe('streamhub-input/command', function () {
             src._validate = function() { return true; };
             src._inputToContent = function(data) { return data; };
 
-            inputCommand = new InputCommand(src, dest);
+            inputCommand = new InputCommand(src);
+            //This pipe() is done by the InputButton
+            src.pipe(dest);
 
             //Control check
             expect(inputCommand.canExecute()).toBeTruthy();
         });
 
-        it('throws when source and/or destination aren\'t provided and .disable()s', function () {
+        afterEach(function () {
+            src.unpipe(dest);
+        });
+
+        it('throws when source isn\'t provided and .disable()s', function () {
             //Confirming good stuff
             expect(function() {
                 inputCommand = new InputCommand();
@@ -50,28 +56,23 @@ describe('streamhub-input/command', function () {
 
             //Trying bad stuff
             expect(function() {
-                inputCommand = new InputCommand(undefined, dest);
+                inputCommand = new InputCommand(undefined);
                 expect(inputCommand.canExecute()).toBeFalsy();
             }).toThrow();
             expect(function() {
                 inputCommand = new InputCommand(src);
-                expect(inputCommand.canExecute()).toBeFalsy();
-            }).toThrow();
-            expect(function() {
-                inputCommand = new InputCommand(src, dest);
                 expect(inputCommand.canExecute()).toBeTruthy();
             }).not.toThrow();
         });
 
-        it('!.canExecute() when ._source or ._destination are falsy', function () {
+        it('!.canExecute() when ._source is falsy', function () {
             //Break ._source
             inputCommand._source = undefined;
             expect(inputCommand.canExecute()).toBeFalsy();
 
-            //Fix ._source and break ._destination
+            //Fix ._source
             inputCommand._source = src;
-            inputCommand._destination = undefined;
-            expect(inputCommand.canExecute()).toBeFalsy();
+            expect(inputCommand.canExecute()).toBeTruthy();
         });
 
         it('can be .disable()\'d and .enable()\'d', function () {
@@ -82,7 +83,7 @@ describe('streamhub-input/command', function () {
             expect(inputCommand.canExecute()).toBeTruthy();
         });
 
-        it('has a default .callback that logs when it is called', function () {
+        xit('has a default .callback that logs when it is called', function () {
             if (debug.enabled('input/command')) {
                 spyOn(console, 'log').andCallThrough();
 
@@ -108,14 +109,14 @@ describe('streamhub-input/command', function () {
                 inputCommand.callback = clbk;
             });
 
-            it('.read()\'s data from ._source and .write()\'s it to ._destination', function () {
+            it('.read()\'s data from ._source and emits it', function () {
                 spyOn(dest, 'write');
 
                 inputCommand.execute();
-                expect(dest.write).toHaveBeenCalledWith(testString, clbk);
+                expect(dest.write).toHaveBeenCalledWith(testString);
             });
 
-            it('passes .callback to be called', function () {
+            xit('passes .callback to be called', function () {
                 spyOn(dest, 'write').andCallThrough();
 
                 inputCommand.execute();
@@ -128,7 +129,7 @@ describe('streamhub-input/command', function () {
                 });
             });
 
-            it('passes a callback parameter to be called', function () {
+            xit('passes a callback parameter to be called', function () {
                 spyOn(dest, 'write').andCallThrough();
 
                 inputCommand.execute(fn);
@@ -153,7 +154,7 @@ describe('streamhub-input/command', function () {
                     fn: fn
                 };
 
-                inputCommand = new InputCommand(src, dest, opts);
+                inputCommand = new InputCommand(src, opts);
             });
 
             it('assigns opts.callback to .callback', function () {

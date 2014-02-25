@@ -35,17 +35,16 @@ inherits.parasitically(Input, EventEmitter);
 /**
  * Uses getInput() to get the user's input data. Checks it with _validate(),
  * then converts it to Content, pushes it, and returns it.
- * @returns {?Content}
  * @override
  * @protected
  */
 Input.prototype._read = function() {
     var data = this.getInput();
     if (!data || !this._validate(data)) {
-        return this.push(null);
+        return;
     }
 
-    return this.push(this._inputToContent(data));
+    this.push(this._inputToContent(data));
 };
 
 /**

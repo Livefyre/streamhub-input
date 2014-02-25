@@ -52,20 +52,42 @@ describe('upload/button', function () {
 
             describe('and render()\'d', function () {
                 beforeEach(function () {
+                    var uploadOpts = $.extend({}, Upload.DEFAULT_OPTS);
+
                     upldBtn.render();
+                    Auth.setToken('FAKE');//Fake auth
                 });
 
-                it('can be clicked to launch an Edit modal, then receive and pipe the returned value', function () {
-                    Auth.setToken('FAKE');//Fake auth
-                    //upldBtn.pipe(writable);
+                it('can be clicked to launch an Upload modal, then receive and pipe the returned value', function () {
                     upldBtn.$el.click();
 
                     var picker = $('#picker');
                     expect(picker).toBeTruthy();
+                });
+
+                it('can receive and pipe the value returned by Upload', function () {
+                    // upldBtn.destroy();
+                    var uploadOpts = Upload.DEFAULT_OPTS;
+                    uploadOpts.pick.debug = true;//Will auto-return an inkBlob
+
+                    opts = {
+                        destination: writable,
+                        uploadOpts: uploadOpts
+                    };
+
+                    upldBtn = new UploadButton(opts);
+                    upldBtn.render();
+                    upldBtn._command.execute(function (err, data) {});
 
                     //Fake data upload and response
-                    throw 'TODO (joao) Fake data upload and response.';
-                    expect(writable._write).toHaveBeenCalled();
+                    //throw 'TODO (joao) Fake data upload and response.';
+
+                    waitsFor(function() {
+                        return window.filepicker;
+                    }, 'filepicker to load', 500);
+                    runs(function () {
+                        expect(writable._write).toHaveBeenCalled();
+                    });
                 });
             });
 
@@ -83,7 +105,7 @@ describe('upload/button', function () {
                     input._inputToContent = function(data) { return new Content(data); };
 
                     var uploadOpts = Upload.DEFAULT_OPTS;
-                    uploadOpts.container = 'fake';
+                    uploadOpts.pick.container = 'fake';
                     opts = {
                         command: cmd,
                         destination: writable,
@@ -111,7 +133,7 @@ describe('upload/button', function () {
                     var uploadOpts = $.extend({}, Upload.DEFAULT_OPTS);
                     uploadOpts.container = 'fake';
                     upldBtn = new UploadButton({uploadOpts: uploadOpts});
-                    expect(upldBtn._input.opts.container).toBe('fake');
+                    expect(upldBtn._input.opts.pick.container).toBe('fake');
                 });
             });
         });

@@ -43,11 +43,10 @@ describe('upload', function () {
         });
 
         afterEach(function () {
-            //uploadInput.destroy();
+            uploadInput.destroy();
         })
 
         it('returns null when read() from before rendering', function () {
-            //debugger
             var nullVal = uploadInput.read();
             expect(nullVal).toBeNull();
         });
@@ -122,12 +121,8 @@ describe('upload', function () {
                 uploadInput.render();
             });
 
-            xit('can getInput() from its view', function () {
-                throw 'TODO (joao) Implement this!';
-            });
-
-            xit('can _validate(data) data', function () {
-                throw 'TODO (joao) Implement this!';
+            it('returns null for getInput()', function () {
+                expect(uploadInput.getInput()).toBeNull();
             });
 
             it('can transform data into Content with _inputToContent(data)', function () {
@@ -140,35 +135,10 @@ describe('upload', function () {
                 throw 'TODO (joao) Pending design input!';
             });
 
-            xit('can be read() from', function () {
-                throw 'TODO (joao) Implement this!';
-            });
-
-            describe('with an opts.destination', function () {
-                beforeEach(function () {
-                    uploadInput = new Upload({
-                        destination: writable,
-                        el: $('#sandbox')[0],
-                    });
-
-                    uploadInput.render();
-                });
-
-                // it('decorates .$postEl with a Button and stores it as ._postButton containing an AuthRequiredCommand wrapping an InputCommand command', function () {
-                //     var btn = uploadInput._postButton;
-                //     expect(btn).toBeTruthy();
-                //     expect(btn._command instanceof AuthRequiredCommand).toBe(true);
-
-                //     var authCmd = btn._command;
-                //     expect(authCmd._command instanceof InputCommand).toBe(true);
-                // });
-
-                // it('sets an InputCommand with this as the source and ._destination as the destination', function () {
-                //     var authCmd = uploadInput._postButton._command;
-                //     var inputCmd = authCmd._command;
-                //     expect(inputCmd._source).toBe(uploadInput);
-                //     expect(inputCmd._destination).toBe(writable);
-                // });
+            it('can be read() from', function () {
+                expect(function () {
+                    uploadInput.read();
+                }).not.toThrow();
             });
         });
 
@@ -191,7 +161,7 @@ describe('upload', function () {
             });
 
             afterEach(function () {
-                //uploadInput.destroy();
+                uploadInput.destroy();
             })
 
             it('assigns opts.destination to ._destination', function () {

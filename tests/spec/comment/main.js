@@ -199,11 +199,10 @@ describe('comment', function () {
                     expect(authCmd._command instanceof InputCommand).toBe(true);
                 });
 
-                it('sets an InputCommand with this as the source and ._destination as the destination', function () {
+                it('sets an InputCommand with this as the source', function () {
                     var authCmd = commentInput._postButton._command;
                     var inputCmd = authCmd._command;
                     expect(inputCmd._source).toBe(commentInput);
-                    expect(inputCmd._destination).toBe(writable);
                 });
             });
         });

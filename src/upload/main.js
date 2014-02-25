@@ -78,7 +78,7 @@ Upload.prototype.template = function (context) {
     return ['<iframe id="',
             context.container,
             //'" style="min-width:560px;min-height:432px;',
-            '">',
+            '" class="lf-upload">',
             '</iframe>'].join('');
 };
 
@@ -98,13 +98,18 @@ Upload.prototype.getTemplateContext = function () {
  * @private
  */
 Upload.prototype._initFilepicker = function () {
+    if (picker) {
+        return;
+    }
+
+    var src = this.opts.src;
     $.getScript(src, scriptLoadCallback);
     
     var self = this;
     function scriptLoadCallback(script, status, data) {
         if (status !== 'success') {
             picker = false;
-            throw 'There was an error loading ' + self.opts.src;;
+            throw 'There was an error loading ' + src;
         }
 
         picker = filepicker;
@@ -159,11 +164,20 @@ Upload.prototype._processResponse = function (err, inkBlob) {
     }
     
     var contents = [];
-    inkBlob && inkBlob.forEach(function (blob) {
-        var content = this._inputToContent(blob);
-        this.push(contents.push(content));
-    }, this);
+    if (inkBlob) {
+        if (!inkBlob.length) {
+            inkBlob = [inkBlob];
+        } 
+
+        inkBlob.forEach(function (blob) {
+            var content = this._inputToContent(blob);
+            //Perform the essential function of _read() for non-flowing mode
+            this.push(contents.push(content));
+        }, this);
+    }
     this.reset();
+    //For flowing mode
+    this.emit('data', contents);
     return contents;
 };
 
