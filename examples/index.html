@@ -346,14 +346,18 @@ Bark twice if you're in Milwaukee. Is this Wilt Chamberlain?
             
             var editor = window.editor = new CommentView({
                 el: document.getElementById("comment-editor"),
-                destination: collection
+                destination: listView
             });
             editor.render();
+            //editor.pipe(listView);
             
-            var topButton = window.topUpload = new UploadButton({
-                el: document.getElementById("top-upload"),
-                destination: collection
-            });
+            var topButton = window.topUpload = new UploadButton($.extend(
+                {
+                    el: document.getElementById("top-upload"),
+                    destination: listView
+                },
+                Upload.DEFAULT_OPTS)
+            );
             /* TODO (joao) Make two UploadButtons work on the same page
             var secondUploadOpts = Upload.DEFAULT_OPTS;
             secondUploadOpts.pick.container = 'picker2';
@@ -365,9 +369,9 @@ Bark twice if you're in Milwaukee. Is this Wilt Chamberlain?
             //var authDelegate = new fyre.conv.RemoteAuthDelegate();
             
             var topComment =  window.topComment = new CommentButton({
-                el: document.getElementById("top-comment"),
-                destination: collection
+                el: document.getElementById("top-comment")
             });
+            topComment.pipe(listView);
             
         });
         </script>

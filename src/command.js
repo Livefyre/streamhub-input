@@ -34,13 +34,15 @@ var InputCommand = function(source, opts) {
         this.disable();
         throw 'A source and destination are required when constructing a InputCommand.';
     }
-    
+
     this.callback = opts.callback || this.callback;
     
     var self = this;
     function cmd(clbk) {
         var data = self._source.getInput();
         data && self._source.emit('data', data);
+        clbk = clbk || self.callback;
+        clbk(undefined, data);
     }
 };
 inherits(InputCommand, Command);

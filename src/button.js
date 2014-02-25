@@ -16,7 +16,6 @@ var Upload = require('upload');
  * @param command {Command} Command to execute.
  * @param [opts] {Object}
  * @param [opts.destination] {Writable} A collection or other Writable to auto-pipe to.
- * @param [opts.input] {Input} Pipes the input to itself.
  * @constructor
  * @extends {Button}
  */
@@ -33,26 +32,11 @@ var InputButton = function(command, opts) {
      * @protected
      */
     this._destination = opts.destination;
-
-    /**
-     * The input to read from.
-     * @type {Input}
-     * @protected
-     */
-    this._input = opts.input;
-
-    // var self = this;
-    // command.callback = function (err, data) {
-    //     data && data.forEach(function (content) {
-    //         self._destination && self._destination.write(content);
-    //     });
-    // }
     
     Button.call(this, command, opts);
     Passthrough.call(this, opts);
 
     this._destination && this.pipe(this._destination);
-    this._input && this._input.pipe(this);
 };
 inherits(InputButton, Button);
 inherits.parasitically(InputButton, Passthrough);

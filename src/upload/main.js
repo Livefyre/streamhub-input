@@ -171,13 +171,12 @@ Upload.prototype._processResponse = function (err, inkBlob) {
 
         inkBlob.forEach(function (blob) {
             var content = this._inputToContent(blob);
+            contents.push(content);
             //Perform the essential function of _read() for non-flowing mode
-            this.push(contents.push(content));
+            this.push(content);
         }, this);
     }
     this.reset();
-    //For flowing mode
-    this.emit('data', contents);
     return contents;
 };
 
@@ -220,7 +219,7 @@ Upload.prototype.launchModal = function(callback) {
  * @returns {?Object}
  * @override
  */
-Upload.prototype.getInput = function () {
+Upload.prototype._getRawInput = function () {
     return null;
 };
 

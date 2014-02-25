@@ -14,17 +14,16 @@ var ModalInputCommand = require('modal/modal-input-command');
  *          incase it isn't good enough for you.
  * @param [opts.destination] {Writable} The collection or other Writable that
  *      will receive this input. it is recommended that this is specified.
- * @param [opts.input] {Input} Input to use instead of the default Edit,
- *          incase it isn't good enough for you.
  * @constructor
  * @extends {InputButton}
  */
 var EditButton = function(opts) {
     opts = opts || {};
-    opts.input = opts.input || new Edit(opts);
-    command = opts.command || new ModalInputCommand(opts.input, opts);
-    
+    var input = new Edit(opts);
+    command = opts.command || new ModalInputCommand(input, opts);
+
     InputButton.call(this, command, opts);
+    input.pipe(this);
 };
 inherits(EditButton, InputButton);
 

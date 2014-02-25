@@ -27,6 +27,8 @@ var Input = function(opts) {
      * @protected
      */
     this._destination = opts.destination;
+
+    this._destination && this.pipe(this._destination);
 };
 inherits.parasitically(Input, Readable);
 //HACK (joao) Need to upgrade inherits.parasitically
@@ -39,19 +41,29 @@ inherits.parasitically(Input, EventEmitter);
  * @protected
  */
 Input.prototype._read = function() {
-    var data = this.getInput();
+    //this.push(this.getInput());
+};
+
+/**
+ * Get the user's input data. Checks it with _validate(), then converts it and returns it.
+ * @returns {Object=}
+ * @override
+ * @protected
+ */
+Input.prototype.getInput = function() {
+    var data = this._getRawInput();
     if (!data || !this._validate(data)) {
         return;
     }
 
-    this.push(this._inputToContent(data));
+    return this._inputToContent(data);
 };
 
 /**
  * Reads the data that has been received from the user.
  * @returns {?Object}
  */
-Input.prototype.getInput = Util.abstractFunction;
+Input.prototype._getRawInput = Util.abstractFunction;
 
 /**
  * Checks that the input from the user is valid.
@@ -71,7 +83,7 @@ Input.prototype.reset = Util.abstractFunction;
 /**
  * Creates and returns a Content object based on the input.
  * @param input {Object} Usually the data retrieved from getInput().
- * @returns {Content}
+ * @returns {!Object}
  * @protected
  */
 Input.prototype._inputToContent = Util.abstractFunction;

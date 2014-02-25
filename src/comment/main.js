@@ -38,11 +38,11 @@ inherits.parasitically(Edit, Input);
 inherits.parasitically(Edit, LaunchableModal);
 
 /**
- * Returns a modified version of data that has been received from the user.
+ * Returns the raw data that has been received from the user.
  * @returns {?Object}
  * @override
  */
-Edit.prototype.getInput = function () {
+Edit.prototype._getRawInput = function () {
     return (this.$textareaEl) ? this.buildPostEventObj() : null;
 };
 
@@ -156,26 +156,24 @@ Edit.prototype.render = function () {
     
     this.$textareaEl = this.$('.' + this.classes.FIELD);
     this.$postEl = this.$('.' + this.classes.POST_BTN);
-    
-    if (this._destination) {
-        var self = this;
-        var clbk = function (err, data) {
-            if (err) {
-                self.handlePostFailure(err);
-            } else {
-                self.handlePostSuccess(data);
-            }
-        };
 
-        var postCmd = new PostComment(
-                    this,//source
-                    this._destination,//destination
-                    {callback: clbk});//opts
-        var authCmd = new AuthRequiredCommand(postCmd);
-        //authCmd.execute = function () {debugger; AuthRequiredCommand.prototype.execute.apply(authCmd, arguments)};
-        
-        this._postButton = new Button(authCmd, {el: this.$postEl});
-    }
+    var self = this;
+    var clbk = function (err, data) {
+        if (err) {
+            self.handlePostFailure(err);
+        } else {
+            self.handlePostSuccess(data);
+        }
+    };
+
+    var postCmd = new PostComment(
+                this,//source
+                {//opts
+                    callback: clbk
+                });
+    var authCmd = new AuthRequiredCommand(postCmd);
+    
+    this._postButton = new Button(authCmd, {el: this.$postEl});
 };
 
 /** @override */
@@ -198,7 +196,7 @@ Edit.prototype.handlePostFailure = function (data) {
  */
 Edit.prototype.handlePostSuccess = function (data) {
     log('Post Success');
-    
+
     this.returnModal(undefined, data);
 };
 
