@@ -121,8 +121,8 @@ describe('upload', function () {
                 uploadInput.render();
             });
 
-            it('returns null for getInput()', function () {
-                expect(uploadInput.getInput()).toBeNull();
+            it('returns undefined for getInput()', function () {
+                expect(uploadInput.getInput()).toBeUndefined();
             });
 
             it('can transform data into Content with _inputToContent(data)', function () {

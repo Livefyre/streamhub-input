@@ -97,14 +97,6 @@ describe('comment/button', function () {
                     cmtBtn._command.execute();
                     expect(cmdSpy).toHaveBeenCalled();
                 });
-
-                it('assigns opts.input to ._input and is .pipe()\'d from it', function () {
-                    expect(cmtBtn._input).toBe(input);
-
-                    spyOn(cmtBtn, 'write');
-                    input.emit('data', 'something');
-                    expect(cmtBtn.write).toHaveBeenCalledWith('something');
-                });
             });
         });
     });

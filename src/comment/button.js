@@ -19,11 +19,11 @@ var ModalInputCommand = require('modal/modal-input-command');
  */
 var EditButton = function(opts) {
     opts = opts || {};
-    var input = new Edit(opts);
-    command = opts.command || new ModalInputCommand(input, opts);
+    this._input = new Edit(opts);
+    command = opts.command || new ModalInputCommand(this._input, opts);
 
     InputButton.call(this, command, opts);
-    input.pipe(this);
+    this._input.pipe(this);
 };
 inherits(EditButton, InputButton);
 

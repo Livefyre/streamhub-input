@@ -21,10 +21,12 @@ describe('upload/button', function () {
     });
     
     describe('when constructed', function () {
+        var opts;
         var upldBtn;
         var writable;
         var testString = 'data sample'
         beforeEach(function () {
+            opts = $.extend({}, Upload.DEFAULT_OPTS);
             upldBtn = new UploadButton();
             writable = new Writable();
             spyOn(writable, '_write').andCallFake(function (data, clbk) {
@@ -52,7 +54,8 @@ describe('upload/button', function () {
 
             describe('and render()\'d', function () {
                 beforeEach(function () {
-                    var uploadOpts = $.extend({}, Upload.DEFAULT_OPTS);
+                    opts.pick.debug = true;
+                    opts.destination = writable;
 
                     upldBtn.render();
                     Auth.setToken('FAKE');//Fake auth
@@ -66,25 +69,15 @@ describe('upload/button', function () {
                 });
 
                 it('can receive and pipe the value returned by Upload', function () {
-                    // upldBtn.destroy();
-                    var uploadOpts = Upload.DEFAULT_OPTS;
-                    uploadOpts.pick.debug = true;//Will auto-return an inkBlob
-
-                    opts = {
-                        destination: writable,
-                        uploadOpts: uploadOpts
-                    };
-
                     upldBtn = new UploadButton(opts);
+                    spyOn(upldBtn._input, '_processResponse').andCallThrough();
                     upldBtn.render();
                     upldBtn._command.execute(function (err, data) {});
 
-                    //Fake data upload and response
-                    //throw 'TODO (joao) Fake data upload and response.';
-
                     waitsFor(function() {
-                        return window.filepicker;
-                    }, 'filepicker to load', 500);
+                        return window.filepicker && 
+                            upldBtn._input._processResponse.calls.length;
+                    }, 'filepicker to load', 2000);
                     runs(function () {
                         expect(writable._write).toHaveBeenCalled();
                     });
@@ -95,7 +88,6 @@ describe('upload/button', function () {
                 var cmd;
                 var cmdSpy;
                 var input;
-                var opts;
                 beforeEach(function () {
                     cmdSpy = jasmine.createSpy('command spy');
                     cmd = new Command(cmdSpy);
@@ -104,13 +96,9 @@ describe('upload/button', function () {
                     input._validate = function() { return true; };
                     input._inputToContent = function(data) { return new Content(data); };
 
-                    var uploadOpts = Upload.DEFAULT_OPTS;
-                    uploadOpts.pick.container = 'fake';
-                    opts = {
-                        command: cmd,
-                        destination: writable,
-                        input: input
-                    };
+                    opts.command = cmd,
+                    opts.destination = writable;
+                    opts.pick.container = 'fake';
 
                     upldBtn = new UploadButton(opts);
                 });
@@ -119,21 +107,6 @@ describe('upload/button', function () {
                     expect(upldBtn._command).toBe(cmd);
                     upldBtn._command.execute();
                     expect(cmdSpy).toHaveBeenCalled();
-                });
-
-                it('assigns opts.input to ._input and is .pipe()\'d from it', function () {
-                    expect(upldBtn._input).toBe(input);
-
-                    spyOn(upldBtn, 'write');
-                    input.emit('data', 'something');
-                    expect(upldBtn.write).toHaveBeenCalledWith('something');
-                });
-
-                it('uses opts.uploadOpts during default construction of the Upload', function () {
-                    var uploadOpts = $.extend({}, Upload.DEFAULT_OPTS);
-                    uploadOpts.container = 'fake';
-                    upldBtn = new UploadButton({uploadOpts: uploadOpts});
-                    expect(upldBtn._input.opts.pick.container).toBe('fake');
                 });
             });
         });

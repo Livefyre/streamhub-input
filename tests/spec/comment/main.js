@@ -166,15 +166,6 @@ describe('comment', function () {
                 throw 'TODO (joao) Pending design input!';
             });
 
-            it('can be read() from', function () {
-                commentInput.$textareaEl.val(testString);
-                expect(commentInput.$textareaEl.val()).toBe(testString);
-
-                var readVal = commentInput.read();
-                expect(readVal).toBeTruthy();
-                expect(readVal.body).toBe(testString);
-            });
-
             it('has a .$textareaEl and .$postEl', function () {
                 expect(commentInput.$textareaEl).toBeTruthy();
                 expect(commentInput.$postEl).toBeTruthy();

@@ -12,14 +12,13 @@ var Upload = require('upload');
  *          incase it isn't good enough for you.
  * @param [opts.destination] {Writable} The collection or other Writable that
  *      will receive this input. it is recommended that this is specified.
- * @param [opts.uploadOpts] {Object} Opts to pass to the default Upload on construction.
  * @constructor
  * @extends {Button}
  */
 var UploadButton = function(opts) {
     opts = opts || {};
-    var input = new Upload(opts);
-    command = opts.command || new ModalInputCommand(input, opts);
+    this._input = new Upload(opts);
+    command = opts.command || new ModalInputCommand(this._input, opts);
     
     var self = this;
     command.callback = function (err, data) {
@@ -29,7 +28,7 @@ var UploadButton = function(opts) {
     }
     
     InputButton.call(this, command, opts);
-    input.pipe(this);
+    this._input.pipe(this);
 };
 inherits(UploadButton, InputButton);
 

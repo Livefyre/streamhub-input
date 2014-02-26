@@ -63,14 +63,6 @@ describe('streamhub-input/button', function () {
                 inputButton.write('something');
                 expect(writable.write).toHaveBeenCalledWith('something');
             });
-
-            it('assigns opts.input to ._input and is .pipe()\'d from it', function () {
-                expect(inputButton._input).toBe(input);
-
-                spyOn(inputButton, 'write');
-                input.emit('data', 'something');
-                expect(inputButton.write).toHaveBeenCalledWith('something');
-            });
         });
     });
 });

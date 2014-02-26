@@ -4,7 +4,7 @@ var log = require('streamhub-sdk/debug')
 var Content = require('streamhub-sdk/content');
 var EventEmitter = require('event-emitter');
 var Readable = require('stream/readable');
-var Util = require('streamhub-sdk/util');
+var util = require('streamhub-sdk/util');
 var View = require('streamhub-sdk/view');
 
 'use strict';
@@ -35,13 +35,13 @@ inherits.parasitically(Input, Readable);
 inherits.parasitically(Input, EventEmitter);
 
 /**
- * Uses getInput() to get the user's input data. Checks it with _validate(),
- * then converts it to Content, pushes it, and returns it.
+ * Uses getInput() to get the user's input data.
  * @override
  * @protected
  */
 Input.prototype._read = function() {
-    //this.push(this.getInput());
+    var data = this.getInput();
+    data && this.push(data);
 };
 
 /**
@@ -63,7 +63,7 @@ Input.prototype.getInput = function() {
  * Reads the data that has been received from the user.
  * @returns {?Object}
  */
-Input.prototype._getRawInput = Util.abstractFunction;
+Input.prototype._getRawInput = util.abstractFunction;
 
 /**
  * Checks that the input from the user is valid.
@@ -72,13 +72,13 @@ Input.prototype._getRawInput = Util.abstractFunction;
  * @returns {!boolean}
  * @protected
  */
-Input.prototype._validate = Util.abstractFunction;
+Input.prototype._validate = util.abstractFunction;
 
 /**
  * Resets the input display, typically by clearing out the current user input
  * from the screen.
  */
-Input.prototype.reset = Util.abstractFunction;
+Input.prototype.reset = util.abstractFunction;
 
 /**
  * Creates and returns a Content object based on the input.
@@ -86,12 +86,12 @@ Input.prototype.reset = Util.abstractFunction;
  * @returns {!Object}
  * @protected
  */
-Input.prototype._inputToContent = Util.abstractFunction;
+Input.prototype._inputToContent = util.abstractFunction;
 
 /**
  * Displays an error message to the user.
  * @param msg
  */
-Input.prototype.showError = Util.abstractFunction;
+Input.prototype.showError = util.abstractFunction;
 
 module.exports = Input;

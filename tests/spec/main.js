@@ -17,6 +17,7 @@ describe('streamhub-input', function () {
     describe('when constructed', function () {
         var input;
         beforeEach(function () {
+            spyOn(Input.prototype, '_getRawInput');
             input = new Input();
         });
 
