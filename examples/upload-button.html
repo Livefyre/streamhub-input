@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../lib/streamhub-sdk/src/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../src/css/fycon.css">
+    <link rel="stylesheet" type="text/css" href="../src/css/lf-bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../src/css/style.css">
+    <style>
+    #listView {
+        width:500px;
+    }
+    
+    </style>
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+</head>
+    <body class="lf">
+        <button id="top-upload">Post Your Photo <i class="fycon-composer-photo"></i></button><br>
+        <div id="listView"></div>
+
+        <script src="../node_modules/cajon/cajon.js" type="text/javascript"></script>
+        <script src="/requirejs.conf.js" type="text/javascript"></script>
+        <script>
+            requirejs({
+                baseUrl: "/"
+            });
+        </script>
+        <script>
+        require([
+            'streamhub-sdk/content/views/content-list-view',
+            'streamhub-sdk/auth',
+            'upload/button'
+        ],function (ListView, Auth, UploadButton) {
+
+            var listView = window.view = new ListView({
+                initial: 3,
+                showMore: 2,
+                el: document.getElementById("listView")
+            });
+
+            Auth.setToken('FAKE TOKEN');
+
+            var upldBtn = window.topUpload = new UploadButton({
+                el: document.getElementById("top-upload")
+            });
+            upldBtn.pipe(listView);
+
+        });
+        </script>
+    </body>
+</html>

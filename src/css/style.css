@@ -1,0 +1,136 @@
+.lf-btn {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 500;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 7px 12px;
+    font-size: 14px;
+    line-height: 1.428571429;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.lf-upload-btn, .lf-edit-btn, .lf-modal-body .editor-post-btn,
+    .lf .lf-btn-info {
+    color: #ffffff;
+    background-color: #0f98ec;
+    border-color: #0a6aa4;
+}
+
+.lf-upload-btn .fycon-composer-photo {
+    font-size: 1.3em;
+    padding: 2px;
+}
+
+.lf-upload {
+    min-width:560px;
+    min-height:432px;
+}
+
+.lf button {
+    -webkit-appearance: button;
+    cursor: pointer;
+    text-transform: none;
+    margin: 0;
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.428571429;
+}
+
+button {
+    align-items: flex-start;
+    text-align: center;
+    cursor: default;
+    color: buttontext;
+    padding: 2px 6px 3px;
+    border: 2px outset buttonface;
+    border-image-source: initial;
+    border-image-slice: initial;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    background-color: buttonface;
+    box-sizing: border-box;
+    margin: 0em;
+    font: -webkit-small-control;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+}
+
+textarea {
+    resize: none;/* For Chrome */
+}
+
+.lf * {
+    box-sizing: border-box;
+}
+
+.lf-modal-content {
+    position: relative;
+    color: #2f3440;
+    background-color: #ffffff;
+    border: 0;
+    -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    -ms-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    -o-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    border-radius: 6px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    background-clip: padding-box;
+    outline: none;
+    text-align: center;
+    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    -ms-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    -o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    display: block;
+}
+
+.lf-modal-header {
+    padding: 15px;
+    background-color: #f7f7f5;
+    border-bottom: 1px solid #ececea;
+    min-height: 16.428571429px;
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+}
+
+.lf-modal-body {
+    position: relative;
+    text-align: center;
+    padding: 30px 15px 15px;
+}
+
+.lf-modal-footer {
+    margin-top: 0;
+    padding: 5px 15px 30px;
+    text-align: center;
+    border-top: 0;
+}
+
+.hub-modal-content-view iframe, .hub-modal-content-view article {
+    position: relative;
+    margin: 50px auto 0;
+    display: block;
+    border: 0;
+}

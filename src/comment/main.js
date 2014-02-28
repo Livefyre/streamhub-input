@@ -89,11 +89,11 @@ Edit.prototype._i18n = {
     emptyText: ''
 };
 
-/** @enum {string} */
-Edit.prototype.classes = {
-    FIELD: 'editor-field',
-    POST_BTN: 'editor-post-btn'
-};
+// /** @enum {string} */
+// Edit.prototype.classes = {
+//     FIELD: 'editor-field',
+//     POST_BTN: 'editor-post-btn'
+// };
 
 /**
  * The default element tag.
@@ -110,19 +110,19 @@ Edit.prototype.elTag = 'article';
 Edit.prototype.template = function (context) {
     return [
         '<section class="lf-modal-body">',
-        '<div class="user-info">',
-        '<span class="name">',
-        'Ron Burgandy',//DEBUG (joao) Dev text
-        '</span>\n',
-        '<span class="handle">',
-        '@tomoleary',//DEBUG (joao) Dev text
-        '</span>',
-        '</div>',
+        // '<div class="user-info">',
+        // '<span class="name">',
+        // 'Ron Burgandy',//DEBUG (joao) Dev text
+        // '</span>\n',
+        // '<span class="handle">',
+        // '@tomoleary',//DEBUG (joao) Dev text
+        // '</span>',
+        // '</div>',
         '<div class="editor-container">',
         '<textarea class="editor-field">',
         //this._i18n.emptyText,
-        'Ron Burgandy. Stay classy, San Diego. Hello, Baxter? Baxter, is that you?\n',//DEBUG (joao) Dev text
-        'Bark twice if you\'re in Milwaukee. Is this Wilt Chamberlain?',//DEBUG (joao) Dev text
+        // 'Ron Burgandy. Stay classy, San Diego. Hello, Baxter? Baxter, is that you?\n',//DEBUG (joao) Dev text
+        // 'Bark twice if you\'re in Milwaukee. Is this Wilt Chamberlain?',//DEBUG (joao) Dev text
         '</textarea>',
         '</div>',
         '<div class="btn-wrapper">',
@@ -153,7 +153,7 @@ Edit.prototype.modalTemplate = function (context) {
  */
 Edit.prototype.render = function () {
     View.prototype.render.call(this);
-    
+
     this.$textareaEl = this.$('.' + this.classes.FIELD);
     this.$postEl = this.$('.' + this.classes.POST_BTN);
 
@@ -172,7 +172,7 @@ Edit.prototype.render = function () {
                     callback: clbk
                 });
     var authCmd = new AuthRequiredCommand(postCmd);
-    
+
     this._postButton = new Button(authCmd, {el: this.$postEl});
 };
 

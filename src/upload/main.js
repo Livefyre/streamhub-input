@@ -30,7 +30,8 @@ var picker = null;
  * @extends {View}
  */
 var Upload = function(opts) {
-    opts = opts || Upload.DEFAULT_OPTS;
+    opts = opts || {};
+    $.extend(opts, Upload.DEFAULT_OPTS);
     View.call(this, opts);
     Input.call(this, opts);
     LaunchableModal.call(this, opts);
@@ -77,7 +78,6 @@ Upload.prototype.elTag = 'iframe';
 Upload.prototype.template = function (context) {
     return ['<iframe id="',
             context.container,
-            //'" style="min-width:560px;min-height:432px;',
             '" class="lf-upload">',
             '</iframe>'].join('');
 };
@@ -195,7 +195,6 @@ Upload.prototype.launchModal = function(callback) {
     
     if (picker === null) {
     //Hasn't loaded yet
-        //TODO (joao) Test this
         setTimeout(function() {
             self.launchModal(callback);
         }.bind(this), 150);
