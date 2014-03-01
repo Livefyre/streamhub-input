@@ -1,0 +1,37 @@
+{
+  "name": "streamhub-editor",
+  "description": "Base editor for streamhub applications",
+  "author": "Livefyre <support@livefyre.com>",
+  "contributors": {
+    "name": "Mark Doten",
+    "email": "mark@livefyre.com"
+  },
+  "version": "1.0.0",
+  "dependencies": {
+    "bower": "*",
+    "mocha-phantomjs": "3.1.6",
+    "phantomjs": "1.9.2-2"
+  },
+  "devDependencies": {
+    "bower": "1.2.7",
+    "express": "*",
+    "http-server": "*",
+    "mocha-phantomjs": "~2.0.3",
+    "mocha": "*",
+    "karma-script-launcher": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-firefox-launcher": "~0.1.0",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-cajon": "*",
+    "karma-phantomjs-launcher": "~0.1.0",
+    "karma": "~0.10.5",
+    "karma-mocha": "~0.1.0",
+    "karma-safari-launcher": "~0.1.1",
+    "karma-chai": "0.0.2"
+  },
+  "scripts": {
+    "postinstall": "./node_modules/bower/bin/bower install",
+    "start": "node ./dev/server.js",
+    "test": "./node_modules/karma/bin/karma start tools/karma.conf.js"
+  }
+}

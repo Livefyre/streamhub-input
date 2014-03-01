@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- <script type="text/javascript" src="lib/requirejs/require.js"></script> -->
+    <!-- <script type="text/javascript" src="/requirejs.conf.js"></script>  -->
+    <script type="text/javascript">
+        var $ = "blah";
+        var jQuery = "blah2";
+    </script>
+    <script type="text/javascript" src="/streamhub-sdk.min.js"></script>
+</head>
+<body>
+    <div id="stream"></div>
+    <script type="text/javascript">
+        var Hub = Livefyre.require('streamhub-sdk');
+        console.log("jQuery as $:", window.$ == window.jQuery && window.jQuery != undefined)
+        console.log("null   as $:", window.$ == null);
+        console.log("'blah' as $:", window.$ == "blah");
+    </script>
+</body>
+</html>

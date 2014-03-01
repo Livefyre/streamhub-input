@@ -1,0 +1,24 @@
+{
+  "name": "karma-cajon",
+  "version": "0.0.1",
+  "homepage": "https://github.com/xdamman/karma-cajon",
+  "authors": [
+    "Xavier Damman <xdamman@gmail.com>"
+  ],
+  "description": "Karma plugin for Cajon",
+  "keywords": [
+    "karma",
+    "karma-plugin",
+    "cajon"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "cajon": "git@github.com:requirejs/cajon.git"
+  }
+}

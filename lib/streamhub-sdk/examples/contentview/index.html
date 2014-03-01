@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../../src/content/css/content.css">
+    <style>
+    body {
+        font-family: sans-serif;
+        font-size: 14px;
+        line-height: 18px;
+        width: 420px;
+    }
+    a {
+        text-decoration: none;
+    }
+    </style>
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+</head>
+    <body>
+        <div id="feedView"></div>
+
+        <h2>SH Content</h2>
+        <div id="c1"></div>
+
+        <h2>SH Instagram Content (RSS)</h2>
+        <div id="c2"></div>
+
+        <h2>SH Twitter Content</h2>
+        <div id="c4"></div>
+
+        <h2>SH Facebook Content</h2>
+        <div id="c5"></div>
+
+        <h2>Ad-hoc Content</h2>
+        <pre>new Content('&lt;p&gt;Woah&lt;/p&gt;')</pre>
+        <div id="c3"></div>
+
+        <h2>Content Author w/ broken avatar</h2>
+        <div id="c6"></div>
+
+        <script src="../../lib/cajon/cajon.js" type="text/javascript"></script>
+        <script src="/requirejs.conf.js" type="text/javascript"></script>
+        
+        <script type="text/javascript">
+        requirejs.config({
+            baseUrl: '../../'
+        });
+        require([
+            'streamhub-sdk/content',
+            'streamhub-sdk/content/types/livefyre-twitter-content',
+            'streamhub-sdk/content/types/oembed',
+            'streamhub-sdk/content/types/livefyre-facebook-content',
+            'streamhub-sdk/content/types/livefyre-content',
+            'streamhub-sdk/content/types/livefyre-oembed',
+            'streamhub-sdk/content/views/content-view',
+            'streamhub-sdk/content/views/facebook-content-view',
+            'streamhub-sdk/content/views/twitter-content-view'],
+        function (Content, LivefyreTweet, Oembed, LivefyreFacebookContent, LivefyreContent, LivefyreOembed, ContentView, FacebookContentView, TwitterContentView) {
+
+            var mockData = {};
+            mockData.livefyreContent = {"source":5,"content":{"replaces":"","parentId":"","bodyHtml":"<p>first</p>","id":"26377292","authorId":"_u1975@livefyre.com","updatedAt":1359696267,"annotations":{"moderator":true},"createdAt":1359696267},"vis":1,"type":0,"event":1359696267541618,"childContent":[],"author":{"displayName":"markdoten","tags":[],"profileUrl":"http://www.t402.livefyre.com/profile/1975/","avatar":"http://d10g4z0y9q0fip.cloudfront.net/a/1/a26fc9513108c64ecdeef1809f2815e8/50.jpg","type":1,"id":"_u1975@livefyre.com"}}
+            mockData.livefyreStreamContent = {"vis": 1, "content": {"replaces": "", "feedEntry": {"transformer": "lfcore.v2.procurement.feed.transformer.instagram", "feedType": 2, "description": "#gayrights #lgbt #equality #marriageequality <img src=\"http://distilleryimage2.instagram.com/18ea2500970c11e294f522000a9f30b8_7.jpg\" />", "pubDate": 1364409052, "channelId": "http://instagram.com/tags/marriageequality/feed/recent.rss", "link": "http://distilleryimage2.instagram.com/18ea2500970c11e294f522000a9f30b8_7.jpg", "id": "bffcb85a-2976-4396-bb60-3cf5b1e2c3a8", "createdAt": 1364409052}, "bodyHtml": "#gayrights #lgbt #equality #marriageequality ", "annotations": {}, "authorId": "7759cd005d95d8cc5bd93718b2ac0064@instagram.com", "parentId": "", "updatedAt": 1364409052, "id": "bffcb85a-2976-4396-bb60-3cf5b1e2c3a8", "createdAt": 1364409052}, "source": 13, "lastVis": 0, "type": 0, "event": 1364409052662964, author: {displayName: "sara",tags: [ ],profileUrl: "https://twitter.com/#!/135sara",avatar: "http://a0.twimg.com/profile_images/1349672055/Baqueira_29-01-2010_13-54-52_normal.jpg",type: 3,id: "123568642@twitter.com"}};
+            mockData.livefyreTwitterContent = {"source":1,"content":{"replaces":"","parentId":"","bodyHtml":"Chronicles of Riddick. Every time.","id":"tweet-297510939517939713@twitter.com","authorId":"16275037@twitter.com","updatedAt":1359767110,"annotations":{},"createdAt":1359767110},"vis":1,"type":0,"event":1359767110368889,"childContent":[],"author":{"displayName":"joemfbrown","tags":[],"profileUrl":"http://twitter.com/#!/joemfbrown","avatar":"http://a0.twimg.com/profile_images/2190838404/me_normal.jpg","type":3,"id":"16275037@twitter.com"}};
+            mockData.livefyreFacebookContent = {"source": 14, "content": {"replaces": "", "parentId": "", "bodyHtml": "<div class='fyre-facebook-entry'>My house with Tamberly Kennedy jammin by the fire</div><div class='fyre-facebook-entry fyre-image'>http://www.facebook.com/photo.php?fbid=598374453508425&set=pcb.598375046841699&type=1&relevant_count=3</div>", "id": "1e2aa20a21caad80e0661f94ecc26d14", "authorId": "100000076278740@facebook.com", "updatedAt": 1366506808, "annotations": {}, "createdAt": 1366506807}, "vis": 1, "type": 0, "event": 1366506809748878, "author": {"displayName": "Ryan Boone", "tags": [], "profileUrl": "http://www.facebook.com/profile.php?id=100000076278740", "avatar": "https://graph.facebook.com/100000076278740/picture", "type": 4, "id": "100000076278740@facebook.com"}};
+
+            var c1 = new LivefyreContent(mockData.livefyreContent);
+            var c1v = new ContentView({
+                content: c1,
+                el: document.getElementById('c1')
+            });
+            c1v.render();
+
+            var c2 = new LivefyreContent(mockData.livefyreStreamContent);
+            var c2v = new ContentView({
+                content: c2,
+                el: document.getElementById('c2')
+            });
+            c2v.render();
+
+            var c3 = new Content('<p>Woah</p>');
+            c3.attachments = [{
+                "version": "1.0",
+                "type": "photo",
+                "width": 240,
+                "height": 160,
+                "title": "ZB8T0193",
+                "url": "http://farm4.static.flickr.com/3123/2341623661_7c99f48bbf_m.jpg",
+                "author_name": "Bees",
+                "author_url": "http://www.flickr.com/photos/bees/",
+                "provider_name": "Flickr",
+                "provider_url": "http://www.flickr.com/"
+            }]
+            var c3v = new ContentView({
+                content: c3,
+                el: document.getElementById('c3')
+            });
+            c3v.render();
+
+            var c4 = new LivefyreTweet(mockData.livefyreTwitterContent);
+            c4.addAttachment(new Oembed({
+                "version": "1.0",
+                "type": "photo",
+                "width": 240,
+                "height": 160,
+                "title": "ZB8T0193",
+                "url": "http://farm4.static.flickr.com/3123/2341623661_7c99f48bbf_m.jpg",
+                "author_name": "Bees",
+                "author_url": "http://www.flickr.com/photos/bees/",
+                "provider_name": "Flickr",
+                "provider_url": "http://www.flickr.com/"
+            }));
+            var c4v = new TwitterContentView({
+                content: c4,
+                el: document.getElementById('c4')
+            });
+            c4v.render();
+            
+            var c5 = new LivefyreFacebookContent(mockData.livefyreFacebookContent);
+            c5.addAttachment(new LivefyreOembed({"content": { "oembed": {
+                "provider_url": "http://www.facebook.com",
+                "version": "1.0",
+                "title": "My house with Tamberly Kennedy jammin by the fire | Facebook",
+                "url": "http://www.facebook.com/photo.php?fbid=598374453508425&set=pcb.598375046841699&type=1&relevant_count=3",
+                "author_name": "",
+                "height": 0,
+                "width": 0,
+                "html": "",
+                "thumbnail_width": 716,
+                "provider_name": "Facebook",
+                "thumbnail_url": "http://sphotos-b.xx.fbcdn.net/hphotos-ash4/387315_598374453508425_1009356889_n.jpg", 
+                "type": "link",
+                "thumbnail_height": 960, 
+                "author_url": ""
+            }}}));
+            var c5v = new FacebookContentView({
+                content: c5,
+                el: document.getElementById('c5')
+            });
+            c5v.render();
+            
+            var c6 = new Content('<p>My avatar is broken</p>');
+            c6.set({
+                author: {
+                    displayName: 'ben',
+                    avatar: 'http://goooo'
+                }
+            });
+            var c6v = new ContentView({
+                content: c6,
+                el: document.getElementById('c6')
+            });
+            c6v.render();
+        });
+        </script>
+    </body>
+</html>

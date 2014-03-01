@@ -1,0 +1,36 @@
+{
+  "name": "view",
+  "description": "An object that attatches to a DOM node",
+  "author": "Livefyre <support@livefyre.com>",
+  "version": "1.1.0",
+  "contributors": {
+    "name": "JJ Weber",
+    "email": "jj@livefyre.com"
+  },
+  "scripts": {
+    "postinstall": "./node_modules/bower/bin/bower install",
+    "start": "./node_modules/http-server/bin/http-server .",
+    "test": "./node_modules/karma/bin/karma start tools/karma.conf.js --singleRun=true",
+    "testw": "./node_modules/karma/bin/karma start tools/karma.conf.js",
+    "jsdoc": "rm -rf docs/api && ./node_modules/jsdoc/jsdoc -c tools/jsdoc.conf.json",
+    "hint": "./node_modules/jshint/bin/jshint src/ tests/spec; echo"
+  },
+  "devDependencies": {
+    "bower": "1.2.7",
+    "http-server": "*",
+    "jshint": "~1.1.0",
+    "jsdoc": "git://github.com/jsdoc3/jsdoc.git",
+    "mocha-phantomjs": "~2.0.3",
+    "mocha": "1.15.1",
+    "karma-script-launcher": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-firefox-launcher": "~0.1.0",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-cajon": "*",
+    "karma-phantomjs-launcher": "~0.1.0",
+    "karma": "~0.10.5",
+    "karma-mocha": "~0.1.0",
+    "karma-safari-launcher": "~0.1.1",
+    "karma-chai": "0.0.2"
+  }
+}

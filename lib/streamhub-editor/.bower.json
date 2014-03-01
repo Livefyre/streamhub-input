@@ -1,0 +1,28 @@
+{
+  "name": "streamhub-editor",
+  "main": [
+    "./src/editor.js"
+  ],
+  "dependencies": {
+    "cajon": "git@github.com:requirejs/cajon.git#~0.1.11",
+    "inherits": "git://github.com/Livefyre/inherits.git",
+    "jquery": "~1.10.2",
+    "mustache": "*",
+    "requirejs-hogan-plugin": "*",
+    "view": "git://github.com/Livefyre/view.git#1.0.0"
+  },
+  "devDependencies": {
+    "chai": "~1.8.1",
+    "sinon-chai": "~2.4.0",
+    "sinonjs": "~1.7.3"
+  },
+  "homepage": "https://github.com/markdoten/streamhub-editor",
+  "_release": "c644923dd3",
+  "_resolution": {
+    "type": "commit",
+    "commit": "c644923dd369289bda57918f0628aff9ec795784"
+  },
+  "_source": "git://github.com/markdoten/streamhub-editor.git",
+  "_target": "c644923dd369289bda57918f0628aff9ec795784",
+  "_originalSource": "git://github.com/markdoten/streamhub-editor.git"
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../../src/css/style.css">
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+</head>
+    <body>
+        <div id="view"></div>
+
+        <script src="/dist/streamhub-sdk.min.js" type="text/javascript"></script>
+        
+        <script type="text/javascript">
+            Livefyre.require(['streamhub-sdk/collection', 'streamhub-sdk/content/views/content-list-view'],
+            function (Collection, ListView) {
+                var opts = {
+                    "network": "labs-t402.fyre.co",
+                    "siteId": "303827",
+                    "articleId": "xbox-0",
+                    "environment": "t402.livefyre.com"
+                };
+
+                var view = window.view = new ListView({ el: document.getElementById('view') });
+                var collection = window.collection = new Collection(opts);
+
+                collection.pipe(view);
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "view",
+  "version": "1.1.0",
+  "main": [
+    "./src/view.js"
+  ],
+  "dependencies": {
+    "cajon": "git://github.com/requirejs/cajon.git#~0.1.11",
+    "jquery": "~1.10.1",
+    "event-emitter": "git://github.com/Livefyre/event-emitter.git",
+    "inherits": "git://github.com/Livefyre/inherits.git"
+  },
+  "devDependencies": {
+    "almond": "~0.2.5",
+    "chai": "~1.8.1"
+  },
+  "homepage": "https://github.com/Livefyre/view",
+  "_release": "1.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.1.0",
+    "commit": "2459c327ca5cc8433cf3e406d223e6588a83154e"
+  },
+  "_source": "git://github.com/Livefyre/view.git",
+  "_target": "~1.1",
+  "_originalSource": "git://github.com/Livefyre/view.git"
+}

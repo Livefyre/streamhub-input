@@ -1,0 +1,14 @@
+{
+  "name": "requirejs-hogan-plugin",
+  "homepage": "https://github.com/millermedeiros/requirejs-hogan-plugin",
+  "version": "0.2.1",
+  "_release": "0.2.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.1",
+    "commit": "d0c3b251c57eab3437f11623b012354145cf4f3d"
+  },
+  "_source": "git://github.com/millermedeiros/requirejs-hogan-plugin.git",
+  "_target": "~0.2.1",
+  "_originalSource": "git://github.com/millermedeiros/requirejs-hogan-plugin.git"
+}

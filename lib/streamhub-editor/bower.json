@@ -1,0 +1,20 @@
+{
+    "name": "streamhub-editor",
+    "version": "1.0.0",
+    "main": [
+        "./src/editor.js"
+    ],
+    "dependencies": {
+        "cajon": "git@github.com:requirejs/cajon.git#~0.1.11",
+        "inherits": "git://github.com/Livefyre/inherits.git",
+        "jquery": "~1.10.2",
+        "mustache": "*",
+        "requirejs-hogan-plugin": "*",
+        "view": "git://github.com/Livefyre/view.git#1.0.0"
+    },
+    "devDependencies": {
+        "chai": "~1.8.1",
+        "sinon-chai": "~2.4.0",
+        "sinonjs": "~1.7.3"
+    }
+}
