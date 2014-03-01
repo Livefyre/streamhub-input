@@ -200,6 +200,9 @@ Upload.prototype.launchModal = function(callback) {
         }.bind(this), 150);
         return;
     }
+
+    this.opts.pick.container = this.name + this.uid;
+    console.log(this.opts.pick.container)
     
     LaunchableModal.prototype.launchModal.apply(this, arguments);
     var successFn = function(inkBlob) {
