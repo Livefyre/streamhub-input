@@ -45,6 +45,9 @@ require.config({
     location: 'lib/streamhub-sdk/src',
     main: 'jquery'
   },{
+    name: 'streamhub-wall',
+    location: 'lib/streamhub-wall/src'
+  },{
     name: 'comment',
     location: 'src/comment'
   },{

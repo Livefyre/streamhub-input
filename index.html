@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="src/css/style.css">
     <style>
     #view {
-        width:500px;
+        /*width:500px;*/
     }
 
     #comment-editor {
@@ -38,7 +38,9 @@
 
     </style>
     <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
-    <!--script src="//livefyre-cdn.s3.amazonaws.com/libs/sdk/v2.5.1/rc/builds/11/streamhub-sdk.min.js"></script-->
+    
+    <!--script src="//livefyre-cdn.s3.amazonaws.com/libs/sdk/v2.5.1/rc/builds/11/streamhub-sdk.min.js"></script>
+    <script type="text/javascript" src="http://cdn.livefyre.com/libs/apps/Livefyre/streamhub-wall/v2.2.4-build.159/streamhub-wall.min.js"></script-->
 </head>
     <body class="lf">
         <form>
@@ -83,7 +85,8 @@
         </script>
         <script>
         require([
-            'streamhub-sdk/content/views/content-list-view',
+            // 'streamhub-sdk/content/views/content-list-view',
+            'streamhub-wall',
             'streamhub-sdk/collection',
             'streamhub-sdk/auth',
             'upload',
@@ -117,8 +120,8 @@
                 $form;
 
             view = new View({
-                initial: 3,
-                showMore: 2,
+                initial: 5,
+                showMore: 4,
                 el: document.getElementById("view")
             });
 
@@ -226,13 +229,13 @@
                 archive.pipe(view.more);
 
                 inputs.forEach(function (o) {
-                    o.pipe(collection);
+                    o && o.pipe(collection);
                 });
             }
 
             function destroy() {
                 inputs.forEach(function (o) {
-                    o.unpipe(collection);
+                    o && o.unpipe(collection);
                 });
 
                 collection.unpipe(view);

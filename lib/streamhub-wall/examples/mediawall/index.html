@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../../lib/streamhub-sdk/src/css/style.css">
+    <!--<script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>-->
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <style> body { margin: 0; padding: 0; background-color: #EFEFEF; }</style>
+</head>
+    <body>
+        
+        <div id="view"></div>
+
+        <script src="../../lib/cajon/cajon.js" type="text/javascript"></script>
+        <script src="/requirejs.conf.js" type="text/javascript"></script>
+        <script>
+            requirejs({
+                baseUrl: "/"
+            });
+        </script>
+        <script>
+        require([
+            'streamhub-sdk/collection',
+            'streamhub-sdk/content',
+            'streamhub-wall'
+        ],function (Collection, Content, MediaWallView) {
+            var opts = {
+                "network": "labs-t402.fyre.co",
+                "siteId": "303827",
+                // Fast Collection
+                // "articleId": "labs_demo_fire",
+                "articleId": "xbox-0",
+                "environment": "t402.livefyre.com"
+            };
+
+            var view = window.view = new MediaWallView({
+                el: document.getElementById("view"),
+                minContentWidth: 300,
+                initial: 5
+                ,showMore: 5
+                //,columns: 6
+                //,modal: false
+            });
+
+            var collection = new Collection(opts);
+            window.archive = collection.createArchive();
+            archive.pipe(view.more);
+
+            var count = 25
+            setInterval(function () {
+                var rand = Math.floor((Math.random()*2)+1);
+                var body = rand == 1 ? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere porttitor diam sit amet laoreet. Etiam eu eleifend odio.' : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere porttitor diam sit amet laoreet. Etiam eu eleifend odio. Suspendisse convallis molestie euismod. Aenean rutrum sagittis dui nec pharetra.';
+                if (count > 0) { view.write(new Content({ body: new Date() + body })); }
+                count--;
+            }, 1000);
+        });
+        </script>
+    </body>
+</html>

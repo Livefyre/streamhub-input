@@ -12,6 +12,7 @@
     "stream": "git://github.com/Livefyre/stream.git#~0.1",
     "streamhub-editor": "git://github.com/markdoten/streamhub-editor.git#c644923dd369289bda57918f0628aff9ec795784",
     "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#rc",
+    "streamhub-wall": "git://github.com/Livefyre/streamhub-wall.git#~2.2.4",
     "view": "git://github.com/Livefyre/view.git#~1.1"
   },
   "devDependencies": {
@@ -20,6 +21,8 @@
     "almond": "~0.2.5"
   },
   "resolutions": {
-    "view": "~1.1"
+    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#rc",
+    "view": "~1.1",
+    "base64": "~0.3.3"
   }
 }
