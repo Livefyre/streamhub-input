@@ -11,7 +11,7 @@
     padding: 7px 12px;
     font-size: 14px;
     line-height: 1.428571429;
-    border-radius: 4px;
+    border-radius: 3px;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -19,7 +19,7 @@
     user-select: none;
 }
 
-.lf-upload-btn, .lf-edit-btn, .lf-modal-body .editor-post-btn,
+.lf-upload-btn, .lf-edit-btn, .lf-comment .editor-post-btn,
     .lf .lf-btn-info {
     color: #ffffff;
     background-color: #0f98ec;
@@ -27,7 +27,7 @@
 }
 
 .lf-upload-btn .fycon-composer-photo {
-    font-size: 1.3em;
+    /*font-size: 1.3em;*/
     padding: 2px;
 }
 
@@ -77,6 +77,10 @@ button {
 
 textarea {
     resize: none;/* For Chrome */
+    font-family: georgia;
+    font-size: 15px;
+    line-height: 28px;
+    color: #4c4c4c;
 }
 
 .lf * {
@@ -92,7 +96,7 @@ textarea {
     -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     -ms-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     -o-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    border-radius: 6px;
+    border-radius: 3px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     background-clip: padding-box;
     outline: none;
@@ -111,21 +115,56 @@ textarea {
     background-color: #f7f7f5;
     border-bottom: 1px solid #ececea;
     min-height: 16.428571429px;
-    border-top-right-radius: 6px;
-    border-top-left-radius: 6px;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
 }
 
-.lf-modal-body {
+.lf-comment{
     position: relative;
     text-align: center;
-    padding: 30px 15px 15px;
+    border: 1px solid #ececea;
+    text-align: left;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    -ms-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    -o-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+
+.lf-comment .btn-wrapper {
+    background-color: #f8f8f8;
+    text-align: right;
+    border-top: 1px solid #ececea;
+    padding: 6px;
+    margin-top: 20px;
+}
+
+.lf-comment .user-info {
+    margin: 26px 30px 20px;
+    font-weight: bold;
+    color: #474C52;
+}
+
+.lf-comment .editor-container {
+    margin: 20px 0;
+    margin: 0;
+/* !lf-bootstrap */
+    display: block;
+}
+
+.lf-comment .editor-container .editor-field {
+    padding: 0 30px;
+    line-height: 28px;
+    color: #4C4C4C;
 }
 
 .lf-modal-footer {
-    margin-top: 0;
+    margin-top: 26px 0 0;
     padding: 5px 15px 30px;
     text-align: center;
     border-top: 0;
+    height: 48px;
 }
 
 .hub-modal-content-view iframe, .hub-modal-content-view article {

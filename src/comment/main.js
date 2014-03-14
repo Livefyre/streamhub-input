@@ -109,20 +109,17 @@ Edit.prototype.elTag = 'article';
  */
 Edit.prototype.template = function (context) {
     return [
-        '<section class="lf-modal-body">',
-        // '<div class="user-info">',
-        // '<span class="name">',
-        // 'Ron Burgandy',//DEBUG (joao) Dev text
-        // '</span>\n',
-        // '<span class="handle">',
-        // '@tomoleary',//DEBUG (joao) Dev text
-        // '</span>',
-        // '</div>',
+        '<section class="lf-comment">',
+        '<div class="user-info">',
+        '<span class="name">',
+        'Ron Burgandy',//DEBUG (joao) Dev text
+        '</span>\n',
+        '</div>',
         '<div class="editor-container">',
         '<textarea class="editor-field">',
         //this._i18n.emptyText,
-        // 'Ron Burgandy. Stay classy, San Diego. Hello, Baxter? Baxter, is that you?\n',//DEBUG (joao) Dev text
-        // 'Bark twice if you\'re in Milwaukee. Is this Wilt Chamberlain?',//DEBUG (joao) Dev text
+        'Ron Burgandy. Stay classy, San Diego. Hello, Baxter? Baxter, is that you?\n',//DEBUG (joao) Dev text
+        'Bark twice if you\'re in Milwaukee. Is this Wilt Chamberlain?',//DEBUG (joao) Dev text
         '</textarea>',
         '</div>',
         '<div class="btn-wrapper">',
@@ -140,8 +137,9 @@ Edit.prototype.modalTemplate = function (context) {
         '<header class="lf-modal-header">',
         'Post Your Comment',
         '</header>',
+        '<div class="lf-modal-body">',
         Edit.prototype.template.apply(this, arguments),
-        '<footer class="lf-modal-footer"></footer>',
+        '</div>',
         '</article>'
     ].join('');
 };
