@@ -1,4 +1,4 @@
-streamhub-input
-===============
-
-A library of reusable items to help gather and submit user input to a Livefyre Streamhub application.
+#Streamhub-input
+----------------
+This is a collection of input devices for use with the
+[Livefyre Streamhub SDK](http://livefyre.github.io/streamhub-sdk "Livefyre Streamhub SDK").
