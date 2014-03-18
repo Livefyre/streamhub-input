@@ -4,12 +4,12 @@ var AuthRequiredCommand = require('streamhub-sdk/ui/command/auth-required-comman
 var Command = require('streamhub-sdk/ui/command');
 var debug = require('streamhub-sdk/debug');
 var inherits = require('inherits');
-var LaunchableModal = require('modal/abstract/launchable-modal');
-var ModalInputCommand= require('modal/modal-input-command');
+var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
+var ModalInputCommand= require('streamhub-input/modal/modal-input-command');
 var util = require('streamhub-sdk/util');
 var View = require('view');
 
-describe('modal/modal-input-command', function () {
+describe('streamhub-input/modal/modal-input-command', function () {
 
     it('is an constructor that subclasses Command', function () {
         expect(typeof(ModalInputCommand)).toBe('function');
@@ -72,7 +72,7 @@ describe('modal/modal-input-command', function () {
         });
 
         it('has a default callback() that logs', function () {
-            if (debug.enabled('modal/modal-input-command')) {
+            if (debug.enabled('streamhub-input/modal/modal-input-command')) {
                 spyOn(console, 'log').andCallThrough();
 
                 inputCmd.execute();

@@ -1,7 +1,7 @@
 var Command = require('streamhub-sdk/ui/command');
 var inherits = require('inherits');
 var log = require('streamhub-sdk/debug')
-        ('input/command');
+        ('streamhub-input/command');
 var Readable = require('stream/readable');
 var Util = require('streamhub-sdk/util');
 var Writable = require('stream/writable');

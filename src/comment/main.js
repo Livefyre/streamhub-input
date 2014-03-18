@@ -1,15 +1,17 @@
-var $ = require('jquery');
+var jQuery;
+var $ = jQuery = require('jquery');
 var inherits = require('inherits');
 var log = require('streamhub-sdk/debug')
-        ('comment');
+        ('streamhub-input/comment');
+var Auth = require('streamhub-sdk/auth');
 var AuthRequiredCommand = require('streamhub-sdk/ui/command/auth-required-command');
 var Button = require('streamhub-sdk/ui/button');
 var Content = require('streamhub-sdk/content');
 var Editor = require('streamhub-editor/editor');
-var Input = require('input');
-var LaunchableModal = require('modal/abstract/launchable-modal');
+var Input = require('streamhub-input');
+var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
 var ModalView = require('streamhub-sdk/modal');
-var PostComment = require('input/command');
+var PostComment = require('streamhub-input/command');
 var Util = require('streamhub-sdk/util');
 var View = require('streamhub-sdk/view');
 
@@ -25,7 +27,7 @@ var View = require('streamhub-sdk/view');
  * @constructor
  * @extends {Editor}
  */
-var Edit = function(opts) {
+var Comment = function(opts) {
     opts = opts || {};
     Editor.call(this, opts);
     Input.call(this, opts);//handles opts.destination
@@ -33,16 +35,16 @@ var Edit = function(opts) {
     
     this._i18n = opts.i18n || this._i18n;
 };
-inherits(Edit, Editor);
-inherits.parasitically(Edit, Input);
-inherits.parasitically(Edit, LaunchableModal);
+inherits(Comment, Editor);
+inherits.parasitically(Comment, Input);
+inherits.parasitically(Comment, LaunchableModal);
 
 /**
  * Returns the raw data that has been received from the user.
  * @returns {?Object}
  * @override
  */
-Edit.prototype._getRawInput = function () {
+Comment.prototype._getRawInput = function () {
     return (this.$textareaEl) ? this.buildPostEventObj() : null;
 };
 
@@ -53,7 +55,7 @@ Edit.prototype._getRawInput = function () {
  * @returns {!boolean}
  * @protected
  */
-Edit.prototype._validate = function (data) {
+Comment.prototype._validate = function (data) {
     return this.validate(data);
 };
 
@@ -61,7 +63,7 @@ Edit.prototype._validate = function (data) {
  * Resets the input display, typically by clearing out the current user input
  * from the screen.
  */
-Edit.prototype.reset = function () {
+Comment.prototype.reset = function () {
     this.$textareaEl && this.$textareaEl.val(this._i18n.emptyText);
 };
 
@@ -71,7 +73,7 @@ Edit.prototype.reset = function () {
  * @returns {Content}
  * @protected
  */
-Edit.prototype._inputToContent = function (input) {
+Comment.prototype._packageInput = function (input) {
     return new Content(input.body);
 };
 
@@ -79,18 +81,18 @@ Edit.prototype._inputToContent = function (input) {
  * Class to be added to the view's element.
  * @type {!string}
  */
-Edit.prototype.class += ' lf-edit';
+Comment.prototype.class += ' lf-edit';
 
 /**
  * Displayable strings
  * @type {Object}
  */
-Edit.prototype._i18n = {
-    emptyText: ''
+Comment.prototype._i18n = {
+    emptyText: 'Comment here'
 };
 
 // /** @enum {string} */
-// Edit.prototype.classes = {
+// Comment.prototype.classes = {
 //     FIELD: 'editor-field',
 //     POST_BTN: 'editor-post-btn'
 // };
@@ -100,27 +102,43 @@ Edit.prototype._i18n = {
  * @override
  * @type {!string}
  */
-Edit.prototype.elTag = 'article';
+Comment.prototype.elTag = 'article';
+
+/**
+ * Get contextual data for a template.
+ * @type {function()}
+ * @override
+ */
+View.prototype.getTemplateContext = function () {
+    var username = Auth.getUserUri();
+    username = (username) ? username.split('@')[0] : '';
+    var emptyTextString = (this._i18n) ? this._i18n.emptyText : '';
+    return {
+        username: username,
+        emptyTextString: emptyTextString
+    };
+};
 
 /**
  * Template for el
  * @override
  * @param [context] {Object}
  */
-Edit.prototype.template = function (context) {
+Comment.prototype.template = function (context) {
     return [
-        '<section class="lf-comment">',
+        '<section class="hub-comment">',
         '<div class="user-info">',
         '<span class="name">',
-        'Ron Burgandy',//DEBUG (joao) Dev text
+        context.username,
         '</span>\n',
         '</div>',
         '<div class="editor-container">',
-        '<textarea class="editor-field">',
-        //this._i18n.emptyText,
-        'Ron Burgandy. Stay classy, San Diego. Hello, Baxter? Baxter, is that you?\n',//DEBUG (joao) Dev text
-        'Bark twice if you\'re in Milwaukee. Is this Wilt Chamberlain?',//DEBUG (joao) Dev text
-        '</textarea>',
+        '<div class="editor-field" contenteditable placeholder="',
+        context.emptyTextString,
+        '" autofocus="autofocus">',
+        // 'Ron Burgandy. Stay classy, San Diego. Hello, Baxter? Baxter, is that you?\n',//DEBUG (joao) Dev text
+        // 'Bark twice if you\'re in Milwaukee. Is this Wilt Chamberlain?',//DEBUG (joao) Dev text
+        '</div>',
         '</div>',
         '<div class="btn-wrapper">',
         '<button class="lf-btn editor-post-btn">',
@@ -131,14 +149,14 @@ Edit.prototype.template = function (context) {
     ].join('');
 };
 
-Edit.prototype.modalTemplate = function (context) {
+Comment.prototype.modalTemplate = function (context) {
     return [
-        '<article class="lf-modal-content">',
-        '<header class="lf-modal-header">',
+        '<article class="hub-modal-input-wrapper">',
+        '<header class="hub-modal-input-header">',
         'Post Your Comment',
         '</header>',
         '<div class="lf-modal-body">',
-        Edit.prototype.template.apply(this, arguments),
+        Comment.prototype.template.apply(this, arguments),
         '</div>',
         '</article>'
     ].join('');
@@ -149,7 +167,7 @@ Edit.prototype.modalTemplate = function (context) {
  * Subclasses will want to setElement on child views after rendering,
  *     then call .render() on those sub-elements
  */
-Edit.prototype.render = function () {
+Comment.prototype.render = function () {
     View.prototype.render.call(this);
 
     this.$textareaEl = this.$('.' + this.classes.FIELD);
@@ -175,13 +193,13 @@ Edit.prototype.render = function () {
 };
 
 /** @override */
-Edit.prototype.events = {};//TODO (joao) Probably shouldn't have this override
+Comment.prototype.events = {};//TODO (joao) Probably shouldn't have this override
 
 /**
  * Post failure callback.
  * @param {Object} data The response data.
  */
-Edit.prototype.handlePostFailure = function (data) {
+Comment.prototype.handlePostFailure = function (data) {
     log('Post Failure');
     
     //TODO (joao) Get msg to display from data param.
@@ -192,14 +210,14 @@ Edit.prototype.handlePostFailure = function (data) {
  * Post success callback.
  * @param {Object} data The response data.
  */
-Edit.prototype.handlePostSuccess = function (data) {
+Comment.prototype.handlePostSuccess = function (data) {
     log('Post Success');
 
     this.returnModal(undefined, data);
 };
 
 /** @override */
-Edit.prototype.returnModal = function (err, data) {
+Comment.prototype.returnModal = function (err, data) {
     this.reset();//TODO (joao) Possibly move this into handlePostSuccess()
     LaunchableModal.prototype.returnModal.apply(this, arguments);
 };
@@ -208,9 +226,9 @@ Edit.prototype.returnModal = function (err, data) {
  * Show an error message to the user.
  * @param {string} msg The error message to display.
  */
-Edit.prototype.showError = function (msg) {
+Comment.prototype.showError = function (msg) {
     log(msg);
     //TODO (joao) Real implementation. Waiting on UX.
 };
 
-module.exports = Edit;
+module.exports = Comment;

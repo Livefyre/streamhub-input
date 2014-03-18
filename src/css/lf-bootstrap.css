@@ -1,10 +1,10 @@
-.lf-modal-content {
+.hub-modal-input-wrapper {
     margin: 20px 40px;
     width: 605px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.lf-modal-header {
+.hub-modal-input-header {
     color: #a2a3a7;
     size: 20px;
 }

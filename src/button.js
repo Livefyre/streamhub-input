@@ -3,12 +3,12 @@ var Button = require('streamhub-sdk/ui/button');
 var Command = require('streamhub-sdk/ui/command');
 var Duplex = require('stream/duplex');
 var inherits = require('inherits');
-var Input = require('input');
-var ModalInputCommand = require('modal/modal-input-command');
+var Input = require('streamhub-input');
+var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
 var Passthrough = require('stream/passthrough');
 var Readable = require('stream/readable');
 var Transform = require('stream/transform');
-var Upload = require('upload');
+var Upload = require('streamhub-input/upload');
 
 'use strict';
 
@@ -49,7 +49,7 @@ inherits.parasitically(InputButton, Readable);
  * @override
  * @type {string}
  */
-InputButton.prototype.elClass += ' lf-input-btn';
+InputButton.prototype.elClass += ' hub-input-btn';
 
 /**
  * The default element tag.

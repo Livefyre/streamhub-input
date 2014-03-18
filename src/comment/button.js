@@ -1,9 +1,9 @@
 //var $ = require('streamhub-sdk/jquery');
 var inherits = require('inherits');
-var InputButton = require('input/button');
+var InputButton = require('streamhub-input/button');
 var Command = require('streamhub-sdk/ui/command');
-var Edit = require('comment');
-var ModalInputCommand = require('modal/modal-input-command');
+var Comment = require('streamhub-input/comment');
+var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
 
 'use strict';
 
@@ -17,20 +17,20 @@ var ModalInputCommand = require('modal/modal-input-command');
  * @constructor
  * @extends {InputButton}
  */
-var EditButton = function(opts) {
+var CommentButton = function(opts) {
     opts = opts || {};
-    this._input = new Edit(opts);
+    this._input = new Comment(opts);
     command = opts.command || new ModalInputCommand(this._input, opts);
 
     InputButton.call(this, command, opts);
     this._input.pipe(this);
 };
-inherits(EditButton, InputButton);
+inherits(CommentButton, InputButton);
 
 /**
  * @override
  * @type {string}
  */
-EditButton.prototype.elClass += ' lf-edit-btn';
+CommentButton.prototype.elClass += ' hub-comment-btn';
 
-module.exports = EditButton;
+module.exports = CommentButton;

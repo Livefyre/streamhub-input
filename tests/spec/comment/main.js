@@ -3,17 +3,17 @@
 var AuthRequiredCommand = require('streamhub-sdk/ui/command/auth-required-command');
 var Command = require('streamhub-sdk/ui/command');
 var debug = require('streamhub-sdk/debug');
-var Edit = require('comment');
+var Edit = require('streamhub-input/comment');
 var inherits = require('inherits');
-var InputCommand = require('input/command');
+var InputCommand = require('streamhub-input/command');
 var jasmineJquery = require('jasmine-jquery');//For sandbox()
-var LaunchableModal = require('modal/abstract/launchable-modal');
-var ModalInputCommand= require('modal/modal-input-command');
+var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
+var ModalInputCommand= require('streamhub-input/modal/modal-input-command');
 var util = require('streamhub-sdk/util');
 var View = require('view');
 var Writable = require('stream/writable');
 
-describe('comment', function () {
+describe('streamhub-input/comment', function () {
     it('is an constructor that subclasses Editor and implements Input and LaunchableModal', function () {
         expect(typeof(Edit)).toBe('function');
         //TODO (joao) Test for abstract implementations
@@ -83,7 +83,7 @@ describe('comment', function () {
         });
 
         it('logs for showError()', function () {
-            if (debug.enabled('comment')) {
+            if (debug.enabled('streamhub-input/comment')) {
                 spyOn(console, 'log').andCallThrough();
 
                 commentInput.showError('error');
@@ -100,7 +100,7 @@ describe('comment', function () {
         });
 
         it('logs for handlePostFailure()', function () {
-            if (debug.enabled('comment')) {
+            if (debug.enabled('streamhub-input/comment')) {
                 spyOn(console, 'log').andCallThrough();
 
                 commentInput.handlePostFailure({});
@@ -117,7 +117,7 @@ describe('comment', function () {
         });
 
         it('logs for handlePostSuccess()', function () {
-            if (debug.enabled('comment')) {
+            if (debug.enabled('streamhub-input/comment')) {
                 spyOn(console, 'log').andCallThrough();
 
                 commentInput.handlePostSuccess({});

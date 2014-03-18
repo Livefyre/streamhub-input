@@ -1,6 +1,6 @@
 var inherits = require('inherits');
 var log = require('streamhub-sdk/debug')
-        ('streamhub-sdk/input/main');
+        ('streamhub-input/input/main');
 var Content = require('streamhub-sdk/content');
 var EventEmitter = require('event-emitter');
 var Readable = require('stream/readable');
@@ -56,7 +56,7 @@ Input.prototype.getInput = function() {
         return;
     }
 
-    return this._inputToContent(data);
+    return this._packageInput(data);
 };
 
 /**
@@ -81,12 +81,12 @@ Input.prototype._validate = util.abstractFunction;
 Input.prototype.reset = util.abstractFunction;
 
 /**
- * Creates and returns a Content object based on the input.
+ * Takes in the inputed data and packages it to be sent out.
  * @param input {Object} Usually the data retrieved from getInput().
  * @returns {!Object}
  * @protected
  */
-Input.prototype._inputToContent = util.abstractFunction;
+Input.prototype._packageInput = util.abstractFunction;
 
 /**
  * Displays an error message to the user.
