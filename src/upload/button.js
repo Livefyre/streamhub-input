@@ -1,8 +1,8 @@
 var Command = require('streamhub-sdk/ui/command');
 var inherits = require('inherits');
-var InputButton = require('input/button');
-var ModalInputCommand = require('modal/modal-input-command');
-var Upload = require('upload');
+var InputButton = require('streamhub-input/button');
+var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
+var Upload = require('streamhub-input/upload');
 
 'use strict';
 
@@ -36,6 +36,6 @@ inherits(UploadButton, InputButton);
  * @override
  * @type {string}
  */
-UploadButton.prototype.elClass += ' lf-upload-btn';
+UploadButton.prototype.elClass += ' hub-upload-btn';
 
 module.exports = UploadButton;

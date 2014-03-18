@@ -4,15 +4,15 @@ var Auth = require('streamhub-sdk/auth');
 var Button = require('streamhub-sdk/ui/button');
 var Command = require('streamhub-sdk/ui/command');
 var Content = require('streamhub-sdk/content');
-var Input = require('input');
-var InputButton = require('input/button');
+var Input = require('streamhub-input');
+var InputButton = require('streamhub-input/button');
 var Passthrough = require('stream/passthrough');
 var Readable = require('stream/readable');
-var Upload = require('upload');
-var UploadButton = require('upload/button');
+var Upload = require('streamhub-input/upload');
+var UploadButton = require('streamhub-input/upload/button');
 var Writable = require('stream/writable');
 
-describe('upload/button', function () {
+describe('streamhub-input/upload/button', function () {
     it('is a constructor that extends InputButton', function () {
         expect(typeof(UploadButton)).toBe('function');
 

@@ -1,10 +1,10 @@
 var $ = require('jquery');
 var inherits = require('inherits');
 var Content = require('streamhub-sdk/content');
-var Input = require('input');
-var LaunchableModal = require('modal/abstract/launchable-modal');
+var Input = require('streamhub-input');
+var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
 var log = require('streamhub-sdk/debug')
-        ('upload');
+        ('streamhub-input/upload');
 var ModalView = require('streamhub-sdk/modal');
 var Util = require('streamhub-sdk/util');
 var View = require('streamhub-sdk/view');
@@ -61,7 +61,7 @@ Upload.prototype.name = 'Streamhub-input/Upload';
  * Class to be added to the view's element.
  * @type {!string}
  */
-Upload.prototype.class += ' lf-upload';
+Upload.prototype.class += ' hub-upload';
 
 /**
  * The default element tag.
@@ -78,7 +78,7 @@ Upload.prototype.elTag = 'iframe';
 Upload.prototype.template = function (context) {
     return ['<iframe id="',
             context.container,
-            '" class="lf-upload">',
+            '" class="hub-upload">',
             '</iframe>'].join('');
 };
 
@@ -170,7 +170,7 @@ Upload.prototype._processResponse = function (err, inkBlob) {
         } 
 
         inkBlob.forEach(function (blob) {
-            var content = this._inputToContent(blob);
+            var content = this._packageInput(blob);
             contents.push(content);
             //Perform the essential function of _read() for non-flowing mode
             this.push(content);
@@ -249,7 +249,7 @@ Upload.prototype.reset = function () {/** The filepicker resets itself */};
  * @protected
  * @override
  */
-Upload.prototype._inputToContent = function (input) {
+Upload.prototype._packageInput = function (input) {
         var content = new Content({body: ''});
         var url = this._cacheUrl + input.key;
         content.attachments.push({

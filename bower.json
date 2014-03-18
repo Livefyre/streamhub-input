@@ -21,6 +21,7 @@
     "auth-delegates": "Livefyre/auth-delegates#~0.4.4-beta"
   },
   "resolutions": {
+    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#input-rc",
     "view": "~1.1"
   }
 }

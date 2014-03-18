@@ -4,9 +4,9 @@ var AuthRequiredCommand = require('streamhub-sdk/ui/command/auth-required-comman
 var Button = require('streamhub-sdk/ui/button');
 var Command = require('streamhub-sdk/ui/command');
 var debug = require('streamhub-sdk/debug');
-var Input = require('input');
-var InputButton = require('input/button');
-var InputCommand = require('input/command');
+var Input = require('streamhub-input');
+var InputButton = require('streamhub-input/button');
+var InputCommand = require('streamhub-input/command');
 var Readable = require('stream/readable');
 var Writable = require('stream/writable');
 
@@ -84,7 +84,7 @@ describe('streamhub-input/command', function () {
         });
 
         xit('has a default .callback that logs when it is called', function () {
-            if (debug.enabled('input/command')) {
+            if (debug.enabled('streamhub-input/command')) {
                 spyOn(console, 'log').andCallThrough();
 
                 inputCommand.execute();

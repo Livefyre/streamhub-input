@@ -2,9 +2,9 @@ var AuthRequiredCommand = require('streamhub-sdk/ui/command/auth-required-comman
 var Command = require('streamhub-sdk/ui/command');
 var inherits = require('inherits');
 var log = require('streamhub-sdk/debug')
-        ('modal/modal-input-command');
-var Input = require('input');
-var LaunchableModal = require('modal/abstract/launchable-modal');
+        ('streamhub-input/modal/modal-input-command');
+var Input = require('streamhub-input');
+var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
 var util = require('streamhub-sdk/util');
 var Writable = require('stream/writable');
 

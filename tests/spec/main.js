@@ -1,6 +1,6 @@
 'use strict';
 
-var Input = require('input');
+var Input = require('streamhub-input');
 var Readable = require('stream/readable');
 var Writable = require('stream/writable');
 

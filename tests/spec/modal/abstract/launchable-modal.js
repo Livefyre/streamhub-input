@@ -1,11 +1,11 @@
 'use strict';
 
 var inherits = require('inherits');
-var LaunchableModal = require('modal/abstract/launchable-modal');
+var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
 var util = require('streamhub-sdk/util');
 var View = require('view');
 
-describe('modal/abstract/launchable-modal', function () {
+describe('streamhub-input/modal/abstract/launchable-modal', function () {
     it('is an abstract', function () {
         expect(typeof(LaunchableModal)).toBe('function');
     });

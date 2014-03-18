@@ -5,16 +5,16 @@ var Command = require('streamhub-sdk/ui/command');
 var Content = require('streamhub-sdk/content');
 var debug = require('streamhub-sdk/debug');
 var inherits = require('inherits');
-var InputCommand = require('input/command');
+var InputCommand = require('streamhub-input/command');
 var jasmineJquery = require('jasmine-jquery');//For sandbox()
-var LaunchableModal = require('modal/abstract/launchable-modal');
-var ModalInputCommand= require('modal/modal-input-command');
-var Upload = require('upload');
+var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
+var ModalInputCommand= require('streamhub-input/modal/modal-input-command');
+var Upload = require('streamhub-input/upload');
 var util = require('streamhub-sdk/util');
 var View = require('view');
 var Writable = require('stream/writable');
 
-describe('upload', function () {
+describe('streamhub-input/upload', function () {
     it('is an constructor that subclasses View and implements Input and LaunchableModal', function () {
         expect(typeof(Upload)).toBe('function');
         //TODO (joao) Test for abstract implementations
@@ -61,9 +61,9 @@ describe('upload', function () {
             }).not.toThrow();
         });
 
-        it('adds the class "lf-upload"', function () {
+        it('adds the class "hub-upload"', function () {
             var classes = uploadInput.class.split(' ');
-            expect(classes).toContain('lf-upload');
+            expect(classes).toContain('hub-upload');
         });
 
         it('has a elTag of "iframe"', function () {
@@ -99,7 +99,7 @@ describe('upload', function () {
         });
 
         it('logs for showError()', function () {
-            if (debug.enabled('upload')) {
+            if (debug.enabled('streamhub-input/upload')) {
                 spyOn(console, 'log').andCallThrough();
 
                 uploadInput.showError('error');

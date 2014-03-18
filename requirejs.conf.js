@@ -15,6 +15,9 @@ require.config({
     'blanket-jasmine': 'lib/blanket/dist/jasmine/blanket_jasmine'
   },
   packages: [{
+    name: 'stream',
+    location: 'lib/stream/src'
+  },{
     name: 'streamhub-editor',
     location: 'lib/streamhub-editor/src/javascript'
   },{
@@ -45,23 +48,23 @@ require.config({
     location: 'lib/streamhub-sdk/src',
     main: 'jquery'
   },{
-    name: 'comment',
-    location: 'src/comment'
-  },{
-    name: 'input',
+    name: 'streamhub-input',
     location: 'src'
   },{
-    name: 'modal',
+    name: 'streamhub-input/comment',
+    location: 'src/comment'
+  },{
+    name: 'streamhub-input/modal',
     location: 'src/modal'
   },{
-    name: 'stream',
-    location: 'lib/stream/src'
+    name: 'streamhub-input/upload',
+    location: 'src/upload'
+  },{
+    name: 'streamhub-wall',
+    location: 'lib/streamhub-wall/src'
   },{
     name: 'tests',
     location: 'tests'
-  },{
-    name: 'upload',
-    location: 'src/upload'
   },{
     name: 'view',
     location: 'lib/view/src',

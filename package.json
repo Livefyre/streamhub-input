@@ -11,7 +11,7 @@
     "bower": "*",
     "cajon": "~0.1.11",
     "http-server": "*",
-    "requirejs": "~2.1.6",
+    "requirejs": "2.1.9",
     "phantom": "*",
     "less": "~1.3.3"
   },
@@ -19,7 +19,7 @@
     "postinstall": "./node_modules/bower/bin/bower install",
     "start": "./node_modules/http-server/bin/http-server .",
     "build": "./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js && npm run-script build-css",
-    "build-css": "mkdir -p dist && cp src/css/style.css dist/streamhub-sdk.min.css",
+    "build-css": "mkdir -p dist && cp src/css/style.css dist/streamhub-input.min.css",
     "hint": "./node_modules/jshint/bin/jshint src/ tests/spec; echo",
     "test": "./node_modules/karma/bin/karma start tools/karma.conf.js --singleRun",
     "testw": "./node_modules/karma/bin/karma start tools/karma.conf.js",
