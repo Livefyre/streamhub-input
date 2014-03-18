@@ -19,7 +19,7 @@
     "postinstall": "./node_modules/bower/bin/bower install",
     "start": "./node_modules/http-server/bin/http-server .",
     "build": "npm run-script clean-build && ./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js && npm run-script build-css",
-    "build-css": "mkdir -p dist && cat src/css/*.css >> dist/streamhub-input.min.css",
+    "build-css": "mkdir -p dist && cat src/css/*.css >> dist/streamhub-input.min.css && cp -r src/css/fonts dist/fonts",
     "clean-build": "rm -rf dist",
     "hint": "./node_modules/jshint/bin/jshint src/ tests/spec; echo",
     "test": "./node_modules/karma/bin/karma start tools/karma.conf.js --singleRun",

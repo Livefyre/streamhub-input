@@ -17,7 +17,9 @@
     'streamhub-sdk/content/views/content-list-view',
     'streamhub-sdk/views/list-view',
     'streamhub-sdk/auth',
-    'streamhub-sdk/modal'
+    'streamhub-sdk/modal',
+    'streamhub-wall',
+    'auth-delegates/delegates/livefyre'
   ],
   stubModules: ['text', 'hgn', 'json'],
   out: "../dist/streamhub-input.min.js",
