@@ -66,6 +66,9 @@ require.config({
     name: 'view',
     location: 'lib/view/src',
     main: 'view'
+  },{
+    name: 'auth-delegates',
+    location: 'lib/auth-delegates/src'
   }],
   shim: {
     jquery: {

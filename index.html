@@ -44,22 +44,23 @@
         <form>
             <legend>authentication</legend>
                 <label>token</label>
+                <button class="auth-login">Log in</button>
                 <input type="text" id="lftoken" value="" />
             <br><br>
             <legend>collection</legend>
                 <label>network</label>
-                <input type="text" id="network" value="" />
+                <input type="text" id="network" value="livefyre.com" />
                 <br>
                 <label>environment</label>
-                <input type="text" id="environment" value="" />
+                <input type="text" id="environment" value="qa-ext.livefyre.com" />
                 <br>
 
                 <label>site ID</label>
-                <input type="text" id="siteId" value="" />
+                <input type="text" id="siteId" value="290596" />
                 <br>
 
                 <label>article ID</label>
-                <input type="text" id="articleId" value="" />
+                <input type="text" id="articleId" value="136" />
                 <br>
             <input type="submit" /><button id="refresh">refresh</button>
         </form>
@@ -89,8 +90,9 @@
             'upload',
             'upload/button',
             'comment',
-            'comment/button'
-        ],function (View, Collection, Auth, Upload, UploadButton, CommentView, CommentButton) {
+            'comment/button',
+            'auth-delegates/delegates/livefyre'
+        ],function (View, Collection, Auth, Upload, UploadButton, CommentView, CommentButton, LivefyreAuthDelegate) {
             /* var opts = {
                 "network": "labs-t402.fyre.co",
                 "siteId": "303827",
@@ -115,6 +117,16 @@
                 btmUp,
                 btmCom,
                 $form;
+
+            var authDelegate = window.AD = new LivefyreAuthDelegate('136', '290596', 'https://qa-ext.livefyre.com');
+            var authUser = authDelegate.getUser();
+            authUser.on('login', function () {
+                var $tokenInput = $('#lftoken');
+                var token = authUser.get('token');
+                $tokenInput.val(token);
+            });
+            
+            Auth.setDelegate(authDelegate);
 
             view = new View({
                 initial: 3,
@@ -161,6 +173,9 @@
             inputs = [embCom, topUp, topCom, btmUp, btmCom];
 
             $(function () {
+                $('.auth-login').click(function () {
+                    authDelegate.login();
+                });
                 var url = window.location.href;
                 var query = url.split('?')[1];
                 if (!query) {
