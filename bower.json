@@ -6,6 +6,7 @@
   ],
   "dependencies": {
     "cajon": "git://github.com/requirejs/cajon.git#~0.1.11",
+    "requirejs": "2.1.9",
     "inherits": "git://github.com/Livefyre/inherits.git",
     "jquery": "~1.10.1",
     "requirejs-hogan-plugin": "*",
@@ -23,6 +24,6 @@
   },
   "resolutions": {
     "view": "~1.1",
-    "streamhub-sdk": "#input-rc"
+    "streamhub-sdk": "input-rc"
   }
 }
