@@ -8,8 +8,16 @@
   name: "streamhub-input",
   include: [
     'almond',
-    'streamhub-input/comment',
-    'streamhub-input/upload'
+    'streamhub-input/comment/button',
+    'streamhub-input/upload/button',
+    'streamhub-sdk',
+    'streamhub-sdk/jquery',
+    'streamhub-sdk/collection',
+    'streamhub-sdk/content',
+    'streamhub-sdk/content/views/content-list-view',
+    'streamhub-sdk/views/list-view',
+    'streamhub-sdk/auth',
+    'streamhub-sdk/modal'
   ],
   stubModules: ['text', 'hgn', 'json'],
   out: "../dist/streamhub-input.min.js",
@@ -30,7 +38,7 @@
   onBuildRead: function(moduleName, path, contents) {
     switch (moduleName) {
       case "jquery":
-      case "base64":
+      // case "base64":
         contents = "define([], function(require, exports, module) {" + contents + "});";
     }
     return contents;
