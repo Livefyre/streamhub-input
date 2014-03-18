@@ -8,7 +8,7 @@
   },
   "version": "0.1.0",
   "dependencies": {
-    "bower": "*",
+    "bower": "1.2.6",
     "cajon": "~0.1.11",
     "http-server": "*",
     "requirejs": "2.1.9",
