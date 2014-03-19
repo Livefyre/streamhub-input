@@ -63,7 +63,6 @@ Comment.prototype.buildPostEventObj = function () {
         text = this.$textareaEl.text();
     event.body = (text !== this._i18n.emptyText) ? text : '';
     return event;
-
 };
 
 /**
