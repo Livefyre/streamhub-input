@@ -34,6 +34,15 @@ var Comment = function(opts) {
     LaunchableModal.call(this);
     
     this._i18n = opts.i18n || this._i18n;
+    this._user = Auth.getDelegate().getUser();
+    var self = this;
+    this._user.on('login', function () {
+        if (!self.$el) {
+            return;
+        }
+        var $name = self.$el.find('.name');
+        $name && $name.text(self._user.get('displayName'));
+    });
 };
 inherits(Comment, Editor);
 inherits.parasitically(Comment, Input);
@@ -91,11 +100,21 @@ Comment.prototype._i18n = {
     emptyText: 'Comment here'
 };
 
-// /** @enum {string} */
-// Comment.prototype.classes = {
-//     FIELD: 'editor-field',
-//     POST_BTN: 'editor-post-btn'
-// };
+/** @enum {string} */
+Comment.prototype.classes = {
+    WRAPPER: 'hub-modal-input-wrapper',
+    HEADER: 'hub-modal-input-header',
+    BODY: 'lf-modal-body',
+    HUB_COMMENT: 'hub-comment',
+    USER_INFO: 'user-info',
+    NAME: 'name',
+    EDITOR: 'editor-container',
+    FIELD: 'editor-field',
+    BTN_WRAPPER: 'btn-wrapper',
+    LF_BTN: 'lf-btn',
+    POST_BTN: 'editor-post-btn',
+    PLACEHOLDER: 'placeholder'
+};
 
 /**
  * The default element tag.
@@ -109,10 +128,9 @@ Comment.prototype.elTag = 'article';
  * @type {function()}
  * @override
  */
-View.prototype.getTemplateContext = function () {
-    var username = Auth.getUserUri();
-    username = (username) ? username.split('@')[0] : '';
-    var emptyTextString = (this._i18n) ? this._i18n.emptyText : '';
+Comment.prototype.getTemplateContext = function () {
+    var username = this._user.get('displayName') || '';
+    var emptyTextString = this._i18n.emptyText;
     return {
         username: username,
         emptyTextString: emptyTextString
@@ -133,11 +151,8 @@ Comment.prototype.template = function (context) {
         '</span>\n',
         '</div>',
         '<div class="editor-container">',
-        '<div class="editor-field" contenteditable placeholder="',
+        '<div class="editor-field placeholder" contenteditable autofocus="autofocus">',
         context.emptyTextString,
-        '" autofocus="autofocus">',
-        // 'Ron Burgandy. Stay classy, San Diego. Hello, Baxter? Baxter, is that you?\n',//DEBUG (joao) Dev text
-        // 'Bark twice if you\'re in Milwaukee. Is this Wilt Chamberlain?',//DEBUG (joao) Dev text
         '</div>',
         '</div>',
         '<div class="btn-wrapper">',
@@ -190,6 +205,8 @@ Comment.prototype.render = function () {
     var authCmd = new AuthRequiredCommand(postCmd);
 
     this._postButton = new Button(authCmd, {el: this.$postEl});
+
+    this.$textareaEl.focus(this, this._managePlaceholder).blur(this, this._managePlaceholder);
 };
 
 /** @override */
@@ -230,5 +247,35 @@ Comment.prototype.showError = function (msg) {
     log(msg);
     //TODO (joao) Real implementation. Waiting on UX.
 };
+
+/**
+ * Manages the display and removal of placeholder text.
+ * @private
+ */
+Comment.prototype._managePlaceholder = function (ev) {
+    var self = ev.data;
+    if (!self || !self.$textareaEl) {
+        log('Some how attempting to manage placeholder without rendered el.');
+        return;
+    }
+
+    var text = self.$textareaEl.text();
+    if (text !== self._i18n.emptyText && text !== '') {
+    //Nothing to react to here
+        return;
+    }
+
+    var cls = self.classes.PLACEHOLDER;
+    //No user input
+    if (text === '') {
+        self.$textareaEl.addClass(cls);
+        self.$textareaEl.text(self._i18n.emptyText);
+    } else if (text === self._i18n.emptyText && self.$textareaEl.hasClass(cls)) {
+    //Get ready for input
+        self.$textareaEl.text('');
+        self.$textareaEl.removeClass(cls);
+        // self == safeActiveElement() && input.select();
+    }
+}
 
 module.exports = Comment;

@@ -84,11 +84,16 @@ button {
     resize: none;/* For Chrome */
     font-family: georgia;
     font-size: 15px;
-    line-height: 28px;
     color: #4c4c4c;
     min-height: 44px;
     max-height: 200px;
     overflow: auto;
+    padding: 0 30px;
+    line-height: 28px;
+}
+
+.placeholder {
+    color: #aaa;
 }
 
 .lf * {
@@ -159,12 +164,6 @@ button {
     margin: 0;
 /* !lf-bootstrap */
     display: block;
-}
-
-.hub-comment .editor-container .editor-field {
-    padding: 0 30px;
-    line-height: 28px;
-    color: #4C4C4C;
 }
 
 .hub-modal-content-view iframe, .hub-modal-content-view article {
