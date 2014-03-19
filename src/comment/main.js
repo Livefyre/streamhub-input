@@ -57,6 +57,15 @@ Comment.prototype._getRawInput = function () {
     return (this.$textareaEl) ? this.buildPostEventObj() : null;
 };
 
+/* @override */
+Comment.prototype.buildPostEventObj = function () {
+    var event = Editor.prototype.buildPostEventObj.apply(this, arguments),
+        text = this.$textareaEl.text();
+    event.body = (text !== this._i18n.emptyText) ? text : '';
+    return event;
+
+};
+
 /**
  * Checks that the input from the user is valid.
  * Should call showError(msg) with
