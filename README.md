@@ -6,6 +6,67 @@ Streamhub-Input
 ##Input Views
 Current views include [Comment](https://github.com/Joao-S-Martins/streamhub-input/tree/master/src/comment "Comment source code") for simple text input and [Uploader](https://github.com/Joao-S-Martins/streamhub-input/tree/master/src/upload "Upload source code") for image contributions. All views implement the [Input abstract](https://github.com/Joao-S-Martins/streamhub-input/blob/master/src/main.js "Input abstract source code"), designed to provide a uniform set of APIs for grabbing a user's input and performing common tasks such as validation and error handling. As with any view, these Input views are designed to be passed an element and rendered on that element. Alternatively though, these views also implement the new [Launchable Modal abstract](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/modal/abstract/launchable-modal.js "Launchable Modal source code"). This defines a couple of methods that allow the view to render in a modal and close the modal when it has finished recieving input from a user.
 
+###Comment Editor
+This Input view is commonly refered to in the code as [Comment](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/comment/main.js "Comment source code"). It's a simple view for recieving text input.
+
+####Constructor Options
+```JavaScript
+var opts = {
+    destination: Writable,//The Collection/Writable to send input to when the submission button is clicked
+    i18n: {//An optional object of displayed strings
+        emptyText: 'Comment here...'//Placeholder in the input space before the user adds their own input
+    }
+};
+```
+
+####Basic Implementation
+As a Modal
+```JavaScript
+var modCom = new Comment();
+modCom.launchModal(callback);//The callback is optional, but useful
+```
+Embedded on the page
+```JavaScript
+var embCom = new Comment({
+    el: document.getElementById("comment")
+});
+embCom.render();
+```
+
+####Public API
+The public API for Comment is simply what is required by the [Input](https://github.com/Joao-S-Martins/streamhub-input/blob/master/src/main.js "Input abstract source code") and [Launchable Modal](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/modal/abstract/launchable-modal.js "Launchable Modal source code") abstracts that it implements. Nothing further has been added.
+
+###Image Uploader
+This Input view is commonly refered to in the code a [Upload](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/upload/main.js "Upload source code"). It utilizes [Filepicker.io](//www.inkfilepicker.com/ "Filepicker.io, by Ink") to accept images from a user. Currently, only the modal version of this view is supported.
+
+####Constructor Options
+```JavaScript
+var opts = {
+    filepicker: {//If you'd like to use your own filepicker account...
+        key: 'keystring',//...then provide the key...
+        cache: 'urlstring'//...and the image cache URL
+    },
+    name: 'uploader'//The optional source name that is used when defining attachments to LivefyreContent
+};
+```
+
+####Basic Implementation
+As a Modal
+```JavaScript
+var modUp = new Upload();
+modUp.launchModal(callback);//The callback is optional, but useful
+```
+~~Embedded on the page~~ **Not yet supported**
+```JavaScript
+var embUp = new Upload({
+    el: document.getElementById("upload")
+});
+embUp.render();
+```
+
+####Public API
+The public API for Upload is simply what is required by the [Input](https://github.com/Joao-S-Martins/streamhub-input/blob/master/src/main.js "Input abstract source code") and [Launchable Modal](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/modal/abstract/launchable-modal.js "Launchable Modal source code") abstracts that it implements. Nothing further has been added.
+
 ---------------
 ##Input Buttons
 With the new Input views, there are also new Input buttons that launch these views as modals. They are very simple to implement as they handle the required commands and view instances on construction for you.

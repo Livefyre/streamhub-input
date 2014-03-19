@@ -172,6 +172,11 @@ Comment.prototype.template = function (context) {
     ].join('');
 };
 
+/**
+ * Template for el when .launchModal()
+ * @param [context] {Object}
+ * @returns {!string}
+ */
 Comment.prototype.modalTemplate = function (context) {
     return [
         '<article class="hub-modal-input-wrapper">',

@@ -21,7 +21,6 @@ var picker = null;
  * A view that handles the display of and data returned by FilePicker.
  * Parasitically inherits from Readable, allowing it to pipe returned data
  * to a Writable.
- * @param [key] {string} API key to use with FilePicker.io
  * @param [opts] {Object}
  * @param [opts.filepicker] {{key: !string, cache: !string}} If you intend to use
  *      a different api key, you will also need to provide the cache url.
@@ -55,7 +54,7 @@ inherits.parasitically(Upload, LaunchableModal);
  * privider_name attribute assigned to written data
  * @type {!string}
  */
-Upload.prototype.name = 'Streamhub-input/Upload';
+Upload.prototype.name = 'Streamhub-Input/Upload';
 
 /**
  * Class to be added to the view's element.
