@@ -18,6 +18,9 @@ require.config({
     name: 'stream',
     location: 'lib/stream/src'
   },{
+    name: 'auth-delegates',
+    location: 'lib/auth-delegates/src'
+  },{
     name: 'streamhub-editor',
     location: 'lib/streamhub-editor/src/javascript'
   },{
@@ -27,16 +30,11 @@ require.config({
     name: 'streamhub-sdk/auth',
     location: 'lib/streamhub-sdk/src/auth'
   },{
-    name: 'streamhub-sdk/ui/button',
-    location: 'lib/streamhub-sdk/src/ui',
-    main: 'button'
+    name: 'streamhub-sdk/ui/',
+    location: 'lib/streamhub-sdk/src/ui'
   },{
     name: 'streamhub-sdk/collection',
     location: 'lib/streamhub-sdk/src/collection'
-  },{
-    name: 'streamhub-sdk/ui/command',
-    location: 'lib/streamhub-sdk/src/ui',
-    main: 'command'
   },{
     name: 'streamhub-sdk/content',
     location: 'lib/streamhub-sdk/src/content'

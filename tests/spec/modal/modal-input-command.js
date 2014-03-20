@@ -1,6 +1,6 @@
 'use strict';
 
-var AuthRequiredCommand = require('streamhub-sdk/ui/command/auth-required-command');
+var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Command = require('streamhub-sdk/ui/command');
 var debug = require('streamhub-sdk/debug');
 var inherits = require('inherits');

@@ -1,6 +1,6 @@
 'use strict';
 
-var AuthRequiredCommand = require('streamhub-sdk/ui/command/auth-required-command');
+var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Command = require('streamhub-sdk/ui/command');
 var debug = require('streamhub-sdk/debug');
 var Edit = require('streamhub-input/comment');
@@ -154,12 +154,16 @@ describe('streamhub-input/comment', function () {
                 expect(content.body).toBe(testString);
             });
 
-            it('can reset() its view', function () {
+            it('can reset() its view and does so after submitting a comment', function () {
                 commentInput.$textareaEl.val(testString);
                 expect(commentInput.$textareaEl.val()).toBe(testString);
 
                 commentInput.reset();
                 expect(commentInput.$textareaEl.val()).toBe('');
+            });
+
+            it('reset()s after successfully submitting a comment', function () {
+                throw 'TODO (joao) Implement this!';
             });
 
             xit('can showError(msg) in its view', function () {
@@ -169,6 +173,14 @@ describe('streamhub-input/comment', function () {
             it('has a .$textareaEl and .$postEl', function () {
                 expect(commentInput.$textareaEl).toBeTruthy();
                 expect(commentInput.$postEl).toBeTruthy();
+            });
+
+            it('sets the user\'s display name on "login"', function () {
+                throw 'TODO (joao) Implement this!';
+            });
+
+            it('gets the user info when delegate is set', function () {
+                throw 'TODO (joao) Implement this!';
             });
 
             describe('with an opts.destination', function () {

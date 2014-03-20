@@ -45,7 +45,7 @@
 
 .hub-modal-input-header {
     color: #a2a3a7;
-    size: 20px;
+    font-size: 20px;
 }
 
 .lf-modal-body {
@@ -81,7 +81,12 @@
     border: 0;
     width: 100%;
 }
-.lf-btn {
+.hub-input-btn {
+    width: 180px;
+    height: 40px;
+    color: #ffffff;
+    background-color: #0f98ec;
+    border: 1px solid #1475b3;
     display: inline-block;
     margin-bottom: 0;
     font-weight: 500;
@@ -89,34 +94,51 @@
     vertical-align: middle;
     cursor: pointer;
     background-image: none;
-    border: 1px solid transparent;
     white-space: nowrap;
     padding: 7px 12px;
     font-size: 14px;
     line-height: 1.428571429;
-    border-radius: 2px;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     -o-user-select: none;
     user-select: none;
+    -webkit-appearance: button;
+    cursor: pointer;
+    text-transform: none;
+    margin: 0;
+    border-radius: 2px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
 }
 
-.hub-input-btn {
-    width: 180px;
-    height: 40px;
+.hub-input-btn.disabled {
+    opacity: 0.5;
 }
 
-.hub-upload-btn, .hub-comment-btn, .hub-comment .editor-post-btn,
-    .lf .lf-btn-info {
-    color: #ffffff;
-    background-color: #0f98ec;
-    border-color: #0a6aa4;
+.hub-input-btn:hover {
+    /* http://css3gen.com/box-shadow/ */
+    -webkit-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.1);
+}
+
+.hub-input-btn:active {
+    background-color: #118fe0;
+    border-color: #105a89;
+    /* http://css3gen.com/box-shadow/ */
+    -webkit-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.3);
 }
 
 .hub-upload-btn .fycon-composer-photo {
-    /*font-size: 1.3em;*/
     padding: 2px;
+    font-size: 1.3em;
 }
 
 .hub-upload {
@@ -124,43 +146,10 @@
     min-height:432px;
 }
 
-.lf button {
-    -webkit-appearance: button;
-    cursor: pointer;
-    text-transform: none;
-    margin: 0;
-}
-
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.428571429;
-}
-
-button {
-    align-items: flex-start;
-    text-align: center;
-    cursor: default;
-    color: buttontext;
-    padding: 2px 6px 3px;
-    border: 2px outset buttonface;
-    border-image-source: initial;
-    border-image-slice: initial;
-    border-image-width: initial;
-    border-image-outset: initial;
-    border-image-repeat: initial;
-    background-color: buttonface;
-    box-sizing: border-box;
-    margin: 0em;
-    font: -webkit-small-control;
-    color: initial;
-    letter-spacing: normal;
-    word-spacing: normal;
-    text-transform: none;
-    text-indent: 0px;
-    text-shadow: none;
-    display: inline-block;
-    text-align: start;
 }
 
 .editor-field {
@@ -175,25 +164,24 @@ button {
     line-height: 28px;
 }
 
+.editor-field:focus {
+    outline: 0;
+}
+
 .placeholder {
     color: #aaa;
 }
 
-.lf * {
+/*.lf * {
     box-sizing: border-box;
-}
+}*/
 
 .hub-modal-input-wrapper {
     position: relative;
     color: #2f3440;
     background-color: #ffffff;
     border: 0;
-    -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    -ms-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    -o-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     border-radius: 3px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     background-clip: padding-box;
     outline: none;
     text-align: center;
@@ -202,7 +190,6 @@ button {
     -ms-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     -o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    box-sizing: border-box;
     display: block;
 }
 
@@ -221,6 +208,7 @@ button {
     border: 1px solid #ececea;
     text-align: left;
     border-radius: 3px;
+    background-color: #ffffff;
     -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
     -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
     -ms-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);

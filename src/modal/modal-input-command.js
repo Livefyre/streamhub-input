@@ -1,4 +1,4 @@
-var AuthRequiredCommand = require('streamhub-sdk/ui/command/auth-required-command');
+var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Command = require('streamhub-sdk/ui/command');
 var inherits = require('inherits');
 var log = require('streamhub-sdk/debug')

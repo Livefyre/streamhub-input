@@ -40,6 +40,12 @@ describe('streamhub-input/upload/button', function () {
             expect(writable._write).toHaveBeenCalled();
         });
 
+        describe('without a complete Auth flow', function () {
+            it('maintains a disabled state', function () {
+                throw 'TODO (joao) Implement this!';
+            });
+        });
+
         describe('with opts.destination', function () {
             beforeEach(function () {
                 upldBtn = new UploadButton({destination: writable});
@@ -107,6 +113,10 @@ describe('streamhub-input/upload/button', function () {
                     expect(upldBtn._command).toBe(cmd);
                     upldBtn._command.execute();
                     expect(cmdSpy).toHaveBeenCalled();
+                });
+
+                it('doesn\'t wrap the command with AuthRequired when opts.authRequired is false', function () {
+                    throw 'TODO (joao) Implement this test!';
                 });
             });
         });

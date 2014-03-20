@@ -4,7 +4,8 @@ var inherits = require('inherits');
 var log = require('streamhub-sdk/debug')
         ('streamhub-input/comment');
 var Auth = require('streamhub-sdk/auth');
-var AuthRequiredCommand = require('streamhub-sdk/ui/command/auth-required-command');
+var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
+// var AuthDelegate = require('auth-delegates');
 var Button = require('streamhub-sdk/ui/button');
 var Content = require('streamhub-sdk/content');
 var Editor = require('streamhub-editor/editor');
@@ -34,15 +35,17 @@ var Comment = function(opts) {
     LaunchableModal.call(this);
     
     this._i18n = opts.i18n || this._i18n;
-    this._user = Auth.getDelegate().getUser();
-    var self = this;
-    this._user.on('login', function () {
-        if (!self.$el) {
-            return;
-        }
-        var $name = self.$el.find('.name');
-        $name && $name.text(self._user.get('displayName'));
-    });
+
+    var delegate = Auth.getDelegate();
+    if (delegate) {
+        this._setUser(delegate);
+    } else {
+        var self = this;
+        Auth.once('delegate', function (authDelegate) {
+            self._setUser(authDelegate);
+        });
+    }
+    
 };
 inherits(Comment, Editor);
 inherits.parasitically(Comment, Input);
@@ -55,6 +58,24 @@ inherits.parasitically(Comment, LaunchableModal);
  */
 Comment.prototype._getRawInput = function () {
     return (this.$textareaEl) ? this.buildPostEventObj() : null;
+};
+
+/**
+ * Uses an auth delegate to set user and attaches listeners
+ * @param authDelegate {!AuthDelegate}
+ * @private
+ */
+Comment.prototype._setUser = function (authDelegate) {
+    this._user = authDelegate.getUser();
+
+    var self = this;
+    this._user.once('login', function () {
+        if (!self.$el) {
+            return;
+        }
+        var $name = self.$el.find('.name');
+        $name && $name.text(self._user.get('displayName'));
+    });
 };
 
 /* @override */
@@ -81,7 +102,8 @@ Comment.prototype._validate = function (data) {
  * from the screen.
  */
 Comment.prototype.reset = function () {
-    this.$textareaEl && this.$textareaEl.val(this._i18n.emptyText);
+    this.$textareaEl && this.$textareaEl.text('');
+    this._managePlaceholder({data: this});
 };
 
 /**
@@ -137,7 +159,7 @@ Comment.prototype.elTag = 'article';
  * @override
  */
 Comment.prototype.getTemplateContext = function () {
-    var username = this._user.get('displayName') || '';
+    var username = this._user && this._user.get('displayName') || '';
     var emptyTextString = this._i18n.emptyText;
     return {
         username: username,
@@ -164,7 +186,7 @@ Comment.prototype.template = function (context) {
         '</div>',
         '</div>',
         '<div class="btn-wrapper">',
-        '<button class="lf-btn editor-post-btn">',
+        '<button class="lf-btn hub-input-btn editor-post-btn">',
         'Post Comment',
         '</button>',
         '</div>',
@@ -243,12 +265,12 @@ Comment.prototype.handlePostFailure = function (data) {
 Comment.prototype.handlePostSuccess = function (data) {
     log('Post Success');
 
+    this.reset();
     this.returnModal(undefined, data);
 };
 
 /** @override */
 Comment.prototype.returnModal = function (err, data) {
-    this.reset();//TODO (joao) Possibly move this into handlePostSuccess()
     LaunchableModal.prototype.returnModal.apply(this, arguments);
 };
 
