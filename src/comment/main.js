@@ -113,7 +113,9 @@ Comment.prototype.reset = function () {
  * @protected
  */
 Comment.prototype._packageInput = function (input) {
-    return new Content(input.body);
+    var content = new Content(input.body);
+    console.log(content);
+    return content
 };
 
 /**
