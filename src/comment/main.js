@@ -114,7 +114,7 @@ Comment.prototype.reset = function () {
  */
 Comment.prototype._packageInput = function (input) {
     var content = new Content(input.body);
-    console.log(content);
+    console.log(content.body);
     return content
 };
 
