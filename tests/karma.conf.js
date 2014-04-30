@@ -1,13 +1,23 @@
 module.exports = function(config) {
   config.set({
-    basePath: '',
-    frameworks: ['jasmine'],
+    basePath: '..',
+    frameworks: ['jasmine', 'cajon'],
     files: [
-      '*.js',
-      'spec/*.js'
+      'requirejs.conf.js',
+      'lib/streamhub-sdk/tests/lib/function.bind.js', // Polyfill for Phantom that must be loaded
+      {pattern: 'lib/**/*.js', included: false},
+      {pattern: 'src/**/*.js', included: false},
+      {pattern: 'lib/**/*.mustache', included: false},
+      {pattern: 'src/**/*.mustache', included: false},
+      {pattern: 'tests/spec/**/*.js', included: false},
+      'tests/tests-main.js'
     ],
     browsers: ['PhantomJS'],
     singleRun: true,
+    coverageReporter: {
+      type : 'lcov',
+      dir : 'coverage/'
+    },
     reporters: ['progress', 'coverage'],
     preprocessors: { '*.js': ['coverage'] }
   });

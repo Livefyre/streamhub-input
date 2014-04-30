@@ -33,7 +33,7 @@ var Comment = function(opts) {
     Editor.call(this, opts);
     Input.call(this, opts);//handles opts.destination
     LaunchableModal.call(this);
-    
+
     this._i18n = opts.i18n || this._i18n;
 
     var delegate = Auth.getDelegate();
@@ -45,7 +45,7 @@ var Comment = function(opts) {
             self._setUser(authDelegate);
         });
     }
-    
+
 };
 inherits(Comment, Editor);
 inherits.parasitically(Comment, Input);
@@ -168,31 +168,12 @@ Comment.prototype.getTemplateContext = function () {
 };
 
 /**
+ * TODO: actual template
  * Template for el
  * @override
  * @param [context] {Object}
  */
-Comment.prototype.template = function (context) {
-    return [
-        '<section class="hub-comment">',
-        '<div class="user-info">',
-        '<span class="name">',
-        context.username,
-        '</span>\n',
-        '</div>',
-        '<div class="editor-container">',
-        '<div class="editor-field placeholder" contenteditable autofocus="autofocus">',
-        context.emptyTextString,
-        '</div>',
-        '</div>',
-        '<div class="btn-wrapper">',
-        '<button class="lf-btn hub-input-btn editor-post-btn">',
-        'Post Comment',
-        '</button>',
-        '</div>',
-        '</section>'
-    ].join('');
-};
+Comment.prototype.template = require('hgn!streamhub-input/templates/comment');
 
 /**
  * Template for el when .launchModal()
@@ -253,7 +234,7 @@ Comment.prototype.events = {};//TODO (joao) Probably shouldn't have this overrid
  */
 Comment.prototype.handlePostFailure = function (data) {
     log('Post Failure');
-    
+
     //TODO (joao) Get msg to display from data param.
     //this.showError(msg);
 };
