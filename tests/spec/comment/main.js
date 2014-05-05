@@ -18,7 +18,7 @@ describe('streamhub-input/comment', function () {
         expect(typeof(Edit)).toBe('function');
         //TODO (joao) Test for abstract implementations
     });
-    
+
     describe('when constructed', function () {
         var commentInput;
         var writable;

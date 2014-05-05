@@ -1,18 +1,19 @@
 var jQuery;
+// var AttachmentListView = require('streamhub-sdk/content/views/attachment-list-view');
 var $ = jQuery = require('jquery');
-var inherits = require('inherits');
-var log = require('streamhub-sdk/debug')
-        ('streamhub-input/comment');
+var AttachmentListView = require('streamhub-input/comment/attachment-list-view');
 var Auth = require('streamhub-sdk/auth');
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
-// var AuthDelegate = require('auth-delegates');
 var Button = require('streamhub-sdk/ui/button');
 var Content = require('streamhub-sdk/content');
 var Editor = require('streamhub-editor/editor');
+var inherits = require('inherits');
 var Input = require('streamhub-input');
 var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
+var log = require('streamhub-sdk/debug')('streamhub-input/comment');
 var ModalView = require('streamhub-sdk/modal');
 var PostComment = require('streamhub-input/command');
+var UploadButtonIcon = require('streamhub-input/upload/buttonicon');
 var Util = require('streamhub-sdk/util');
 var View = require('streamhub-sdk/view');
 
@@ -52,12 +53,61 @@ inherits.parasitically(Comment, Input);
 inherits.parasitically(Comment, LaunchableModal);
 
 /**
+ * Displayable strings
+ * @type {Object}
+ */
+Comment.prototype._i18n = {
+    emptyText: 'Comment here'
+};
+
+/**
  * Returns the raw data that has been received from the user.
  * @returns {?Object}
  * @override
  */
 Comment.prototype._getRawInput = function () {
     return (this.$textareaEl) ? this.buildPostEventObj() : null;
+};
+
+/**
+ * TODO: remove in favor of resize.
+ * Manages the display and removal of placeholder text.
+ * @private
+ */
+Comment.prototype._managePlaceholder = function (ev) {
+    var self = ev.data;
+    if (!self || !self.$textareaEl) {
+        log('Some how attempting to manage placeholder without rendered el.');
+        return;
+    }
+
+    var text = self.$textareaEl.text();
+    if (text !== self._i18n.emptyText && text !== '') {
+    //Nothing to react to here
+        return;
+    }
+
+    var cls = self.classes.PLACEHOLDER;
+    //No user input
+    if (text === '') {
+        self.$textareaEl.addClass(cls);
+        self.$textareaEl.text(self._i18n.emptyText);
+    } else if (text === self._i18n.emptyText && self.$textareaEl.hasClass(cls)) {
+    //Get ready for input
+        self.$textareaEl.text('');
+        self.$textareaEl.removeClass(cls);
+        // self == safeActiveElement() && input.select();
+    }
+}
+
+/**
+ * Creates and returns a Content object based on the input.
+ * @param input {Object} Usually the data retrieved from getInput().
+ * @returns {Content}
+ * @protected
+ */
+Comment.prototype._packageInput = function (input) {
+    return new Content(input.body);
 };
 
 /**
@@ -78,14 +128,6 @@ Comment.prototype._setUser = function (authDelegate) {
     });
 };
 
-/* @override */
-Comment.prototype.buildPostEventObj = function () {
-    var event = Editor.prototype.buildPostEventObj.apply(this, arguments),
-        text = this.$textareaEl.text();
-    event.body = (text !== this._i18n.emptyText) ? text : '';
-    return event;
-};
-
 /**
  * Checks that the input from the user is valid.
  * Should call showError(msg) with
@@ -97,6 +139,16 @@ Comment.prototype._validate = function (data) {
     return this.validate(data);
 };
 
+/* @override */
+Comment.prototype.buildPostEventObj = function () {
+    var event = Editor.prototype.buildPostEventObj.apply(this, arguments),
+        text = this.$textareaEl.text();
+    event.body = (text !== this._i18n.emptyText) ? text : '';
+    event.media = this._attachmentsList.getAttachments();
+    return event;
+};
+
+
 /**
  * Resets the input display, typically by clearing out the current user input
  * from the screen.
@@ -104,30 +156,6 @@ Comment.prototype._validate = function (data) {
 Comment.prototype.reset = function () {
     this.$textareaEl && this.$textareaEl.text('');
     this._managePlaceholder({data: this});
-};
-
-/**
- * Creates and returns a Content object based on the input.
- * @param input {Object} Usually the data retrieved from getInput().
- * @returns {Content}
- * @protected
- */
-Comment.prototype._packageInput = function (input) {
-    return new Content(input.body);
-};
-
-/**
- * Class to be added to the view's element.
- * @type {!string}
- */
-Comment.prototype.class += ' lf-edit';
-
-/**
- * Displayable strings
- * @type {Object}
- */
-Comment.prototype._i18n = {
-    emptyText: 'Comment here'
 };
 
 /** @enum {string} */
@@ -139,12 +167,19 @@ Comment.prototype.classes = {
     USER_INFO: 'user-info',
     NAME: 'name',
     EDITOR: 'editor-container',
+    EDITOR_UPLOAD: 'editor-upload',
     FIELD: 'editor-field',
     BTN_WRAPPER: 'btn-wrapper',
     LF_BTN: 'lf-btn',
     POST_BTN: 'editor-post-btn',
     PLACEHOLDER: 'placeholder'
 };
+
+/**
+ * Class to be added to the view's element.
+ * @type {!string}
+ */
+Comment.prototype.elClass += ' lf-edit';
 
 /**
  * The default element tag.
@@ -162,18 +197,35 @@ Comment.prototype.getTemplateContext = function () {
     var username = this._user && this._user.get('displayName') || '';
     var emptyTextString = this._i18n.emptyText;
     return {
-        username: username,
-        emptyTextString: emptyTextString
+        uploadEnabled: true,
+        strings: {
+            emptyTextString: emptyTextString,
+            username: username
+        }
     };
 };
 
 /**
- * TODO: actual template
- * Template for el
- * @override
- * @param [context] {Object}
+ * Post failure callback.
+ * @param {Object} data The response data.
  */
-Comment.prototype.template = require('hgn!streamhub-input/templates/comment');
+Comment.prototype.handlePostFailure = function (data) {
+    log('Post Failure');
+
+    //TODO (joao) Get msg to display from data param.
+    //this.showError(msg);
+};
+
+/**
+ * Post success callback.
+ * @param {Object} data The response data.
+ */
+Comment.prototype.handlePostSuccess = function (data) {
+    log('Post Success');
+
+    this.reset();
+    this.returnModal(undefined, data);
+};
 
 /**
  * Template for el when .launchModal()
@@ -222,37 +274,32 @@ Comment.prototype.render = function () {
 
     this._postButton = new Button(authCmd, {el: this.$postEl});
 
+    // TODO: setting
+    if (true) {
+        // TODO: handler
+        this._uploadButton = new UploadButtonIcon();
+        this._uploadButton.render();
+        this._attachmentsList = new AttachmentListView();
+        this._attachmentsList.render();
+        this._uploadButton.pipe(this._attachmentsList);
+        var $buttonWrapper = this.$('.' + this.classes.BTN_WRAPPER);
+        var $containerWrapper = this.$('.upload-container');
+        $buttonWrapper.prepend(this._uploadButton.$el);
+        $containerWrapper.append(this._attachmentsList.$el);
+    }
+
     this.$textareaEl.focus(this, this._managePlaceholder).blur(this, this._managePlaceholder);
-};
-
-/** @override */
-Comment.prototype.events = {};//TODO (joao) Probably shouldn't have this override
-
-/**
- * Post failure callback.
- * @param {Object} data The response data.
- */
-Comment.prototype.handlePostFailure = function (data) {
-    log('Post Failure');
-
-    //TODO (joao) Get msg to display from data param.
-    //this.showError(msg);
-};
-
-/**
- * Post success callback.
- * @param {Object} data The response data.
- */
-Comment.prototype.handlePostSuccess = function (data) {
-    log('Post Success');
-
-    this.reset();
-    this.returnModal(undefined, data);
 };
 
 /** @override */
 Comment.prototype.returnModal = function (err, data) {
     LaunchableModal.prototype.returnModal.apply(this, arguments);
+};
+
+/** @override */
+Comment.prototype.sendPostEvent = function (data) {
+    // TODO: commandeer
+    console.log('trying to post: ' + data);
 };
 
 /**
@@ -265,33 +312,18 @@ Comment.prototype.showError = function (msg) {
 };
 
 /**
- * Manages the display and removal of placeholder text.
- * @private
+ * TODO: actual template
+ * Template for el
+ * @override
+ * @param [context] {Object}
  */
-Comment.prototype._managePlaceholder = function (ev) {
-    var self = ev.data;
-    if (!self || !self.$textareaEl) {
-        log('Some how attempting to manage placeholder without rendered el.');
-        return;
-    }
+Comment.prototype.template = require('hgn!streamhub-input/templates/comment');
 
-    var text = self.$textareaEl.text();
-    if (text !== self._i18n.emptyText && text !== '') {
-    //Nothing to react to here
-        return;
-    }
 
-    var cls = self.classes.PLACEHOLDER;
-    //No user input
-    if (text === '') {
-        self.$textareaEl.addClass(cls);
-        self.$textareaEl.text(self._i18n.emptyText);
-    } else if (text === self._i18n.emptyText && self.$textareaEl.hasClass(cls)) {
-    //Get ready for input
-        self.$textareaEl.text('');
-        self.$textareaEl.removeClass(cls);
-        // self == safeActiveElement() && input.select();
-    }
-}
+/** @override */
+Comment.prototype.validate = function(data) {
+    // TODO: yeah...
+    return true;
+};
 
 module.exports = Comment;

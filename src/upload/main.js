@@ -6,6 +6,7 @@ var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal')
 var log = require('streamhub-sdk/debug')
         ('streamhub-input/upload');
 var ModalView = require('streamhub-sdk/modal');
+var Oembed = require('streamhub-sdk/content/types/oembed');
 var Util = require('streamhub-sdk/util');
 var View = require('streamhub-sdk/view');
 
@@ -29,8 +30,7 @@ var picker = null;
  * @extends {View}
  */
 var Upload = function(opts) {
-    opts = opts || {};
-    $.extend(opts, Upload.DEFAULT_OPTS);
+    opts = $.extend({}, Upload.DEFAULT_OPTS, opts);
     View.call(this, opts);
     Input.call(this, opts);
     LaunchableModal.call(this, opts);
@@ -45,6 +45,9 @@ var Upload = function(opts) {
     if (!picker) {
         this._initFilepicker();
     }
+
+    // hack
+    this.push(JSON.parse(localStorage.getItem("mockAttatchment")));
 };
 inherits(Upload, View);
 inherits.parasitically(Upload, Input);
@@ -103,7 +106,7 @@ Upload.prototype._initFilepicker = function () {
 
     var src = this.opts.src;
     $.getScript(src, scriptLoadCallback);
-    
+
     var self = this;
     function scriptLoadCallback(script, status, data) {
         if (status !== 'success') {
@@ -121,20 +124,21 @@ Upload.prototype._initFilepicker = function () {
  * @type {!string}
  * @private
  */
-Upload.prototype._filepickerKey = 'AtvGm2B6RR9mDKb8bImIHz';
+Upload.prototype._filepickerKey = 'AtvGm2B6RR9mDKb8bImIHz';  // uhhh
 
 /**
  * The URL where uploads are cached
  * @type {!string}
  * @private
  */
-Upload.prototype._cacheUrl = 'http://dazfoe7f6de09.cloudfront.net/';
+Upload.prototype._cacheUrl = 'http://dazfoe7f6de09.cloudfront.net/';  // mrr
 
 /**
  * The default options for using FilePicker and pickAndStore
  * @type {!Object}
  */
 Upload.DEFAULT_OPTS = {
+    packageAs: 'content',
     pick: {
         'container': 'picker',
         'maxSize': 4*1024*1024, // allows files < 4MB
@@ -161,14 +165,15 @@ Upload.prototype._processResponse = function (err, inkBlob) {
         }
         return;
     }
-    
+
     var contents = [];
     if (inkBlob) {
         if (!inkBlob.length) {
             inkBlob = [inkBlob];
-        } 
+        }
 
         inkBlob.forEach(function (blob) {
+            // TODO: option
             var content = this._packageInput(blob);
             contents.push(content);
             //Perform the essential function of _read() for non-flowing mode
@@ -191,7 +196,7 @@ Upload.prototype.launchModal = function(callback) {
     if (picker === false) {
         throw 'The FilePicker script failed to load correctly.';
     }
-    
+
     if (picker === null) {
     //Hasn't loaded yet
         setTimeout(function() {
@@ -202,7 +207,7 @@ Upload.prototype.launchModal = function(callback) {
 
     this.opts.pick.container = this.name + this.uid;
     console.log(this.opts.pick.container)
-    
+
     LaunchableModal.prototype.launchModal.apply(this, arguments);
     var successFn = function(inkBlob) {
         self.returnModal(undefined, self._processResponse(undefined, inkBlob));
@@ -211,7 +216,7 @@ Upload.prototype.launchModal = function(callback) {
         self._processResponse(err);
         self.returnModal(err);//TODO (joao) Maybe don't do this. Need error flow.
     };
-    
+
     picker.pickAndStore(this.opts.pick, this.opts.store, successFn, errorFn);
 };
 
@@ -249,16 +254,28 @@ Upload.prototype.reset = function () {/** The filepicker resets itself */};
  * @override
  */
 Upload.prototype._packageInput = function (input) {
-        var content = new Content({body: ''});
-        var url = this._cacheUrl + input.key;
-        content.attachments.push({
-            type: 'photo',
-            url: url,
-            link: url,
-            provider_name: this.name
-            //TODO (joao) images dimensions?
-        });
-        return content;
+    var url = this._cacheUrl + input.key;
+    var attachment = {
+        type: 'photo',
+        url: url,
+        link: url,
+        provider_name: this.name
+        //TODO (joao) images dimensions?!!!!
+    };
+    if (this.opts.packageAs === 'attachment') {
+        return this._constructAttachment(input, attachment);
+    }
+    return this._constructContent(input, attachment);
+};
+
+Upload.prototype._constructContent = function (input, attachment) {
+    var content = new Content({body: ''});
+    content.attachments.push(attachment);
+    return content;
+};
+
+Upload.prototype._constructAttachment = function (input, attachment) {
+    return attachment;
 };
 
 /**

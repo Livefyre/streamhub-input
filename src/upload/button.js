@@ -27,14 +27,14 @@ var UploadButton = function(opts) {
     if (opts.authRequired !== false) {
         command = new AuthRequiredCommand(command);
     }
-    
+
     var self = this;
     command.callback = function (err, data) {
         data && self._destination && data.forEach(function (content) {
             self._destination.write(content);
         });
     }
-    
+
     InputButton.call(this, command, opts);
     this._input.pipe(this);
 };

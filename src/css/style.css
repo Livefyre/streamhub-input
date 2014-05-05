@@ -121,7 +121,6 @@ body {
 
 .hub-comment{
     position: relative;
-    text-align: center;
     border: 1px solid #ececea;
     text-align: left;
     border-radius: 3px;
@@ -138,7 +137,6 @@ body {
     text-align: right;
     border-top: 1px solid #ececea;
     padding: 6px;
-    margin-top: 20px;
 }
 
 .hub-comment .user-info {
@@ -148,10 +146,8 @@ body {
 }
 
 .hub-comment .editor-container {
-    margin: 20px 0;
-    margin: 0;
 /* !lf-bootstrap */
-    display: block;
+    margin-bottom: 20px;
 }
 
 .hub-modal-content-view iframe, .hub-modal-content-view article {
@@ -159,4 +155,48 @@ body {
     margin: 50px auto 0;
     display: block;
     border: 0;
+}
+
+
+/**
+ * Kinda crazy overrides
+ */
+.lf-editor-upload {
+    float: left;
+    margin: 5px;
+}
+
+.lf-editor-upload > .fycon-composer-photo:before {
+    font-size: 1.3em;
+    opacity: 0.25;
+    padding: 2px;
+}
+
+/**
+ * Horizontal scrollage
+ */
+.streamhub-horizontal-list-view > .hub-list {
+    background-color: #f8f8f8;
+    border-color: #ececea;
+    border-style: solid;
+    border-width: 1px 0 0 0;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    position:relative;
+    white-space: nowrap;
+    width: auto;
+}
+
+.content-attachment {
+    background-color: #fff;
+    display: inline-block;
+    margin: 20px;
+}
+
+.content-attachment-thumbnail {
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 200px;
+    width: 200px;
 }

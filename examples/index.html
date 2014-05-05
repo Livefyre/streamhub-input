@@ -59,6 +59,7 @@
                 <br>
             <input type="submit" /><button id="refresh">refresh</button>
         </form>
+        <div id="comment-editor"></div>
         <section id="upper-controls">
             <button id="top-upload">Post Your Photo <i class="fycon-composer-photo"></i></button>
             <button id="top-comment">Post Your Comment</button>
@@ -84,10 +85,10 @@
             'streamhub-sdk/content/content-view-factory',
             'streamhub-sdk/util',
             'streamhub-sdk/auth',
-            'upload',
-            'upload/button',
-            'comment',
-            'comment/button'
+            'streamhub-input/upload',
+            'streamhub-input/upload/button',
+            'streamhub-input/comment',
+            'streamhub-input/comment/button'
         ],function (ListView, Collection, Content, ContentViewFactory, Util, Auth, Upload, UploadButton, CommentView, CommentButton) {
             /* var opts = {
                 "network": "labs-t402.fyre.co",
@@ -101,7 +102,7 @@
             //         "articleId": "177",
             //         "environment": "qa-ext.livefyre.com"
             //     };
-            
+
             var opts,
                 view,
                 collection,
@@ -130,8 +131,8 @@
             //         }
             //         //User needs to authenticate
             //         //TODO (joao) authenticate user
-                    
-                    
+
+
             //         //TODO (joao) retry the upload?
             //     }
             // }
@@ -140,11 +141,11 @@
                 el: document.getElementById("comment-editor")
             });
             embCom.render();
-            
+
             topUp = new UploadButton({
                 el: document.getElementById("top-upload")
             });
-            
+
             topCom = new CommentButton({
                 el: document.getElementById("top-comment")
             });
@@ -239,7 +240,7 @@
                 //TODO (joao) Destroy collection?
                 archive = collection = null;
             }
-            
+
         });
         </script>
     </body>

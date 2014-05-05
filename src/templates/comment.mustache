@@ -1,12 +1,11 @@
 <section class="hub-comment">
     <div class="user-info">
-        <span class="name">{{ username }}</span>
+        <span class="name">{{ strings.username }}</span>
     </div>
     <div class="editor-container">
-        <div class="editor-field placeholder" contenteditable autofocus="autofocus">
-            {{ emptyTextString }}
-        </div>
+        <textarea class="editor-field" placeholder='{{ strings.emptyTextString }}'></textarea>
     </div>
+    <div class="upload-container"></div>
     <div class="btn-wrapper">
         <button class="lf-btn hub-input-btn editor-post-btn"> Post Comment </button>
     </div>
