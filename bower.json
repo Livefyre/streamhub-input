@@ -11,7 +11,7 @@
     "jquery": "~1.10.1",
     "requirejs-hogan-plugin": "*",
     "stream": "git://github.com/Livefyre/stream.git#~0.1",
-    "streamhub-editor": "git://github.com/markdoten/streamhub-editor.git#c644923dd369289bda57918f0628aff9ec795784",
+    "streamhub-editor": "git@github.com:Livefyre/streamhub-editor.git#j_enhance",
     "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#input-rc",
     "view": "git://github.com/Livefyre/view.git#~1.1"
   },

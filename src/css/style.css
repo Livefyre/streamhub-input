@@ -63,30 +63,45 @@
     min-height:432px;
 }
 
+/* TODO: seriously? */
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.428571429;
 }
 
-.editor-field {
-    resize: none;/* For Chrome */
-    font-family: georgia;
-    font-size: 15px;
+textarea.lf-editor-field,
+.lf-editor-resize {
+    border: none;
+    box-sizing: border-box;
     color: #4c4c4c;
-    min-height: 44px;
+    font: normal 15px/22px georgia; /* TODO: font stack */;
+    margin: 0;
     max-height: 200px;
-    overflow: auto;
+    min-height: 44px;
+    outline: 0;
+    overflow: hidden;
     padding: 0 30px;
-    line-height: 28px;
+    resize: none;
+    vertical-align: top;
+    width: 100%;
+    word-wrap: break-word;
 }
 
+/* TODO: lessify */
+.lf-editor-resize {
+    .opacity(0);
+    position: absolute;
+    width: 100%;
+    z-index: -1;
+}
+.lf-editor-resize > p {
+    min-height: 22px;
+    line-height: 22px;
+    margin: 0;
+}
 .editor-field:focus {
     outline: 0;
-}
-
-.placeholder {
-    color: #aaa;
 }
 
 /*.lf * {
@@ -175,16 +190,31 @@ body {
 /**
  * Horizontal scrollage
  */
-.streamhub-horizontal-list-view > .hub-list {
+.lf-attachment-list-view > .hub-list {
     background-color: #f8f8f8;
     border-color: #ececea;
     border-style: solid;
     border-width: 1px 0 0 0;
-    overflow-x: scroll;
-    overflow-y: hidden;
     position:relative;
-    white-space: nowrap;
-    width: auto;
+    width: 100%;
+}
+
+.content-attachment-discard {
+    cursor: pointer;
+    float: right;
+    font-size: 30px;
+    height: 32px;
+    left: 15px;
+    position: relative;
+    text-indent: -9999px;
+    top: -15px;
+    width: 32px;
+    background-image: url(../images/photo_x.png);
+
+    @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+        background-image: url(../images/photo_x@2x.png);
+        background-size: 32px 32px;
+    }
 }
 
 .content-attachment {

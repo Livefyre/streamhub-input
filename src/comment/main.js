@@ -1,11 +1,8 @@
-var jQuery;
-// var AttachmentListView = require('streamhub-sdk/content/views/attachment-list-view');
-var $ = jQuery = require('jquery');
+var $ = require('jquery');
 var AttachmentListView = require('streamhub-input/comment/attachment-list-view');
 var Auth = require('streamhub-sdk/auth');
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Button = require('streamhub-sdk/ui/button');
-var Content = require('streamhub-sdk/content');
 var Editor = require('streamhub-editor/editor');
 var inherits = require('inherits');
 var Input = require('streamhub-input');
@@ -32,83 +29,18 @@ var View = require('streamhub-sdk/view');
 var Comment = function(opts) {
     opts = opts || {};
     Editor.call(this, opts);
-    Input.call(this, opts);//handles opts.destination
+    Input.call(this, opts);
     LaunchableModal.call(this);
+    var self = this;
 
-    this._i18n = opts.i18n || this._i18n;
-
-    var delegate = Auth.getDelegate();
-    if (delegate) {
-        this._setUser(delegate);
-    } else {
-        var self = this;
-        Auth.once('delegate', function (authDelegate) {
-            self._setUser(authDelegate);
-        });
-    }
-
+    Auth.once('delegate', function (authDelegate) {
+        self._setUser(authDelegate);
+    });
+    Auth.getDelegate();
 };
 inherits(Comment, Editor);
 inherits.parasitically(Comment, Input);
 inherits.parasitically(Comment, LaunchableModal);
-
-/**
- * Displayable strings
- * @type {Object}
- */
-Comment.prototype._i18n = {
-    emptyText: 'Comment here'
-};
-
-/**
- * Returns the raw data that has been received from the user.
- * @returns {?Object}
- * @override
- */
-Comment.prototype._getRawInput = function () {
-    return (this.$textareaEl) ? this.buildPostEventObj() : null;
-};
-
-/**
- * TODO: remove in favor of resize.
- * Manages the display and removal of placeholder text.
- * @private
- */
-Comment.prototype._managePlaceholder = function (ev) {
-    var self = ev.data;
-    if (!self || !self.$textareaEl) {
-        log('Some how attempting to manage placeholder without rendered el.');
-        return;
-    }
-
-    var text = self.$textareaEl.text();
-    if (text !== self._i18n.emptyText && text !== '') {
-    //Nothing to react to here
-        return;
-    }
-
-    var cls = self.classes.PLACEHOLDER;
-    //No user input
-    if (text === '') {
-        self.$textareaEl.addClass(cls);
-        self.$textareaEl.text(self._i18n.emptyText);
-    } else if (text === self._i18n.emptyText && self.$textareaEl.hasClass(cls)) {
-    //Get ready for input
-        self.$textareaEl.text('');
-        self.$textareaEl.removeClass(cls);
-        // self == safeActiveElement() && input.select();
-    }
-}
-
-/**
- * Creates and returns a Content object based on the input.
- * @param input {Object} Usually the data retrieved from getInput().
- * @returns {Content}
- * @protected
- */
-Comment.prototype._packageInput = function (input) {
-    return new Content(input.body);
-};
 
 /**
  * Uses an auth delegate to set user and attaches listeners
@@ -123,57 +55,26 @@ Comment.prototype._setUser = function (authDelegate) {
         if (!self.$el) {
             return;
         }
+        Auth.setToken(self._user.getToken());
         var $name = self.$el.find('.name');
         $name && $name.text(self._user.get('displayName'));
     });
 };
 
-/**
- * Checks that the input from the user is valid.
- * Should call showError(msg) with
- * @param [data] {Object} Typically comes from .getInput()
- * @returns {!boolean}
- * @protected
- */
-Comment.prototype._validate = function (data) {
-    return this.validate(data);
-};
-
 /* @override */
 Comment.prototype.buildPostEventObj = function () {
-    var event = Editor.prototype.buildPostEventObj.apply(this, arguments),
-        text = this.$textareaEl.text();
-    event.body = (text !== this._i18n.emptyText) ? text : '';
-    event.media = this._attachmentsList.getAttachments();
+    var event = Editor.prototype.buildPostEventObj.call(this);
+    event.attachments = this._attachmentsList.getAttachments();
     return event;
 };
 
-
-/**
- * Resets the input display, typically by clearing out the current user input
- * from the screen.
- */
-Comment.prototype.reset = function () {
-    this.$textareaEl && this.$textareaEl.text('');
-    this._managePlaceholder({data: this});
-};
-
 /** @enum {string} */
-Comment.prototype.classes = {
-    WRAPPER: 'hub-modal-input-wrapper',
-    HEADER: 'hub-modal-input-header',
-    BODY: 'lf-modal-body',
-    HUB_COMMENT: 'hub-comment',
-    USER_INFO: 'user-info',
-    NAME: 'name',
-    EDITOR: 'editor-container',
-    EDITOR_UPLOAD: 'editor-upload',
-    FIELD: 'editor-field',
-    BTN_WRAPPER: 'btn-wrapper',
-    LF_BTN: 'lf-btn',
-    POST_BTN: 'editor-post-btn',
-    PLACEHOLDER: 'placeholder'
-};
+Comment.prototype.classes = (function () {
+    var classes = $.extend({}, Editor.prototype.classes);
+    classes.BTN_WRAPPER = 'btn-wrapper';
+    classes.POST_BTN = 'editor-post-btn';
+    return classes;
+})();
 
 /**
  * Class to be added to the view's element.
@@ -188,6 +89,12 @@ Comment.prototype.elClass += ' lf-edit';
  */
 Comment.prototype.elTag = 'article';
 
+/** @override */
+Comment.prototype.getInput = function () {
+    // Don't call us, we'll call you
+    return null;
+};
+
 /**
  * Get contextual data for a template.
  * @type {function()}
@@ -195,11 +102,9 @@ Comment.prototype.elTag = 'article';
  */
 Comment.prototype.getTemplateContext = function () {
     var username = this._user && this._user.get('displayName') || '';
-    var emptyTextString = this._i18n.emptyText;
     return {
-        uploadEnabled: true,
         strings: {
-            emptyTextString: emptyTextString,
+            post: 'Post Comment',
             username: username
         }
     };
@@ -224,10 +129,11 @@ Comment.prototype.handlePostSuccess = function (data) {
     log('Post Success');
 
     this.reset();
-    this.returnModal(undefined, data);
+    this.returnModal(null, data);
 };
 
 /**
+ * This probably doesn't
  * Template for el when .launchModal()
  * @param [context] {Object}
  * @returns {!string}
@@ -251,27 +157,20 @@ Comment.prototype.modalTemplate = function (context) {
  *     then call .render() on those sub-elements
  */
 Comment.prototype.render = function () {
-    View.prototype.render.call(this);
+    this.$el.html(this.template(this.getTemplateContext(), {
+        editor: require('hgn!streamhub-editor/templates/editor').template,
+    }));
+
+    // iz annoy
+    this.$resizeEl = this.$('.' + this.classes.RESIZE);
+    this.$textareaEl = this.$('.' + this.classes.FIELD);
+    this._processPlaceholders();
 
     this.$textareaEl = this.$('.' + this.classes.FIELD);
     this.$postEl = this.$('.' + this.classes.POST_BTN);
 
-    var self = this;
-    var clbk = function (err, data) {
-        if (err) {
-            self.handlePostFailure(err);
-        } else {
-            self.handlePostSuccess(data);
-        }
-    };
 
-    var postCmd = new PostComment(
-                this,//source
-                {//opts
-                    callback: clbk
-                });
-    var authCmd = new AuthRequiredCommand(postCmd);
-
+    var authCmd = new AuthRequiredCommand();
     this._postButton = new Button(authCmd, {el: this.$postEl});
 
     // TODO: setting
@@ -287,8 +186,6 @@ Comment.prototype.render = function () {
         $buttonWrapper.prepend(this._uploadButton.$el);
         $containerWrapper.append(this._attachmentsList.$el);
     }
-
-    this.$textareaEl.focus(this, this._managePlaceholder).blur(this, this._managePlaceholder);
 };
 
 /** @override */
@@ -297,9 +194,16 @@ Comment.prototype.returnModal = function (err, data) {
 };
 
 /** @override */
-Comment.prototype.sendPostEvent = function (data) {
-    // TODO: commandeer
-    console.log('trying to post: ' + data);
+Comment.prototype.sendPostEvent = function (ev) {
+    // Calling you
+    ev.errback = function (err, data) {
+        if (err) {
+            return ev.failure();
+        }
+        ev.success();
+    }
+    this.push(ev);
+    this.push(null);
 };
 
 /**

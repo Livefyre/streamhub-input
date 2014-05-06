@@ -24,6 +24,9 @@ require.config({
     name: 'streamhub-editor',
     location: 'lib/streamhub-editor/src/javascript'
   },{
+    name: 'streamhub-editor/templates',
+    location: 'lib/streamhub-editor/src/templates'
+  },{
     name: 'streamhub-sdk',
     location: 'lib/streamhub-sdk/src'
   },{

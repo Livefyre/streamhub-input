@@ -3,10 +3,10 @@
         <span class="name">{{ strings.username }}</span>
     </div>
     <div class="editor-container">
-        <textarea class="editor-field" placeholder='{{ strings.emptyTextString }}'></textarea>
+        {{> editor}}
     </div>
     <div class="upload-container"></div>
     <div class="btn-wrapper">
-        <button class="lf-btn hub-input-btn editor-post-btn"> Post Comment </button>
+        <button class="lf-btn hub-input-btn lf-editor-post-btn">{{ strings.post }} </button>
     </div>
 </section>
