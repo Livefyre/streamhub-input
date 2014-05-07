@@ -18,6 +18,9 @@ require.config({
     name: 'stream',
     location: 'lib/stream/src'
   },{
+    name: 'auth',
+    location: 'lib/auth/src'
+  },{
     name: 'auth-delegates',
     location: 'lib/auth-delegates/src'
   },{

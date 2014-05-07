@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="//livefyre-cdn.s3.amazonaws.com/libs/sdk/v2.5.1/rc/builds/11/streamhub-sdk.min.css">
-    <link rel="stylesheet" type="text/css" href="src/css/fycon.css">
-    <link rel="stylesheet" type="text/css" href="src/css/lf-bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="src/css/style.css">
+    <link rel="stylesheet" type="text/css" href="dist/streamhub-input.min.css">
     <style>
     #view {
         /*width:500px;*/
@@ -153,7 +150,8 @@
             // }
 
             embCom = new CommentView({
-                el: document.getElementById("comment-editor")
+                el: document.getElementById("comment-editor"),
+                mediaEnabled: true
             });
             embCom.render();
 
