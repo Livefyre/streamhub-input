@@ -3,7 +3,7 @@
 var Auth = require('streamhub-sdk/auth');
 var Button = require('streamhub-sdk/ui/button');
 var Command = require('streamhub-sdk/ui/command');
-var CommentButton = require('streamhub-input/comment/button');
+var CommentButton = require('streamhub-input/content-editor/button');
 var Content = require('streamhub-sdk/content');
 var Input = require('streamhub-input');
 var InputButton = require('streamhub-input/button');
@@ -11,14 +11,14 @@ var Passthrough = require('stream/passthrough');
 var Readable = require('stream/readable');
 var Writable = require('stream/writable');
 
-describe('streamhub-input/comment/button', function () {
+describe('streamhub-input/content-editor/button', function () {
     it('is a constructor that extends InputButton', function () {
         expect(typeof(CommentButton)).toBe('function');
 
         var cmtBtn = new CommentButton();
         expect(cmtBtn instanceof InputButton).toBe(true);
     });
-    
+
     describe('when constructed', function () {
         var cmtBtn;
         var writable;

@@ -3,7 +3,7 @@
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Command = require('streamhub-sdk/ui/command');
 var debug = require('streamhub-sdk/debug');
-var Edit = require('streamhub-input/comment');
+var Edit = require('streamhub-input/content-editor');
 var inherits = require('inherits');
 var InputCommand = require('streamhub-input/command');
 var jasmineJquery = require('jasmine-jquery');//For sandbox()
@@ -13,7 +13,7 @@ var util = require('streamhub-sdk/util');
 var View = require('view');
 var Writable = require('stream/writable');
 
-describe('streamhub-input/comment', function () {
+describe('streamhub-input/content-editor', function () {
     it('is an constructor that subclasses Editor and implements Input and LaunchableModal', function () {
         expect(typeof(Edit)).toBe('function');
         //TODO (joao) Test for abstract implementations
@@ -83,7 +83,7 @@ describe('streamhub-input/comment', function () {
         });
 
         it('logs for showError()', function () {
-            if (debug.enabled('streamhub-input/comment')) {
+            if (debug.enabled('streamhub-input/content-editor')) {
                 spyOn(console, 'log').andCallThrough();
 
                 commentInput.showError('error');
@@ -100,7 +100,7 @@ describe('streamhub-input/comment', function () {
         });
 
         it('logs for handlePostFailure()', function () {
-            if (debug.enabled('streamhub-input/comment')) {
+            if (debug.enabled('streamhub-input/content-editor')) {
                 spyOn(console, 'log').andCallThrough();
 
                 commentInput.handlePostFailure({});
@@ -117,7 +117,7 @@ describe('streamhub-input/comment', function () {
         });
 
         it('logs for handlePostSuccess()', function () {
-            if (debug.enabled('streamhub-input/comment')) {
+            if (debug.enabled('streamhub-input/content-editor')) {
                 spyOn(console, 'log').andCallThrough();
 
                 commentInput.handlePostSuccess({});

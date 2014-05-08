@@ -32,7 +32,7 @@ var InputButton = function(command, opts) {
      * @protected
      */
     this._destination = opts.destination;
-    
+
     Button.call(this, command, opts);
     Passthrough.call(this, opts);
 
@@ -49,7 +49,7 @@ inherits.parasitically(InputButton, Readable);
  * @override
  * @type {string}
  */
-InputButton.prototype.elClass += ' hub-input-btn';
+InputButton.prototype.elClass += ' input-btn';
 
 /**
  * The default element tag.

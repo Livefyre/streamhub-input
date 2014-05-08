@@ -19,6 +19,6 @@ AttachmentView.prototype.getTemplateContext = function () {
 AttachmentView.prototype.template = require('hgn!streamhub-input/templates/attachment');
 
 /** @override */
-AttachmentView.prototype.elClass = 'content-attachment';
+AttachmentView.prototype.elClass = 'lf-attachment';
 
 module.exports = AttachmentView;

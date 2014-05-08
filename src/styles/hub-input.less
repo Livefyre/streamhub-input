@@ -4,55 +4,51 @@
 @import "/lib/streamhub-editor/src/styles/editor.less";
 @import "/lib/streamhub-sdk/src/css/style.css";
 
-.hub-input-btn {
-    width: 180px;
-    height: 40px;
-    color: #fff;
-    background-color: #0f98ec;
-    border: 1px solid #1475b3;
-    display: inline-block;
-    margin-bottom: 0;
-    font-weight: 500;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
-    background-image: none;
-    white-space: nowrap;
-    padding: 7px 12px;
-    font-size: 14px;
-    line-height: 1.428571429;
-    .user-select(none);
+.lf-input-btn {
     -webkit-appearance: button;
-    cursor: pointer;
-    text-transform: none;
-    margin: 0;
+    .user-select(none);
+    background-color: #0f98ec;
+    background-image: none;
     border-radius: 2px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border: 1px solid #1475b3;
+    color: #fff;
+    cursor: pointer;
+    cursor: pointer;
+    display: inline-block;
+    font-family: @helvetica;
+    font-size: 14px;
+    font-weight: 500;
+    height: 40px;
     letter-spacing: normal;
-    word-spacing: normal;
-    text-transform: none;
+    line-height: 1.428571429;
+    margin-bottom: 0;
+    margin: 0;
+    outline: none;
+    padding: 7px 12px;
+    text-align: center;
     text-indent: 0px;
     text-shadow: none;
+    text-transform: none;
+    text-transform: none;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: 180px;
+    word-spacing: normal;
 }
 
-.hub-input-btn.disabled {
+.lf-input-btn.disabled {
     .opacity(0.5);
 }
 
-.hub-input-btn:hover {
-    /* http://css3gen.com/box-shadow/ */
-    -webkit-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.1);
-    box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.1);
+.lf-input-btn:hover {
+    background-color: #0f98ec;
+    .box-shadow(inset 1px 0px 2px 0px rgba(0, 0, 0, 0.1));
 }
 
-.hub-input-btn:active {
+.lf-input-btn:active {
     background-color: #118fe0;
     border-color: #105a89;
-    /* http://css3gen.com/box-shadow/ */
-    -webkit-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.3);
-    box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.3);
+    .box-shadow(inset 1px 0px 2px 0px rgba(0, 0, 0, 0.3));
 }
 
 .hub-upload-btn .fycon-composer-photo {
@@ -65,32 +61,17 @@
     min-height:432px;
 }
 
-/* TODO: seriously? */
-body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.428571429;
-}
-
-/*.lf * {
-    box-sizing: border-box;
-}*/
-
 .hub-modal-input-wrapper {
-    position: relative;
-    color: #2f3440;
-    background-color: #ffffff;
-    border: 0;
-    border-radius: 3px;
+    .box-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
     background-clip: padding-box;
-    outline: none;
-    text-align: center;
-    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    -moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    -ms-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    -o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    background-color: #ffffff;
+    border-radius: 3px;
+    border: 0;
+    color: #2f3440;
     display: block;
+    outline: none;
+    position: relative;
+    text-align: center;
 }
 
 .hub-modal-input-header {
@@ -102,33 +83,29 @@ body {
     border-top-left-radius: 3px;
 }
 
-.hub-comment{
+.lf-content-editor {
     position: relative;
     border: 1px solid #ececea;
     text-align: left;
     border-radius: 3px;
     background-color: #ffffff;
-    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
-    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
-    -ms-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
-    -o-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    .box-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
 }
 
-.hub-comment .btn-wrapper {
+.lf-content-editor .lf-btn-wrapper {
     background-color: #f8f8f8;
     text-align: right;
     border-top: 1px solid #ececea;
     padding: 6px;
 }
 
-.hub-comment .user-info {
+.lf-content-editor .lf-user-info {
     margin: 26px 30px 20px;
     font-weight: bold;
     color: #474C52;
 }
 
-.hub-comment .editor-container {
+.lf-editor-container {
 /* !lf-bootstrap */
     margin-bottom: 20px;
 }
@@ -164,7 +141,7 @@ body {
     width: 100%;
 }
 
-.content-attachment-discard {
+.lf-attachment-discard {
     cursor: pointer;
     float: right;
     font-size: 30px;
@@ -182,13 +159,13 @@ body {
     }
 }
 
-.content-attachment {
+.lf-attachment {
     background-color: #fff;
     display: inline-block;
     margin: 20px;
 }
 
-.content-attachment-thumbnail {
+.lf-attachment-thumbnail {
     background-size: contain;
     background-position: center center;
     background-repeat: no-repeat;

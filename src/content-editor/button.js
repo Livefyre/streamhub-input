@@ -3,13 +3,13 @@ var inherits = require('inherits');
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var InputButton = require('streamhub-input/button');
 var Command = require('streamhub-sdk/ui/command');
-var Comment = require('streamhub-input/comment');
+var Comment = require('streamhub-input/content-editor');
 var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
 
 'use strict';
 
 /**
- * 
+ *
  * @param [opts] {Object}
  * @param [opts.command] {Command} A Command to replace the default,
  *          incase it isn't good enough for you.
@@ -21,7 +21,7 @@ var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
  * @constructor
  * @extends {InputButton}
  */
-var CommentButton = function(opts) {
+var EditorLaunchButton = function(opts) {
     opts = opts || {};
     this._input = new Comment(opts);
     command = opts.command || new ModalInputCommand(this._input, opts);
@@ -32,12 +32,12 @@ var CommentButton = function(opts) {
     InputButton.call(this, command, opts);
     this._input.pipe(this);
 };
-inherits(CommentButton, InputButton);
+inherits(EditorLaunchButton, InputButton);
 
 /**
  * @override
  * @type {string}
  */
-CommentButton.prototype.elClass += ' hub-comment-btn';
+EditorLaunchButton.prototype.elClass += ' comment-btn';
 
-module.exports = CommentButton;
+module.exports = EditorLaunchButton;

@@ -38,7 +38,7 @@
 
     </style>
     <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
-    
+
     <!--script src="//livefyre-cdn.s3.amazonaws.com/libs/sdk/v2.5.1/rc/builds/11/streamhub-sdk.min.js"></script>
     <script type="text/javascript" src="http://cdn.livefyre.com/libs/apps/Livefyre/streamhub-wall/v2.2.4-build.159/streamhub-wall.min.js"></script-->
     <script src="../dist/streamhub-input.min.js"></script>
@@ -85,8 +85,8 @@
             'streamhub-sdk/auth',
             'streamhub-input/upload',
             'streamhub-input/upload/button',
-            'streamhub-input/comment',
-            'streamhub-input/comment/button'
+            'streamhub-input/content-editor',
+            'streamhub-input/content-editor/button'
         ],function ($, View, Collection, Auth, Upload, UploadButton, CommentView, CommentButton) {
             /* var opts = {
                 "network": "labs-t402.fyre.co",
@@ -128,8 +128,8 @@
             //         }
             //         //User needs to authenticate
             //         //TODO (joao) authenticate user
-                    
-                    
+
+
             //         //TODO (joao) retry the upload?
             //     }
             // }
@@ -138,11 +138,11 @@
                 el: document.getElementById("comment-editor")
             });
             embCom.render();
-            
+
             topUp = new UploadButton({
                 el: document.getElementById("top-upload")
             });
-            
+
             topCom = new CommentButton({
                 el: document.getElementById("top-comment")
             });
@@ -237,7 +237,7 @@
                 //TODO (joao) Destroy collection?
                 archive = collection = null;
             }
-            
+
         });
         </script>
     </body>

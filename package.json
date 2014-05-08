@@ -18,7 +18,7 @@
   },
   "scripts": {
     "postinstall": "./node_modules/bower/bin/bower install",
-    "start": "./node_modules/http-server/bin/http-server .",
+    "start": "node ./dev/server.js",
     "build": "npm run-script clean-build && ./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js && npm run-script build-css",
     "build-css": "mkdir -p dist && cat src/css/*.css >> dist/streamhub-input.min.css && cp -r src/css/fonts dist/fonts",
     "clean-build": "rm -rf dist",
@@ -34,6 +34,7 @@
     "send-to-coveralls": "find coverage -name 'lcov.info' -print0 | xargs -0 cat | ./node_modules/coveralls/bin/coveralls.js"
   },
   "devDependencies": {
+    "express": "4.0.0",
     "jshint": "~2.1.0",
     "jsdoc": "git://github.com/jsdoc3/jsdoc.git",
     "ink-docstrap": "git://github.com/michaelward82/docstrap.git#line-number-alignment",

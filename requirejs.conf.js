@@ -1,4 +1,5 @@
 require.config({
+  baseUrl: '/',
   paths: {
     jquery: 'lib/jquery/jquery',
     text: 'lib/requirejs-text/text',
@@ -23,6 +24,13 @@ require.config({
   },{
     name: 'auth-delegates',
     location: 'lib/auth-delegates/src'
+  },{
+    name: 'debug',
+    location: 'lib/debug',
+    main: 'debug'
+  },{
+    name: 'livefyre-auth',
+    location: 'lib/livefyre-auth/src'
   },{
     name: 'streamhub-editor',
     location: 'lib/streamhub-editor/src/javascript'
@@ -55,14 +63,17 @@ require.config({
     name: 'streamhub-input',
     location: 'src'
   },{
-    name: 'streamhub-input/comment',
-    location: 'src/comment'
+    name: 'streamhub-input/content-editor',
+    location: 'src/content-editor'
   },{
     name: 'streamhub-input/modal',
     location: 'src/modal'
   },{
     name: 'streamhub-input/upload',
     location: 'src/upload'
+  },{
+    name: 'streamhub-input/templates',
+    location: 'src/templates'
   },{
     name: 'streamhub-wall',
     location: 'lib/streamhub-wall/src'

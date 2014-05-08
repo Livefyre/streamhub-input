@@ -8,7 +8,7 @@
   name: "streamhub-input",
   include: [
     'almond',
-    'streamhub-input/comment/button',
+    'streamhub-input/content-editor/button',
     'streamhub-input/upload/button',
     'streamhub-sdk',
     'streamhub-sdk/jquery',

@@ -1,6 +1,6 @@
 var inherits = require('inherits');
 var ListView = require('streamhub-sdk/views/list-view');
-var OembedView = require('streamhub-input/comment/attachment-view');
+var AttachmentView = require('streamhub-input/content-editor/attachment-view');
 
 'use strict';
 
@@ -16,6 +16,21 @@ function AttachmentListView() {
 }
 inherits(AttachmentListView, ListView);
 
+/** @enum {string} */
+AttachmentListView.prototype.classes = {
+    DISCARD_X: 'lf-attachment-discard'
+};
+
+/** @override */
+AttachmentListView.prototype.elClass = 'lf-attachment-list-view';
+
+/** @override */
+AttachmentListView.prototype.events = (function () {
+    var events = {};
+    events['click .' + AttachmentListView.prototype.classes.DISCARD_X] = '_handleRemove';
+    return events;
+})();
+
 AttachmentListView.prototype._handleRemove = function (ev) {
     var id = ev.target.parentNode.getAttribute('data-lf-id');
     this.remove(this._viewMap[id]);
@@ -24,7 +39,7 @@ AttachmentListView.prototype._handleRemove = function (ev) {
 
 /** @override */
 AttachmentListView.prototype.add = function (oembed, attachment) {
-    var newView = new OembedView({
+    var newView = new AttachmentView({
         oembed: oembed
     });
     newView.render();
@@ -37,15 +52,20 @@ AttachmentListView.prototype.add = function (oembed, attachment) {
     return newView;
 };
 
-/** @override */
-AttachmentListView.prototype.elClass = 'lf-attachment-list-view';
-
-/** @override */
-AttachmentListView.prototype.events = {
-    'click .content-attachment-discard': '_handleRemove'
+/**
+ * Clear all currently displayed attachments
+ */
+AttachmentListView.prototype.clearAttachments = function () {
+    for (var i = 0; i < this.views.length; i++) {
+        this.remove(this.views[i]);
+    }
+    this._viewMap = {};
 };
 
-// docs
+/**
+ * Get all the attachments in view
+ * @return {Array.<Oembed>}
+ */
 AttachmentListView.prototype.getAttachments = function () {
     var attachments = [];
     for (var i = 0; i < this.views.length; i++) {

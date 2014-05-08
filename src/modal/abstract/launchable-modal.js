@@ -27,21 +27,19 @@ var LaunchableModal = function() {
  */
 LaunchableModal.prototype.launchModal = function(callback) {
     this.template = this.modalTemplate;
-    
+
     /**
      * Function to call after a successful interaction.
      * @type {!function(err: Object, data: Object)}
      */
     this._callback = callback || util.nullFunction;
-    
+
     /**
      * Modal representation of this view.
      * @type {!ModalView}
      */
-    this._modal = new ModalView({
-        modalSubView: this
-    });
-    this._modal.show();//Will .render()
+    this._modal = new ModalView();
+    this._modal.show(this); //Will .render()
 };
 
 /**
@@ -63,7 +61,7 @@ LaunchableModal.prototype._returnModal = function (err, data) {
     if (!this._modal || !this._callback) {
         return;
     }
-    
+
     this._callback(err, data);
     this._callback = null;
     this._modal.$el.trigger('hideModal.hub');//Will _modal.hide()

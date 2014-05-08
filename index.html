@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="dist/streamhub-input.min.css">
+    <link rel="stylesheet" type="text/css" href="dev/css/hub-input.css">
     <style>
-    #view {
+    #wall {
         /*width:500px;*/
     }
 
@@ -36,75 +36,51 @@
     </style>
     <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
 
-    <!--script src="//livefyre-cdn.s3.amazonaws.com/libs/sdk/v2.5.1/rc/builds/11/streamhub-sdk.min.js"></script>
-    <script type="text/javascript" src="http://cdn.livefyre.com/libs/apps/Livefyre/streamhub-wall/v2.2.4-build.159/streamhub-wall.min.js"></script-->
 </head>
     <body class="lf">
-        <form>
-            <legend>authentication</legend>
-                <label>token</label>
-                <button class="auth-login">Log in</button>
-                <input type="text" id="lftoken" value="" />
-            <br><br>
-            <legend>collection</legend>
-                <label>network</label>
-                <input type="text" id="network" value="livefyre.com" />
-                <br>
-                <label>environment</label>
-                <input type="text" id="environment" value="qa-ext.livefyre.com" />
-                <br>
+        <legend>authentication</legend>
+        <button id="auth-button" class="auth-button">Log in</button>
+        <legend>collection</legend>
+        <label>network</label>
+        <input type="text" id="network" value="livefyre.com" />
+        <br>
+        <label>environment</label>
+        <input type="text" id="environment" value="qa-ext.livefyre.com" />
+        <br>
+        <label>site ID</label>
+        <input type="text" id="siteId" value="290596" />
+        <br>
+        <label>article ID</label>
+        <input type="text" id="articleId" value="136" />
 
-                <label>site ID</label>
-                <input type="text" id="siteId" value="290596" />
-                <br>
-
-                <label>article ID</label>
-                <input type="text" id="articleId" value="136" />
-                <br>
-            <input type="submit" /><button id="refresh">refresh</button>
-        </form>
         <section id="upper-controls">
             <button id="top-upload">Post Your Photo <i class="fycon-composer-photo"></i></button>
             <button id="top-comment">Post Your Comment</button>
         </section>
-        <div id="view"></div>
+
+        <div id="wall"></div>
+
         <section id="lower-controls">
             <button id="btm-upload">Post Your Photo <i class="fycon-composer-photo"></i></button>
             <button id="btm-comment">Post Your Comment</button>
         </section>
+
         <div id="comment-editor"></div>
 
         <script src="lib/cajon/cajon.js" type="text/javascript"></script>
         <script src="requirejs.conf.js" type="text/javascript"></script>
         <script>
-            requirejs({
-                baseUrl: ""
-            });
-        </script>
-        <script>
         require([
-            // 'streamhub-sdk/content/views/content-list-view',
             'streamhub-wall',
             'streamhub-sdk/collection',
-            'streamhub-sdk/auth',
+            'auth',
+            'livefyre-auth',
             'streamhub-input/upload',
             'streamhub-input/upload/button',
-            'streamhub-input/comment',
-            'streamhub-input/comment/button',
-            'auth-delegates/delegates/livefyre'
-        ],function (View, Collection, Auth, Upload, UploadButton, CommentView, CommentButton, LivefyreAuthDelegate) {
-            /* var opts = {
-                "network": "labs-t402.fyre.co",
-                "siteId": "303827",
-                "articleId": "xbox-0",
-                "environment": "t402.livefyre.com"
-            }; */
-            // var opts = {/* TESTING OPTS */
-            //         "network": "livefyre.com",
-            //         "siteId": "290596",
-            //         "articleId": "177",
-            //         "environment": "qa-ext.livefyre.com"
-            //     };
+            'streamhub-input/content-editor',
+            'streamhub-input/content-editor/button',
+            'auth/contrib/auth-button'
+        ],function (Wall, Collection, auth, livefyreAuth, Upload, UploadButton, ContentEditor, CommentButton, createAuthButton) {
             var opts,
                 view,
                 collection,
@@ -118,38 +94,16 @@
                 btmCom,
                 $form;
 
-            var authDelegate = window.AD = new LivefyreAuthDelegate('136', '290596', 'https://qa-ext.livefyre.com');
-            var authUser = authDelegate.getUser();
-            authUser.on('login', function () {
-                var $tokenInput = $('#lftoken');
-                var token = authUser.get('token');
-                $tokenInput.val(token);
-            });
+            livefyreAuth.plugin(auth);
+            auth.delegate(livefyreAuth.createDelegate('http://qa-ext.livefyre.com'));
 
-            Auth.setDelegate(authDelegate);
-
-            view = new View({
+            wall = new Wall({
                 initial: 5,
                 showMore: 4,
-                el: document.getElementById("view")
+                el: document.getElementById("wall")
             });
 
-            // var onwriteFn = collection._writableState.onwrite;
-            // collection._writableState.onwrite = function(err) {
-            //     onwriteFn(err);
-            //     if (err === 'FORBIDDEN') {
-            //         if (Auth.getToken()) {
-            //             throw 'User is not permitted to write content to this collection';
-            //         }
-            //         //User needs to authenticate
-            //         //TODO (joao) authenticate user
-
-
-            //         //TODO (joao) retry the upload?
-            //     }
-            // }
-
-            embCom = new CommentView({
+            embCom = new ContentEditor({
                 el: document.getElementById("comment-editor"),
                 mediaEnabled: true
             });
@@ -173,42 +127,30 @@
 
             inputs = [embCom, topUp, topCom, btmUp, btmCom];
 
+
             $(function () {
-                $('.auth-login').click(function () {
-                    authDelegate.login();
-                });
-                var url = window.location.href;
-                var query = url.split('?')[1];
-                if (!query) {
-                    return $;
-                }
+                createAuthButton(auth, document.getElementById('auth-button'));
+                // $('.auth-login').click(function () {
+                //     authDelegate.login();
+                // });
+                // var url = window.location.href;
+                // var query = url.split('?')[1];
+                // if (!query) {
+                //     return $;
+                // }
 
-                var pairs = query.split('&');
-                opts = {};
-                pairs.forEach(function(s) {
-                    var pair = s.split('=');
-                    opts[pair[0]] = pair[1];
-                    $('#' + pair[0]).val(pair[1]);
-                });
+                // var pairs = query.split('&');
+                // opts = {};
+                // pairs.forEach(function(s) {
+                //     var pair = s.split('=');
+                //     opts[pair[0]] = pair[1];
+                //     $('#' + pair[0]).val(pair[1]);
+                // });
 
-                submit();
+                onPageLoad();
             });
 
-            $('#refresh').click(function () {
-                submit();
-                !opts && (opts = {});
-                opts.lftoken = Auth.getToken();
-                var subStr = $.param(opts);
-                var loc = window.location.href.split('?')[0];
-                loc += '?' + subStr;
-                window.location.href = loc;
-            });
-
-            $form = $('form');
-            $form.submit(submit);
-
-            function submit(e) {
-                e && e.preventDefault();
+            function onPageLoad() {
                 var token = $('#lftoken').val(),
                     network = $('#network').val(),
                     environment = $('#environment').val(),
@@ -237,10 +179,11 @@
 
             function build(opts) {
                 collection = new Collection(opts);
-                collection.pipe(view);
+                collection.pipe(wall);
                 archive = collection.createArchive();
-                archive.pipe(view.more);
+                archive.pipe(wall.more);
 
+                // embCom.setDestination(collection);
                 inputs.forEach(function (o) {
                     o && o.pipe(collection);
                 });
@@ -251,8 +194,8 @@
                     o && o.unpipe(collection);
                 });
 
-                collection.unpipe(view);
-                archive.unpipe(view);
+                collection.unpipe(wall);
+                archive.unpipe(wall);
                 //TODO (joao) Destroy collection?
                 archive = collection = null;
             }

@@ -275,7 +275,7 @@ Upload.prototype._constructContent = function (input, attachment) {
 };
 
 Upload.prototype._constructAttachment = function (input, attachment) {
-    return attachment;
+    return attachment;  // TODO: structure
 };
 
 /**

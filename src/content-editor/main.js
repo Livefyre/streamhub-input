@@ -1,14 +1,15 @@
 var $ = require('jquery');
-var AttachmentListView = require('streamhub-input/comment/attachment-list-view');
-var Auth = require('auth');  // -> auth
+var AttachmentListView = require('streamhub-input/content-editor/attachment-list-view');
+var Auth = require('auth');
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Button = require('streamhub-sdk/ui/button');
+var Command = require('streamhub-sdk/ui/command');
 var Editor = require('streamhub-editor/editor');
 var inherits = require('inherits');
 var Input = require('streamhub-input');
 var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
 var Content = require('streamhub-sdk/content');
-var log = require('streamhub-sdk/debug')('streamhub-input/comment');
+var log = require('streamhub-sdk/debug')('streamhub-input/content-editor');
 var ModalView = require('streamhub-sdk/modal');
 var PostComment = require('streamhub-input/command');
 var UploadButtonIcon = require('streamhub-input/upload/button-icon');
@@ -27,29 +28,29 @@ var View = require('streamhub-sdk/view');
  * @constructor
  * @extends {Editor}
  */
-var ContentEditor = function(opts) {
+function ContentEditor(opts) {
     opts = opts || {};
+    opts.mediaEnabled = true;
     Editor.call(this, opts);
-    Input.call(this, opts);  // mrr
     LaunchableModal.call(this);
 
-    var livefyreUser = Auth.get('livefyre');
-    var self = this;
-    this._user = livefyreUser;
-
-    // TODO: destruction
-    Auth.on('login.livefyre', function (livefyreUser) {
-        self._user = livefyreUser;
-        this.render();
-    });
-    Auth.on('logout.livefyre', function (livefyreUser) {
-        self._user = null;
-        this.render();
-    });
+    this._user = Auth.get('livefyre');
+    Auth.on('login.livefyre', handleLogin.bind(this));
+    Auth.on('logout.livefyre', handleLogout.bind(this));
 };
 inherits(ContentEditor, Editor);
 inherits.parasitically(ContentEditor, Input);
 inherits.parasitically(ContentEditor, LaunchableModal);
+
+function handleLogin(self, livefyreUser) {
+    self._user = livefyreUser;
+    self.render();
+}
+
+function handleLogout(self) {
+    self._user = null;
+    self.render();
+}
 
 /**
  * Render the upload button (camera icon) that launches filepicker, and
@@ -71,27 +72,26 @@ ContentEditor.prototype._addUploadButton = function   () {
  * Post failure callback.
  */
 ContentEditor.prototype._handlePostFailure = function () {
-    log('Post Failure');
-
-    //TODO (joao) Get msg to display from data param.
-    //this.showError(msg);
-    this._authCmd.enable();
+    this.showError(this._i18n.ERRORS.GENERIC);
+    this._postCmd.enable();
 };
 
 /**
  * Post success callback.
  */
-ContentEditor.prototype._handlePostSuccess = function () {
-    log('Post Success');
-
+ContentEditor.prototype._handlePostSuccess = function (newContent) {
     this.reset();
-    this.returnModal(null, data);
-    this._authCmd.enable();
+    this.returnModal(null);
+    this._postCmd.enable();
 };
 
 /** @override */
 ContentEditor.prototype._validate = function(data) {
-    return data.body || data.attachments.length;
+    var valid = !!(data.body || data.attachments.length);
+    if (!valid) {
+        this.showError(this._i18n.ERRORS.BODY);
+    }
+    return valid;
 };
 
 /* @override */
@@ -106,9 +106,9 @@ ContentEditor.prototype.buildPostEventObj = function () {
 /** @enum {string} */
 ContentEditor.prototype.classes = (function () {
     var classes = $.extend({}, Editor.prototype.classes);
-    classes.BTN_WRAPPER = 'btn-wrapper';
+    classes.BTN_WRAPPER = 'lf-btn-wrapper';
     classes.POST_BTN = 'lf-editor-post-btn';
-    classes.UPLOAD_CONTAINER = 'upload-container';
+    classes.UPLOAD_CONTAINER = 'lf-upload-container';
     return classes;
 })();
 
@@ -126,8 +126,16 @@ ContentEditor.prototype.elClass += ' lf-edit';
 ContentEditor.prototype.elTag = 'article';
 
 /** @override */
+ContentEditor.prototype.destroy = function () {
+    View.prototype.destroy.call(this);
+    Auth.removeListener('login.livefyre', handleLogin.bind(this));
+    Auth.removeListener('logout.livefyre', handleLogout.bind(this));
+};
+
+/** @override */
 ContentEditor.prototype.getInput = function () {
     // Don't call us, we'll call you
+    debugger;
     return null;
 };
 
@@ -156,7 +164,7 @@ ContentEditor.prototype.modalTemplate = function (context) {
     return [
         '<article class="hub-modal-input-wrapper">',
         '<header class="hub-modal-input-header">',
-        'Post Your ContentEditor',
+        'Post Your Comment',
         '</header>',
         '<div class="lf-modal-body">',
         ContentEditor.prototype.template.apply(this, arguments),
@@ -167,6 +175,7 @@ ContentEditor.prototype.modalTemplate = function (context) {
 
 /** @sugar */
 ContentEditor.prototype.pipe = function (writable) {
+    Input.prototype.pipe.call(this, writable);
     this.setDestination(writable);
 };
 
@@ -177,7 +186,7 @@ ContentEditor.prototype.pipe = function (writable) {
  */
 ContentEditor.prototype.render = function () {
     this.$el.html(this.template(this.getTemplateContext(), {
-        editor: require('templates/editor').template,
+        editor: require('hgn!streamhub-input/templates/editor').template,
     }));
 
     // iz annoy
@@ -188,8 +197,9 @@ ContentEditor.prototype.render = function () {
     this.$textareaEl = this.$('.' + this.classes.FIELD);
     this.$postEl = this.$('.' + this.classes.POST_BTN);
 
-    this._authCmd = new AuthRequiredCommand();
-    this._postButton = new Button(this._authCmd, {el: this.$postEl});
+    this._postCmd = new Command(function () {});
+    var authCmd = new AuthRequiredCommand(this._postCmd);
+    this._postButton = new Button(this._postCmd, {el: this.$postEl});
 
     if (this.opts.mediaEnabled) {
         this._addUploadButton()
@@ -199,12 +209,7 @@ ContentEditor.prototype.render = function () {
 /** @override */
 ContentEditor.prototype.reset = function () {
     Editor.prototype.reset.call(this);
-    // TODO: impl in component
-    if (this._attachmentsList) {
-        for (var i = 0; i < this._attachmentsList.views.length; i++) {
-            this._attachmentsList.remove(this._attachmentsList.views[i]);
-        }
-    }
+    this._attachmentsList && this._attachmentsList.clearAttachments();
 };
 
 /** @override */
@@ -218,12 +223,12 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
     var newContent = new Content();
     newContent.body = ev.body;
     newContent.attachments = ev.attachments;
-    this._authCmd.disable();
-    this._destination.write(newContent, function (err) {
+    this._postCmd.disable();
+    this._destination && this._destination.write(newContent, function (err) {
         if (err) {
             ev.failure(err);
         }
-        ev.success();
+        ev.success(newContent);
     });
 };
 
