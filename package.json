@@ -13,7 +13,7 @@
     "http-server": "*",
     "less": "*",
     "less-middleware": "0.1.15",
-    "phantom": "*",
+    "phantomjs": "*",
     "requirejs": "2.1.9"
   },
   "scripts": {

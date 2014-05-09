@@ -26,7 +26,6 @@
     "livefyre-auth": "Livefyre/livefyre-auth"
   },
   "resolutions": {
-    "view": "~1.1",
-    "livefyre-bootstrap": "1.0.0"
+    "view": "~1.1"
   }
 }

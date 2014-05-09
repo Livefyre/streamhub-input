@@ -42,12 +42,8 @@ var Upload = function(opts) {
     this.name = opts.name || this.name;
     this.opts = opts;
 
-    if (!picker) {
-        this._initFilepicker();
-    }
-
     // hack
-    this.push(JSON.parse(localStorage.getItem("mockAttatchment")));
+    // this.push(JSON.parse(localStorage.getItem("mockAttatchment")));
 };
 inherits(Upload, View);
 inherits.parasitically(Upload, Input);
@@ -97,6 +93,7 @@ Upload.prototype.getTemplateContext = function () {
 
 /**
  * Loads the filepicker script if picker is undefined
+ * @param {function()} cb
  * @private
  */
 Upload.prototype._initFilepicker = function () {
@@ -112,10 +109,12 @@ Upload.prototype._initFilepicker = function () {
         if (status !== 'success') {
             picker = false;
             throw 'There was an error loading ' + src;
+            return;
         }
 
         picker = filepicker;
         picker.setKey(self._filepickerKey);
+        self.emit('pickerLoaded');
     }
 };
 
@@ -193,28 +192,22 @@ Upload.prototype._processResponse = function (err, inkBlob) {
 Upload.prototype.launchModal = function(callback) {
     var self = this;
     callback = callback || this.onStore;
-    if (picker === false) {
-        throw 'The FilePicker script failed to load correctly.';
+    if (!picker) {
+        this.once('pickerLoaded', this.launchModal.bind(this, callback));
+        return this._initFilepicker();
     }
 
-    if (picker === null) {
-    //Hasn't loaded yet
-        setTimeout(function() {
-            self.launchModal(callback);
-        }.bind(this), 150);
-        return;
-    }
-
+    // ok...
     this.opts.pick.container = this.name + this.uid;
     console.log(this.opts.pick.container)
 
     LaunchableModal.prototype.launchModal.apply(this, arguments);
     var successFn = function(inkBlob) {
-        self.returnModal(undefined, self._processResponse(undefined, inkBlob));
+        self.returnModal(null, self._processResponse(undefined, inkBlob));
     };
     var errorFn = function(err) {
         self._processResponse(err);
-        self.returnModal(err);//TODO (joao) Maybe don't do this. Need error flow.
+        self.returnModal(err);  // TODO: (joao) Maybe don't do this. Need error flow.
     };
 
     picker.pickAndStore(this.opts.pick, this.opts.store, successFn, errorFn);

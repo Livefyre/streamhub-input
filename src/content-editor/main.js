@@ -135,7 +135,6 @@ ContentEditor.prototype.destroy = function () {
 /** @override */
 ContentEditor.prototype.getInput = function () {
     // Don't call us, we'll call you
-    debugger;
     return null;
 };
 
@@ -175,7 +174,7 @@ ContentEditor.prototype.modalTemplate = function (context) {
 
 /** @sugar */
 ContentEditor.prototype.pipe = function (writable) {
-    Input.prototype.pipe.call(this, writable);
+    // Input.prototype.pipe.call(this, writable);
     this.setDestination(writable);
 };
 

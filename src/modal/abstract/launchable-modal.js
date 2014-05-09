@@ -6,6 +6,8 @@ var util = require('streamhub-sdk/util');
 
 'use strict';
 
+// TODO: this is not actually abstract
+
 /**
  * A view that can be displayed and interacted with in an otherwise generic modal.
  * @constructor

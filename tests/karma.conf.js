@@ -4,7 +4,7 @@ module.exports = function(config) {
     frameworks: ['jasmine', 'cajon'],
     files: [
       'requirejs.conf.js',
-      'lib/streamhub-sdk/tests/lib/function.bind.js', // Polyfill for Phantom that must be loaded
+      // 'lib/streamhub-sdk/tests/lib/function.bind.js', // Polyfill for Phantom that must be loaded
       {pattern: 'lib/**/*.js', included: false},
       {pattern: 'src/**/*.js', included: false},
       {pattern: 'lib/**/*.mustache', included: false},
@@ -13,13 +13,8 @@ module.exports = function(config) {
       'tests/tests-main.js'
     ],
     browsers: ['PhantomJS'],
+    colors: true,
     singleRun: true,
-    coverageReporter: {
-      type : 'lcov',
-      dir : 'coverage/'
-    },
-    reporters: ['progress', 'coverage'],
-    preprocessors: { '*.js': ['coverage'] }
+    reporters: ['dots', 'progress', 'coverage'],
   });
 };
-
