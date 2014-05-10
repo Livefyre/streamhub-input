@@ -4,14 +4,13 @@ var Auth = require('auth');
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Button = require('streamhub-sdk/ui/button');
 var Command = require('streamhub-sdk/ui/command');
+var Content = require('streamhub-sdk/content');
 var Editor = require('streamhub-editor/editor');
 var inherits = require('inherits');
-var Input = require('streamhub-input');
-var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
-var Content = require('streamhub-sdk/content');
+var LaunchableModal = require('streamhub-input/modal/launchable-modal');
 var log = require('streamhub-sdk/debug')('streamhub-input/content-editor');
 var ModalView = require('streamhub-sdk/modal');
-var PostComment = require('streamhub-input/command');
+var Readable = require('stream/readable');
 var UploadButtonIcon = require('streamhub-input/upload/button-icon');
 var Util = require('streamhub-sdk/util');
 var View = require('streamhub-sdk/view');
@@ -33,14 +32,20 @@ function ContentEditor(opts) {
     opts.mediaEnabled = true;
     Editor.call(this, opts);
     LaunchableModal.call(this);
+    Readable.call(this);
+
+    opts.destination && this.pipe(opts.destination);
+
+    this._postCmd = new Command(function () {});
+    this._authCmd = new AuthRequiredCommand(this._postCmd);
 
     this._user = Auth.get('livefyre');
     Auth.on('login.livefyre', handleLogin.bind(this));
     Auth.on('logout.livefyre', handleLogout.bind(this));
 };
 inherits(ContentEditor, Editor);
-inherits.parasitically(ContentEditor, Input);
 inherits.parasitically(ContentEditor, LaunchableModal);
+inherits.parasitically(ContentEditor, Readable);
 
 function handleLogin(self, livefyreUser) {
     self._user = livefyreUser;
@@ -55,6 +60,7 @@ function handleLogout(self) {
 /**
  * Render the upload button (camera icon) that launches filepicker, and
  * render the contianer where photo upload thumbnails will live.
+ * @private
  */
 ContentEditor.prototype._addUploadButton = function   () {
     this._uploadButton = new UploadButtonIcon();
@@ -70,6 +76,7 @@ ContentEditor.prototype._addUploadButton = function   () {
 
 /**
  * Post failure callback.
+ * @private
  */
 ContentEditor.prototype._handlePostFailure = function () {
     this.showError(this._i18n.ERRORS.GENERIC);
@@ -78,6 +85,7 @@ ContentEditor.prototype._handlePostFailure = function () {
 
 /**
  * Post success callback.
+ * @private
  */
 ContentEditor.prototype._handlePostSuccess = function (newContent) {
     this.reset();
@@ -86,8 +94,13 @@ ContentEditor.prototype._handlePostSuccess = function (newContent) {
 };
 
 /** @override */
+ContentEditor.prototype._read = function () {
+    return null;
+};
+
+/** @override */
 ContentEditor.prototype._validate = function(data) {
-    var valid = !!(data.body || data.attachments.length);
+    var valid = !!(data.body || (data.attachments && data.attachments.length));
     if (!valid) {
         this.showError(this._i18n.ERRORS.BODY);
     }
@@ -132,12 +145,6 @@ ContentEditor.prototype.destroy = function () {
     Auth.removeListener('logout.livefyre', handleLogout.bind(this));
 };
 
-/** @override */
-ContentEditor.prototype.getInput = function () {
-    // Don't call us, we'll call you
-    return null;
-};
-
 /**
  * Get contextual data for a template.
  * @type {function()}
@@ -172,12 +179,6 @@ ContentEditor.prototype.modalTemplate = function (context) {
     ].join('');
 };
 
-/** @sugar */
-ContentEditor.prototype.pipe = function (writable) {
-    // Input.prototype.pipe.call(this, writable);
-    this.setDestination(writable);
-};
-
 /**
  * If a template is set, render it in this.el
  * Subclasses will want to setElement on child views after rendering,
@@ -188,7 +189,7 @@ ContentEditor.prototype.render = function () {
         editor: require('hgn!streamhub-input/templates/editor').template,
     }));
 
-    // iz annoy
+    // this is called in the base render, unfortunate duplication
     this.$resizeEl = this.$('.' + this.classes.RESIZE);
     this.$textareaEl = this.$('.' + this.classes.FIELD);
     this._processPlaceholders();
@@ -196,9 +197,7 @@ ContentEditor.prototype.render = function () {
     this.$textareaEl = this.$('.' + this.classes.FIELD);
     this.$postEl = this.$('.' + this.classes.POST_BTN);
 
-    this._postCmd = new Command(function () {});
-    var authCmd = new AuthRequiredCommand(this._postCmd);
-    this._postButton = new Button(this._postCmd, {el: this.$postEl});
+    this._postButton = new Button(this._authCmd, {el: this.$postEl});
 
     if (this.opts.mediaEnabled) {
         this._addUploadButton()
@@ -219,26 +218,45 @@ ContentEditor.prototype.returnModal = function (err, data) {
 /** @override */
 ContentEditor.prototype.sendPostEvent = function (ev) {
     // Calling you
+    var calledBack = false;
     var newContent = new Content();
     newContent.body = ev.body;
     newContent.attachments = ev.attachments;
     this._postCmd.disable();
-    this._destination && this._destination.write(newContent, function (err) {
-        if (err) {
-            ev.failure(err);
-        }
-        ev.success(newContent);
-    });
+    this.push(newContent);
+    ev.success();
+
+    // TODO: error handling
+    // for (var i = 0; i < this._destinations.length; i++) {
+    //     this._destinations[i].write(newContent, function (err) {
+    //         if (calledBack) {
+    //             return;
+    //         }
+    //         calledBack = true;
+
+    //         if (err) {
+    //             ev.failure(err);
+    //         }
+    //         ev.success(newContent);
+    //     });
+    // };
 };
 
-/**
- * Set the destination writable to handle content that is created here.
- * TODO: this looks like a feature of Input
- * @param {Writable} writable
- */
-ContentEditor.prototype.setDestination = function (writable) {
-    this._destination = writable;
-};
+// /**
+//  * Set the destination writable to handle content that is created here.
+//  * @param {Writable} writable
+//  */
+// ContentEditor.prototype.pipe = function (writable) {
+//     this._destinations.push(writable);
+// };
+
+// *
+//  * Set the destination writable to handle content that is created here.
+//  * @param {Writable} writable
+
+// ContentEditor.prototype.unpipe = function (writable) {
+//     this._destinations.splice(this._destinations.indexOf(writable), 0);
+// };
 
 /**@override */
 ContentEditor.prototype.template = require('hgn!streamhub-input/templates/content-editor');

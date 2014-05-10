@@ -5,9 +5,8 @@ var Command = require('streamhub-sdk/ui/command');
 var debug = require('streamhub-sdk/debug');
 var Edit = require('streamhub-input/content-editor');
 var inherits = require('inherits');
-var InputCommand = require('streamhub-input/command');
 var jasmineJquery = require('jasmine-jquery');//For sandbox()
-var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
+var LaunchableModal = require('streamhub-input/modal/launchable-modal');
 var ModalInputCommand= require('streamhub-input/modal/modal-input-command');
 var util = require('streamhub-sdk/util');
 var View = require('view');
@@ -49,13 +48,13 @@ describe('streamhub-input/content-editor', function () {
         });
 
         it('adds the class "lf-edit"', function () {
-            var classes = commentInput.class.split(' ');
+            var classes = commentInput.elClass.split(' ');
             expect(classes).toContain('lf-edit');
         });
 
         it('has default i18n', function () {
             expect(typeof(commentInput._i18n)).toBe('object');
-            expect(typeof(commentInput._i18n.emptyText)).toBe('string');
+            expect(typeof(commentInput._i18n.PLACEHOLDERTEXT)).toBe('string');
         });
 
         it('has a elTag of "article"', function () {
@@ -72,65 +71,14 @@ describe('streamhub-input/content-editor', function () {
             expect(typeof(commentInput.modalTemplate())).toBe('string');
         });
 
-        it('reset()s and returnModal()s when it handlePostSuccess()', function () {
+        it('reset()s and returnModal()s when it _handlePostSuccess()', function () {
             spyOn(commentInput, 'returnModal').andCallThrough();
             spyOn(commentInput, 'reset');
 
-            commentInput.handlePostSuccess({});
+            commentInput._handlePostSuccess({});
 
             expect(commentInput.returnModal).toHaveBeenCalled();
             expect(commentInput.reset).toHaveBeenCalled();
-        });
-
-        it('logs for showError()', function () {
-            if (debug.enabled('streamhub-input/content-editor')) {
-                spyOn(console, 'log').andCallThrough();
-
-                commentInput.showError('error');
-
-                waitsFor(function () {
-                    return console.log.wasCalled;
-                }, 'console.log to get called', 200);
-                runs(function () {
-                    expect(console.log).toHaveBeenCalled();
-                });
-            } else {
-                throw 'This test requires debugging enabled for comment';
-            }
-        });
-
-        it('logs for handlePostFailure()', function () {
-            if (debug.enabled('streamhub-input/content-editor')) {
-                spyOn(console, 'log').andCallThrough();
-
-                commentInput.handlePostFailure({});
-
-                waitsFor(function () {
-                    return console.log.wasCalled;
-                }, 'console.log to get called', 200);
-                runs(function () {
-                    expect(console.log).toHaveBeenCalled();
-                });
-            } else {
-                throw 'This test requires debugging enabled for comment';
-            }
-        });
-
-        it('logs for handlePostSuccess()', function () {
-            if (debug.enabled('streamhub-input/content-editor')) {
-                spyOn(console, 'log').andCallThrough();
-
-                commentInput.handlePostSuccess({});
-
-                waitsFor(function () {
-                    return console.log.wasCalled;
-                }, 'console.log to get called', 200);
-                runs(function () {
-                    expect(console.log).toHaveBeenCalled();
-                });
-            } else {
-                throw 'This test requires debugging enabled for comment';
-            }
         });
 
         describe('and rendered', function () {
@@ -139,19 +87,14 @@ describe('streamhub-input/content-editor', function () {
                 commentInput.render();
             });
 
-            it('can getInput() from its view', function () {
+            it('can buildPostEventObj() from its view', function () {
                 commentInput.$textareaEl.val(testString);
-                expect(commentInput.getInput().body).toBe(testString);
+                expect(commentInput.buildPostEventObj().body).toBe(testString);
             });
 
             it('can _validate(data) data', function () {
                 expect(commentInput._validate({})).toBe(false);
-                expect(commentInput._validate({body: testString})).toBe(true);
-            });
-
-            it('can transform data into Content with _inputToContent(data)', function () {
-                var content = commentInput._inputToContent({body: testString});
-                expect(content.body).toBe(testString);
+                expect(commentInput._validate({body: testString, attachments: []})).toBe(true);
             });
 
             it('can reset() its view and does so after submitting a comment', function () {
@@ -162,7 +105,7 @@ describe('streamhub-input/content-editor', function () {
                 expect(commentInput.$textareaEl.val()).toBe('');
             });
 
-            it('reset()s after successfully submitting a comment', function () {
+            xit('reset()s after successfully submitting a comment', function () {
                 throw 'TODO (joao) Implement this!';
             });
 
@@ -175,11 +118,11 @@ describe('streamhub-input/content-editor', function () {
                 expect(commentInput.$postEl).toBeTruthy();
             });
 
-            it('sets the user\'s display name on "login"', function () {
+            xit('sets the user\'s display name on "login"', function () {
                 throw 'TODO (joao) Implement this!';
             });
 
-            it('gets the user info when delegate is set', function () {
+            xit('gets the user info when delegate is set', function () {
                 throw 'TODO (joao) Implement this!';
             });
 
@@ -191,21 +134,6 @@ describe('streamhub-input/content-editor', function () {
                     });
 
                     commentInput.render();
-                });
-
-                it('decorates .$postEl with a Button and stores it as ._postButton containing an AuthRequiredCommand wrapping an InputCommand command', function () {
-                    var btn = commentInput._postButton;
-                    expect(btn).toBeTruthy();
-                    expect(btn._command instanceof AuthRequiredCommand).toBe(true);
-
-                    var authCmd = btn._command;
-                    expect(authCmd._command instanceof InputCommand).toBe(true);
-                });
-
-                it('sets an InputCommand with this as the source', function () {
-                    var authCmd = commentInput._postButton._command;
-                    var inputCmd = authCmd._command;
-                    expect(inputCmd._source).toBe(commentInput);
                 });
             });
         });
@@ -228,10 +156,6 @@ describe('streamhub-input/content-editor', function () {
 
             afterEach(function () {
                 commentInput.destroy();
-            })
-
-            it('assigns opts.destination to ._destination', function () {
-                expect(commentInput._destination).toBe(writable);
             });
 
             it('assigns opts.i18n to ._18n', function () {

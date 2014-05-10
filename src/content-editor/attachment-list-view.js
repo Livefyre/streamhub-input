@@ -18,6 +18,7 @@ inherits(AttachmentListView, ListView);
 
 /** @enum {string} */
 AttachmentListView.prototype.classes = {
+    DATA_ID: 'data-lf-id',
     DISCARD_X: 'lf-attachment-discard'
 };
 
@@ -32,24 +33,20 @@ AttachmentListView.prototype.events = (function () {
 })();
 
 AttachmentListView.prototype._handleRemove = function (ev) {
-    var id = ev.target.parentNode.getAttribute('data-lf-id');
+    var id = ev.target.parentNode.getAttribute(this.classes.DATA_ID);
     this.remove(this._viewMap[id]);
-    delete this._viewMap[id];
+    this._viewMap[id] = null;
 };
 
 /** @override */
-AttachmentListView.prototype.add = function (oembed, attachment) {
+AttachmentListView.prototype.add = function (content, attachment) {
     var newView = new AttachmentView({
-        oembed: oembed
+        oembed: content.attachments[0]
     });
-    newView.render();
-    newView.$el.attr('data-lf-id', newView.uid);
+    newView.$el.attr(this.classes.DATA_ID, newView.uid);
     this._viewMap[newView.uid] = newView;
-    // Add to DOM
-    this.views.splice(0, 0, newView);
-    this._insert(newView);
-    this.emit('added', newView);
-    return newView;
+
+    return ListView.prototype.add.call(this, newView);
 };
 
 /**

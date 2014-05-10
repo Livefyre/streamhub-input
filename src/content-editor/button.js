@@ -2,8 +2,7 @@
 var inherits = require('inherits');
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var InputButton = require('streamhub-input/button');
-var Command = require('streamhub-sdk/ui/command');
-var Comment = require('streamhub-input/content-editor');
+var ContentEditor = require('streamhub-input/content-editor');
 var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
 
 'use strict';
@@ -21,16 +20,17 @@ var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
  * @constructor
  * @extends {InputButton}
  */
-var EditorLaunchButton = function(opts) {
+function EditorLaunchButton(opts) {
     opts = opts || {};
-    this._input = new Comment(opts);
-    command = opts.command || new ModalInputCommand(this._input, opts);
+    this._editor = new ContentEditor(opts);
+    var command = new ModalInputCommand(this._editor, opts);
     if (opts.authRequired !== false) {
         command = new AuthRequiredCommand(command);
     }
 
     InputButton.call(this, command, opts);
-    this._input.pipe(this);
+    this._editor.pipe(this);
+    opts.destination && this.pipe(opts.destination);
 };
 inherits(EditorLaunchButton, InputButton);
 

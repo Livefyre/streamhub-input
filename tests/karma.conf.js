@@ -4,7 +4,7 @@ module.exports = function(config) {
     frameworks: ['jasmine', 'cajon'],
     files: [
       'requirejs.conf.js',
-      // 'lib/streamhub-sdk/tests/lib/function.bind.js', // Polyfill for Phantom that must be loaded
+      'lib/streamhub-sdk/tests/lib/function.bind.js', // Polyfill for Phantom that must be loaded
       {pattern: 'lib/**/*.js', included: false},
       {pattern: 'src/**/*.js', included: false},
       {pattern: 'lib/**/*.mustache', included: false},
@@ -15,6 +15,6 @@ module.exports = function(config) {
     browsers: ['PhantomJS'],
     colors: true,
     singleRun: true,
-    reporters: ['dots', 'progress', 'coverage'],
+    reporters: ['dots', 'progress'],
   });
 };

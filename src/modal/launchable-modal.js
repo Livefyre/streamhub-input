@@ -1,12 +1,10 @@
 var inherits = require('inherits');
 var log = require('streamhub-sdk/debug')
-        ('streamhub-input/modal/abstract/launchable-modal');
+        ('streamhub-input/modal/launchable-modal');
 var ModalView = require('streamhub-sdk/modal');
-var util = require('streamhub-sdk/util');
+var util = require('streamhub-input/util');
 
 'use strict';
-
-// TODO: this is not actually abstract
 
 /**
  * A view that can be displayed and interacted with in an otherwise generic modal.
@@ -19,7 +17,7 @@ var LaunchableModal = function() {
      * @param [context] {Object}
      * @returns {!string}
      */
-    this.modalTemplate = this.modalTemplate || this.template || util.abstractFunction;
+    this.modalTemplate = this.modalTemplate || this.template;
 };
 
 /**

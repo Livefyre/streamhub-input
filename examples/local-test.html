@@ -3,6 +3,10 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/dev/css/hub-input.css">
     <style>
+    #wall {
+        /*width:500px;*/
+    }
+
     #comment-editor {
         width:500px;
         position: absolute;
@@ -31,21 +35,32 @@
 
     </style>
     <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+
 </head>
     <body class="lf">
-        <form>
-            <legend>authentication</legend>
-            <label>token</label>
-            <button class="auth-login">Log in</button>
-            <input type="text" id="lftoken" value="" />
-        </form>
+        <legend>authentication</legend>
+        <button id="auth-button" class="auth-button">Log in</button>
+        <legend>collection</legend>
+        <label>network</label>
+        <input type="text" id="network" value="fyre" />
+        <br>
+        <label>site ID</label>
+        <input type="text" id="siteId" value="286470" />
+        <br>
+        <label>article ID</label>
+        <input type="text" id="articleId" value="input-1" />
 
         <section id="upper-controls">
             <button id="top-upload">Post Your Photo <i class="fycon-composer-photo"></i></button>
             <button id="top-comment">Post Your Comment</button>
         </section>
 
-        <div id="view"></div>
+        <div id="wall"></div>
+
+        <section id="lower-controls">
+            <button id="btm-upload">Post Your Photo <i class="fycon-composer-photo"></i></button>
+            <button id="btm-comment">Post Your Comment</button>
+        </section>
 
         <div id="comment-editor"></div>
 
@@ -53,16 +68,16 @@
         <script src="/requirejs.conf.js" type="text/javascript"></script>
         <script>
         require([
-            // 'streamhub-sdk/content/views/content-list-view',
             'streamhub-wall',
             'streamhub-sdk/collection',
             'auth',
+            'livefyre-auth',
             'streamhub-input/upload',
             'streamhub-input/upload/button',
             'streamhub-input/content-editor',
             'streamhub-input/content-editor/button',
-            'auth-delegates/delegates/livefyre'
-        ],function (View, Collection, Auth, Upload, UploadButton, CommentView, CommentButton, LivefyreAuthDelegate) {
+            'auth/contrib/auth-button'
+        ],function (Wall, Collection, auth, livefyreAuth, Upload, UploadButton, ContentEditor, CommentButton, createAuthButton) {
             var opts,
                 view,
                 collection,
@@ -76,20 +91,31 @@
                 btmCom,
                 $form;
 
-            view = new View({
+            livefyreAuth.plugin(auth);
+            auth.delegate(livefyreAuth.createDelegate('http://www.fyre'));
+
+            wall = new Wall({
                 initial: 5,
                 showMore: 4,
-                el: document.getElementById("view")
+                el: document.getElementById("wall")
             });
 
-            embCom = new CommentView({
+            embCom = new ContentEditor({
                 el: document.getElementById("comment-editor"),
                 mediaEnabled: true
             });
             embCom.render();
 
+            topUp = new UploadButton({
+                el: document.getElementById("top-upload")
+            });
+
             topCom = new CommentButton({
                 el: document.getElementById("top-comment")
+            });
+
+            btmUp = new UploadButton({
+                el: document.getElementById("btm-upload")
             });
 
             btmCom = new CommentButton({
@@ -98,79 +124,65 @@
 
             inputs = [embCom, topUp, topCom, btmUp, btmCom];
 
+
             $(function () {
-                $('.auth-login').click(function () {
-                    authDelegate.login();
-                });
-                var url = window.location.href;
-                var query = url.split('?')[1];
-                if (!query) {
-                    return $;
+                createAuthButton(auth, document.getElementById('auth-button'));
+                onPageLoad();
+            });
+
+            function onPageLoad() {
+                var token = $('#lftoken').val(),
+                    network = $('#network').val(),
+                    site = $('#siteId').val(),
+                    article = $('#articleId').val();
+
+                token && Auth.setToken(token);
+
+                if (!network || !site || !article) {
+                    return;
                 }
 
-                var pairs = query.split('&');
-                opts = {};
-                pairs.forEach(function(s) {
-                    var pair = s.split('=');
-                    opts[pair[0]] = pair[1];
-                    $('#' + pair[0]).val(pair[1]);
-                });
+                opts = {
+                    network: network,
+                    siteId: site,
+                    articleId: article,
+                    autoCreate: true
+                }
 
-            });
+                opts.collectionMeta = {
+                    articleId: opts.articleId,
+                    title: 'New input demo collection for article #' + opts.articleId + ' site#' + opts.siteId,
+                    url: 'http://fyre.' + opts.articleId,
+                    checksum: String(Math.random())
+                }
 
-            $('#refresh').click(function () {
-                submit();
-                !opts && (opts = {});
-                opts.lftoken = Auth.getToken();
-                var subStr = $.param(opts);
-                var loc = window.location.href.split('?')[0];
-                loc += '?' + subStr;
-                window.location.href = loc;
-            });
+                if (collection) {
+                    destroy();
+                }
 
-            $form = $('form');
-
-
-            var ARTICLE_RE = /[?&]articleId=([^&#]*)/;
-            var SITE_RE = /[?&]siteId=([^&#]*)/;
-
-            try {
-                var LF_articleId = document.location.href.match(ARTICLE_RE)[1];
-            } catch (e) {
-                document.write('<h1>USE ?articleId=XXX QUERY PARAM!</h1>');
+                build(opts);
             }
 
-            collection = new Collection({
-                network: 'fyre',
-                articleId: 'input-' + LF_articleId,
-                siteId: '286470'
-            });
-            collection.pipe(view);
-            archive = collection.createArchive();
-            archive.pipe(view.more);
+            function build(opts) {
+                collection = new Collection(opts);
+                collection.pipe(wall);
+                archive = collection.createArchive();
+                archive.pipe(wall.more);
 
-
-            var authDelegate = new LivefyreAuthDelegate(collection.articleId, collection.siteId, 'http://www.fyre');
-            var authUser = authDelegate.getUser();
-            authUser.on('login', function () {
-                debugger;
-                var $tokenInput = $('#lftoken');
-                var token = authUser.get('token');
-                $tokenInput.val(token);
-                collection.setToken(token);  // Where should this happen?
-            });
-
-            inputs.forEach(function (o) {
-                o && o.pipe(collection);
-            });
+                // embCom.setDestination(collection);
+                inputs.forEach(function (o) {
+                    o && o.pipe(collection);
+                });
+            }
 
             function destroy() {
                 inputs.forEach(function (o) {
                     o && o.unpipe(collection);
                 });
 
-                collection.unpipe(view);
-                archive.unpipe(view);
+                collection.unpipe(wall);
+                archive.unpipe(wall);
+                //TODO (joao) Destroy collection?
                 archive = collection = null;
             }
 

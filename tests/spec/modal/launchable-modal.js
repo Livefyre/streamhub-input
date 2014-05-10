@@ -1,15 +1,11 @@
 'use strict';
 
 var inherits = require('inherits');
-var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
+var LaunchableModal = require('streamhub-input/modal/launchable-modal');
 var util = require('streamhub-sdk/util');
 var View = require('view');
 
-describe('streamhub-input/modal/abstract/launchable-modal', function () {
-    it('is an abstract', function () {
-        expect(typeof(LaunchableModal)).toBe('function');
-    });
-    
+describe('streamhub-input/modal/launchable-modal', function () {
     describe('inherits.parasitically() by a View and', function () {
         var clbk;
         var data;
@@ -43,8 +39,7 @@ describe('streamhub-input/modal/abstract/launchable-modal', function () {
 
         it('adds modalTemplate() for modal rendering, which defaults to util.abstractFunction when template() is not defined', function () {
             view = new SubView({noTemplate: true});
-            expect(typeof(view.modalTemplate)).toBe('function');
-            expect(view.modalTemplate).toBe(util.abstractFunction);
+            expect(view.modalTemplate).toBe(null);
         });
 
         it('adds modalTemplate() for modal rendering, which defaults to template() when defined', function () {

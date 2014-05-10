@@ -5,9 +5,8 @@ var Command = require('streamhub-sdk/ui/command');
 var Content = require('streamhub-sdk/content');
 var debug = require('streamhub-sdk/debug');
 var inherits = require('inherits');
-var InputCommand = require('streamhub-input/command');
 var jasmineJquery = require('jasmine-jquery');//For sandbox()
-var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
+var LaunchableModal = require('streamhub-input/modal/launchable-modal');
 var ModalInputCommand= require('streamhub-input/modal/modal-input-command');
 var Upload = require('streamhub-input/upload');
 var util = require('streamhub-sdk/util');
@@ -19,7 +18,7 @@ describe('streamhub-input/upload', function () {
         expect(typeof(Upload)).toBe('function');
         //TODO (joao) Test for abstract implementations
     });
-    
+
     describe('when constructed', function () {
         var response;
         var uploadInput;
@@ -34,12 +33,13 @@ describe('streamhub-input/upload', function () {
                 key: 'randomfilename'
                 // container:
                 // isWriteable:
-                // path: 
+                // path:
             }];
             var opts = Upload.DEFAULT_OPTS;
             opts.el = $('#sandbox')[0];
             uploadInput = new Upload(opts);
             writable = new Writable();
+            writable._write = function () {};
         });
 
         afterEach(function () {
@@ -88,31 +88,12 @@ describe('streamhub-input/upload', function () {
             expect(typeof(uploadInput.modalTemplate(cxt))).toBe('string');
         });
 
-        it('reset()s and returns Array.<Content> when it _processResponse()s a successful response', function () {
-            spyOn(uploadInput, 'reset');
+        it('Returns Array.<Content> when it _processResponse()s a successful response', function () {
             var retVal = uploadInput._processResponse(undefined, response);
-            expect(uploadInput.reset).toHaveBeenCalled();
             expect(retVal).toBeTruthy();
             expect(typeof(retVal)).toBe('object');//Array, really
             expect(typeof(retVal.forEach)).toBe('function');
             expect(retVal.length).toBe(response.length);
-        });
-
-        it('logs for showError()', function () {
-            if (debug.enabled('streamhub-input/upload')) {
-                spyOn(console, 'log').andCallThrough();
-
-                uploadInput.showError('error');
-
-                waitsFor(function () {
-                    return console.log.wasCalled;
-                }, 'console.log to get called', 200);
-                runs(function () {
-                    expect(console.log).toHaveBeenCalled();
-                });
-            } else {
-                throw 'This test requires debugging enabled for comment';
-            }
         });
 
         describe('and rendered', function () {
@@ -121,12 +102,8 @@ describe('streamhub-input/upload', function () {
                 uploadInput.render();
             });
 
-            it('returns undefined for getInput()', function () {
-                expect(uploadInput.getInput()).toBeUndefined();
-            });
-
-            it('can transform data into Content with _inputToContent(data)', function () {
-                var retVal = uploadInput._inputToContent(response[0]);
+            it('can transform data into Content with _packageInput(data)', function () {
+                var retVal = uploadInput._packageInput(response[0]);
                 expect(retVal instanceof Content).toBe(true);
                 expect(retVal.attachments.length).toBeTruthy();
             });
@@ -162,10 +139,6 @@ describe('streamhub-input/upload', function () {
 
             afterEach(function () {
                 uploadInput.destroy();
-            })
-
-            it('assigns opts.destination to ._destination', function () {
-                expect(uploadInput._destination).toBe(writable);
             });
 
             it('assigns opts.name to .name', function () {

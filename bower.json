@@ -13,8 +13,8 @@
     "jquery": "~1.10.1",
     "requirejs-hogan-plugin": "*",
     "stream": "git://github.com/Livefyre/stream.git#~0.1",
-    "streamhub-editor": "git@github.com:Livefyre/streamhub-editor.git#j_enhance",
-    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#~2.8.0",
+    "streamhub-editor": "git@github.com:Livefyre/streamhub-editor.git#~1.1.0",
+    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#~2.9.0",
     "view": "git://github.com/Livefyre/view.git#~1.1"
   },
   "devDependencies": {
@@ -26,6 +26,7 @@
     "livefyre-auth": "Livefyre/livefyre-auth"
   },
   "resolutions": {
-    "view": "~1.1"
+    "view": "~1.1",
+    "livefyre-bootstrap": "1.0.0"
   }
 }

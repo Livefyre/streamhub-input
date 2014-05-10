@@ -4,7 +4,7 @@ Streamhub-Input
 
 -------------
 ##Input Views
-Current views include [Comment](https://github.com/Joao-S-Martins/streamhub-input/tree/master/src/comment "Comment source code") for simple text input and [Uploader](https://github.com/Joao-S-Martins/streamhub-input/tree/master/src/upload "Upload source code") for image contributions. All views implement the [Input abstract](https://github.com/Joao-S-Martins/streamhub-input/blob/master/src/main.js "Input abstract source code"), designed to provide a uniform set of APIs for grabbing a user's input and performing common tasks such as validation and error handling. As with any view, these Input views are designed to be passed an element and rendered on that element. Alternatively though, these views also implement the new [Launchable Modal abstract](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/modal/abstract/launchable-modal.js "Launchable Modal source code"). This defines a couple of methods that allow the view to render in a modal and close the modal when it has finished recieving input from a user.
+Current views include [Comment](https://github.com/Joao-S-Martins/streamhub-input/tree/master/src/comment "Comment source code") for simple text input and [Uploader](https://github.com/Joao-S-Martins/streamhub-input/tree/master/src/upload "Upload source code") for image contributions. All views implement the [Input abstract](https://github.com/Joao-S-Martins/streamhub-input/blob/master/src/main.js "Input abstract source code"), designed to provide a uniform set of APIs for grabbing a user's input and performing common tasks such as validation and error handling. As with any view, these Input views are designed to be passed an element and rendered on that element. Alternatively though, these views also implement the new [Launchable Modal abstract](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/modal/launchable-modal.js "Launchable Modal source code"). This defines a couple of methods that allow the view to render in a modal and close the modal when it has finished recieving input from a user.
 
 ###Comment Editor
 This Input view is commonly refered to in the code as [Comment](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/comment/main.js "Comment source code"). It's a simple view for recieving text input.
@@ -34,7 +34,7 @@ embCom.render();
 ```
 
 ####Public API
-The public API for Comment is simply what is required by the [Input](https://github.com/Joao-S-Martins/streamhub-input/blob/master/src/main.js "Input abstract source code") and [Launchable Modal](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/modal/abstract/launchable-modal.js "Launchable Modal source code") abstracts that it implements. Nothing further has been added.
+The public API for Comment is simply what is required by the [Input](https://github.com/Joao-S-Martins/streamhub-input/blob/master/src/main.js "Input abstract source code") and [Launchable Modal](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/modal/launchable-modal.js "Launchable Modal source code") abstracts that it implements. Nothing further has been added.
 
 ###Image Uploader
 This Input view is commonly refered to in the code a [Upload](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/upload/main.js "Upload source code"). It utilizes [Filepicker.io](//www.inkfilepicker.com/ "Filepicker.io, by Ink") to accept images from a user. Currently, only the modal version of this view is supported.
@@ -65,7 +65,7 @@ embUp.render();
 ```
 
 ####Public API
-The public API for Upload is simply what is required by the [Input](https://github.com/Joao-S-Martins/streamhub-input/blob/master/src/main.js "Input abstract source code") and [Launchable Modal](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/modal/abstract/launchable-modal.js "Launchable Modal source code") abstracts that it implements. Nothing further has been added.
+The public API for Upload is simply what is required by the [Input](https://github.com/Joao-S-Martins/streamhub-input/blob/master/src/main.js "Input abstract source code") and [Launchable Modal](//github.com/Joao-S-Martins/streamhub-input/blob/master/src/modal/launchable-modal.js "Launchable Modal source code") abstracts that it implements. Nothing further has been added.
 
 ---------------
 ##Input Buttons

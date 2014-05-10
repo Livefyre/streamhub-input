@@ -1,10 +1,9 @@
 var $ = require('jquery');
 var inherits = require('inherits');
 var Content = require('streamhub-sdk/content');
-var Input = require('streamhub-input');
-var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
-var log = require('streamhub-sdk/debug')
-        ('streamhub-input/upload');
+var Readable = require('stream/readable');
+var LaunchableModal = require('streamhub-input/modal/launchable-modal');
+var log = require('streamhub-sdk/debug')('streamhub-input/upload');
 var ModalView = require('streamhub-sdk/modal');
 var Oembed = require('streamhub-sdk/content/types/oembed');
 var Util = require('streamhub-sdk/util');
@@ -29,25 +28,22 @@ var picker = null;
  * @constructor
  * @extends {View}
  */
-var Upload = function(opts) {
+function Upload(opts) {
     opts = $.extend({}, Upload.DEFAULT_OPTS, opts);
     View.call(this, opts);
-    Input.call(this, opts);
-    LaunchableModal.call(this, opts);
+    LaunchableModal.call(this);
+    Readable.call(this);
 
     if (opts.filepicker) {
         this._filepickerKey = opts.filepicker.key;
         this._cacheUrl = opts.filepicker.cache;
     }
     this.name = opts.name || this.name;
-    this.opts = opts;
-
-    // hack
-    // this.push(JSON.parse(localStorage.getItem("mockAttatchment")));
+    opts.destination && this.pipe(opts.destination);
 };
 inherits(Upload, View);
-inherits.parasitically(Upload, Input);
 inherits.parasitically(Upload, LaunchableModal);
+inherits.parasitically(Upload, Readable);
 
 /**
  * privider_name attribute assigned to written data
@@ -67,6 +63,11 @@ Upload.prototype.class += ' hub-upload';
  * @type {!string}
  */
 Upload.prototype.elTag = 'iframe';
+
+/** @override */
+Upload.prototype._read = function () {
+    return null;
+};
 
 /**
  * Template for el
@@ -172,14 +173,12 @@ Upload.prototype._processResponse = function (err, inkBlob) {
         }
 
         inkBlob.forEach(function (blob) {
-            // TODO: option
             var content = this._packageInput(blob);
             contents.push(content);
             //Perform the essential function of _read() for non-flowing mode
             this.push(content);
         }, this);
     }
-    this.reset();
     return contents;
 };
 
@@ -199,7 +198,6 @@ Upload.prototype.launchModal = function(callback) {
 
     // ok...
     this.opts.pick.container = this.name + this.uid;
-    console.log(this.opts.pick.container)
 
     LaunchableModal.prototype.launchModal.apply(this, arguments);
     var successFn = function(inkBlob) {
@@ -212,32 +210,6 @@ Upload.prototype.launchModal = function(callback) {
 
     picker.pickAndStore(this.opts.pick, this.opts.store, successFn, errorFn);
 };
-
-/**
- * Reads the data that has been received from the user.
- * @returns {?Object}
- * @override
- */
-Upload.prototype._getRawInput = function () {
-    return null;
-};
-
-/**
- * Checks that the input from the user is valid.
- * Should call showError(msg) with
- * @param [data] {Object} Typically comes from .getInput()
- * @returns {!boolean}
- * @protected
- * @override
- */
-Upload.prototype._validate = function () {/** The filepicker validates its input */};
-
-/**
- * Resets the input display, typically by clearing out the current user input
- * from the screen.
- * @override
- */
-Upload.prototype.reset = function () {/** The filepicker resets itself */};
 
 /**
  * Creates and returns a Content object based on the input.
@@ -255,20 +227,9 @@ Upload.prototype._packageInput = function (input) {
         provider_name: this.name
         //TODO (joao) images dimensions?!!!!
     };
-    if (this.opts.packageAs === 'attachment') {
-        return this._constructAttachment(input, attachment);
-    }
-    return this._constructContent(input, attachment);
-};
-
-Upload.prototype._constructContent = function (input, attachment) {
     var content = new Content({body: ''});
     content.attachments.push(attachment);
     return content;
-};
-
-Upload.prototype._constructAttachment = function (input, attachment) {
-    return attachment;  // TODO: structure
 };
 
 /**

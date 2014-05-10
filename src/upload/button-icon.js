@@ -13,7 +13,6 @@ var UploadButton = require('streamhub-input/upload/button');
  */
 function UploadButtonIcon(opts) {
     opts = opts || {};
-    opts.packageAs = 'attachment';
     UploadButton.call(this, opts);
 };
 inherits(UploadButtonIcon, UploadButton);

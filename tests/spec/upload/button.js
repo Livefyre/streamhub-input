@@ -1,10 +1,9 @@
 'use strict';
 
-var Auth = require('streamhub-sdk/auth');
+var Auth = require('auth');
 var Button = require('streamhub-sdk/ui/button');
 var Command = require('streamhub-sdk/ui/command');
 var Content = require('streamhub-sdk/content');
-var Input = require('streamhub-input');
 var InputButton = require('streamhub-input/button');
 var Passthrough = require('stream/passthrough');
 var Readable = require('stream/readable');
@@ -19,7 +18,7 @@ describe('streamhub-input/upload/button', function () {
         var upldBtn = new UploadButton();
         expect(upldBtn instanceof InputButton).toBe(true);
     });
-    
+
     describe('when constructed', function () {
         var opts;
         var upldBtn;
@@ -36,53 +35,53 @@ describe('streamhub-input/upload/button', function () {
 
         it('can pipe data to a writable', function () {
             upldBtn.pipe(writable);
-            upldBtn.write(testString);
+            upldBtn.push(testString);
             expect(writable._write).toHaveBeenCalled();
         });
 
         describe('without a complete Auth flow', function () {
-            it('maintains a disabled state', function () {
+            xit('maintains a disabled state', function () {
                 throw 'TODO (joao) Implement this!';
             });
         });
 
         describe('with opts.destination', function () {
             beforeEach(function () {
-                upldBtn = new UploadButton({destination: writable});
+                upldBtn = new UploadButton({
+                    authRequired: false,
+                    destination: writable
+                });
             });
 
-            it('assigns opts.destination to ._destination and .pipe()s to it', function () {
-                expect(upldBtn._destination).toBe(writable);
-
-                upldBtn.write('something');
+            it('.pipe()s to the destination', function () {
+                upldBtn.push('something');
                 expect(writable._write).toHaveBeenCalled();
             });
 
             describe('and render()\'d', function () {
                 beforeEach(function () {
+                    opts.authRequired = false;
                     opts.pick.debug = true;
                     opts.destination = writable;
 
                     upldBtn.render();
-                    Auth.setToken('FAKE');//Fake auth
                 });
 
                 it('can be clicked to launch an Upload modal, then receive and pipe the returned value', function () {
                     upldBtn.$el.click();
-
                     var picker = $('#picker');
                     expect(picker).toBeTruthy();
                 });
 
                 it('can receive and pipe the value returned by Upload', function () {
                     upldBtn = new UploadButton(opts);
-                    spyOn(upldBtn._input, '_processResponse').andCallThrough();
+                    spyOn(upldBtn._upload, '_processResponse').andCallThrough();
                     upldBtn.render();
                     upldBtn._command.execute(function (err, data) {});
 
                     waitsFor(function() {
-                        return window.filepicker && 
-                            upldBtn._input._processResponse.calls.length;
+                        return window.filepicker &&
+                            upldBtn._upload._processResponse.calls.length;
                     }, 'filepicker to load', 2000);
                     runs(function () {
                         expect(writable._write).toHaveBeenCalled();
@@ -97,7 +96,7 @@ describe('streamhub-input/upload/button', function () {
                 beforeEach(function () {
                     cmdSpy = jasmine.createSpy('command spy');
                     cmd = new Command(cmdSpy);
-                    input = new Input();
+                    input = new Command();
                     input.getInput = function() { return 'stuff'; };
                     input._validate = function() { return true; };
                     input._inputToContent = function(data) { return new Content(data); };
@@ -109,13 +108,7 @@ describe('streamhub-input/upload/button', function () {
                     upldBtn = new UploadButton(opts);
                 });
 
-                it('uses opts.command in place of its default command', function () {
-                    expect(upldBtn._command).toBe(cmd);
-                    upldBtn._command.execute();
-                    expect(cmdSpy).toHaveBeenCalled();
-                });
-
-                it('doesn\'t wrap the command with AuthRequired when opts.authRequired is false', function () {
+                xit('doesn\'t wrap the command with AuthRequired when opts.authRequired is false', function () {
                     throw 'TODO (joao) Implement this test!';
                 });
             });
