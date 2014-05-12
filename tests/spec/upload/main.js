@@ -46,11 +46,6 @@ describe('streamhub-input/upload', function () {
             uploadInput.destroy();
         })
 
-        it('returns null when read() from before rendering', function () {
-            var nullVal = uploadInput.read();
-            expect(nullVal).toBeNull();
-        });
-
         it('can launchModal(), then returnModal()', function () {
             expect(typeof(uploadInput.launchModal)).toBe('function');
             expect(typeof(uploadInput.returnModal)).toBe('function');
@@ -59,11 +54,6 @@ describe('streamhub-input/upload', function () {
                 uploadInput.launchModal();
                 uploadInput.returnModal();
             }).not.toThrow();
-        });
-
-        it('adds the class "hub-upload"', function () {
-            var classes = uploadInput.class.split(' ');
-            expect(classes).toContain('hub-upload');
         });
 
         it('has a elTag of "iframe"', function () {
@@ -110,12 +100,6 @@ describe('streamhub-input/upload', function () {
 
             xit('can showError(msg) in its view', function () {
                 throw 'TODO (joao) Pending design input!';
-            });
-
-            it('can be read() from', function () {
-                expect(function () {
-                    uploadInput.read();
-                }).not.toThrow();
             });
         });
 

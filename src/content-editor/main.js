@@ -10,7 +10,7 @@ var inherits = require('inherits');
 var LaunchableModal = require('streamhub-input/modal/launchable-modal');
 var log = require('streamhub-sdk/debug')('streamhub-input/content-editor');
 var ModalView = require('streamhub-sdk/modal');
-var Readable = require('stream/readable');
+var Pipeable = require('streamhub-input/pipeable');
 var UploadButtonIcon = require('streamhub-input/upload/button-icon');
 var Util = require('streamhub-sdk/util');
 var View = require('streamhub-sdk/view');
@@ -32,9 +32,7 @@ function ContentEditor(opts) {
     opts.mediaEnabled = true;
     Editor.call(this, opts);
     LaunchableModal.call(this);
-    Readable.call(this);
-
-    opts.destination && this.pipe(opts.destination);
+    Pipeable.call(this, opts);
 
     this._postCmd = new Command(function () {});
     this._authCmd = new AuthRequiredCommand(this._postCmd);
@@ -45,7 +43,7 @@ function ContentEditor(opts) {
 };
 inherits(ContentEditor, Editor);
 inherits.parasitically(ContentEditor, LaunchableModal);
-inherits.parasitically(ContentEditor, Readable);
+inherits.parasitically(ContentEditor, Pipeable);
 
 function handleLogin(self, livefyreUser) {
     self._user = livefyreUser;
@@ -91,11 +89,6 @@ ContentEditor.prototype._handlePostSuccess = function (newContent) {
     this.reset();
     this.returnModal(null);
     this._postCmd.enable();
-};
-
-/** @override */
-ContentEditor.prototype._read = function () {
-    return null;
 };
 
 /** @override */
@@ -197,7 +190,7 @@ ContentEditor.prototype.render = function () {
     this.$textareaEl = this.$('.' + this.classes.FIELD);
     this.$postEl = this.$('.' + this.classes.POST_BTN);
 
-    this._postButton = new Button(this._authCmd, {el: this.$postEl});
+    this._postButton = new Button(this._postCmd, {el: this.$postEl});
 
     if (this.opts.mediaEnabled) {
         this._addUploadButton()
@@ -217,46 +210,17 @@ ContentEditor.prototype.returnModal = function (err, data) {
 
 /** @override */
 ContentEditor.prototype.sendPostEvent = function (ev) {
-    // Calling you
-    var calledBack = false;
     var newContent = new Content();
     newContent.body = ev.body;
     newContent.attachments = ev.attachments;
     this._postCmd.disable();
-    this.push(newContent);
-    ev.success();
-
-    // TODO: error handling
-    // for (var i = 0; i < this._destinations.length; i++) {
-    //     this._destinations[i].write(newContent, function (err) {
-    //         if (calledBack) {
-    //             return;
-    //         }
-    //         calledBack = true;
-
-    //         if (err) {
-    //             ev.failure(err);
-    //         }
-    //         ev.success(newContent);
-    //     });
-    // };
+    this.writeToDestination(newContent, function(err) {
+        if (err) {
+            ev.failure(err);
+        }
+        ev.success(newContent);
+    });
 };
-
-// /**
-//  * Set the destination writable to handle content that is created here.
-//  * @param {Writable} writable
-//  */
-// ContentEditor.prototype.pipe = function (writable) {
-//     this._destinations.push(writable);
-// };
-
-// *
-//  * Set the destination writable to handle content that is created here.
-//  * @param {Writable} writable
-
-// ContentEditor.prototype.unpipe = function (writable) {
-//     this._destinations.splice(this._destinations.indexOf(writable), 0);
-// };
 
 /**@override */
 ContentEditor.prototype.template = require('hgn!streamhub-input/templates/content-editor');

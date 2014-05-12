@@ -20,15 +20,15 @@ var Upload = require('streamhub-input/upload');
  */
 function UploadButton(opts) {
     opts = opts || {};
-    this._upload = new Upload(opts);
-    var command = new ModalInputCommand(this._upload, opts);
+    var input = new Upload(opts);
+    var command = new ModalInputCommand(input, opts);
 
     if (opts.authRequired !== false) {
         command = new AuthRequiredCommand(command);
     }
 
+    opts.input = opts.input || input;
     InputButton.call(this, command, opts);
-    this._upload.pipe(this);
 };
 inherits(UploadButton, InputButton);
 

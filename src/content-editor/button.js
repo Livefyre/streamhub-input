@@ -12,6 +12,7 @@ var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
  * @param [opts] {Object}
  * @param [opts.command] {Command} A Command to replace the default,
  *          incase it isn't good enough for you.
+ * @param [opts.input] {*} The input source.
  * @param [opts.destination] {Writable} The collection or other Writable that
  *      will receive this input. it is recommended that this is specified.
  * @param [opts.authRequired] {boolean} True by default. Wraps the command in an
@@ -22,15 +23,15 @@ var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
  */
 function EditorLaunchButton(opts) {
     opts = opts || {};
-    this._editor = new ContentEditor(opts);
-    var command = new ModalInputCommand(this._editor, opts);
+    var input = new ContentEditor(opts);
+    var command = new ModalInputCommand(input, opts);
+
     if (opts.authRequired !== false) {
         command = new AuthRequiredCommand(command);
     }
 
+    opts.input = opts.input || input;
     InputButton.call(this, command, opts);
-    this._editor.pipe(this);
-    opts.destination && this.pipe(opts.destination);
 };
 inherits(EditorLaunchButton, InputButton);
 

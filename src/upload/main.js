@@ -1,11 +1,11 @@
 var $ = require('jquery');
-var inherits = require('inherits');
 var Content = require('streamhub-sdk/content');
-var Readable = require('stream/readable');
+var inherits = require('inherits');
 var LaunchableModal = require('streamhub-input/modal/launchable-modal');
 var log = require('streamhub-sdk/debug')('streamhub-input/upload');
 var ModalView = require('streamhub-sdk/modal');
 var Oembed = require('streamhub-sdk/content/types/oembed');
+var Pipeable = require('streamhub-input/pipeable');
 var Util = require('streamhub-sdk/util');
 var View = require('streamhub-sdk/view');
 
@@ -25,6 +25,8 @@ var picker = null;
  * @param [opts.filepicker] {{key: !string, cache: !string}} If you intend to use
  *      a different api key, you will also need to provide the cache url.
  * @param [opts.name] {string} Assigned to provider_name for returned data
+ * @param [opts.destination] {Writable} The collection or other Writable that
+ *      will receive this input. it is recommended that this is specified.
  * @constructor
  * @extends {View}
  */
@@ -32,18 +34,17 @@ function Upload(opts) {
     opts = $.extend({}, Upload.DEFAULT_OPTS, opts);
     View.call(this, opts);
     LaunchableModal.call(this);
-    Readable.call(this);
+    Pipeable.call(this, opts);
 
     if (opts.filepicker) {
         this._filepickerKey = opts.filepicker.key;
         this._cacheUrl = opts.filepicker.cache;
     }
     this.name = opts.name || this.name;
-    opts.destination && this.pipe(opts.destination);
 };
 inherits(Upload, View);
 inherits.parasitically(Upload, LaunchableModal);
-inherits.parasitically(Upload, Readable);
+inherits.parasitically(Upload, Pipeable);
 
 /**
  * privider_name attribute assigned to written data
@@ -52,22 +53,11 @@ inherits.parasitically(Upload, Readable);
 Upload.prototype.name = 'Streamhub-Input/Upload';
 
 /**
- * Class to be added to the view's element.
- * @type {!string}
- */
-Upload.prototype.class += ' hub-upload';
-
-/**
  * The default element tag.
  * @override
  * @type {!string}
  */
 Upload.prototype.elTag = 'iframe';
-
-/** @override */
-Upload.prototype._read = function () {
-    return null;
-};
 
 /**
  * Template for el
@@ -176,7 +166,7 @@ Upload.prototype._processResponse = function (err, inkBlob) {
             var content = this._packageInput(blob);
             contents.push(content);
             //Perform the essential function of _read() for non-flowing mode
-            this.push(content);
+            this.writeToDestination(content);
         }, this);
     }
     return contents;

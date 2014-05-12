@@ -28,6 +28,7 @@ describe('streamhub-input/upload/button', function () {
             opts = $.extend({}, Upload.DEFAULT_OPTS);
             upldBtn = new UploadButton();
             writable = new Writable();
+            writable._write = function () {};
             spyOn(writable, '_write').andCallFake(function (data, clbk) {
                 clbk();
             });
@@ -35,7 +36,7 @@ describe('streamhub-input/upload/button', function () {
 
         it('can pipe data to a writable', function () {
             upldBtn.pipe(writable);
-            upldBtn.push(testString);
+            upldBtn._input.writeToDestination(testString);
             expect(writable._write).toHaveBeenCalled();
         });
 
@@ -54,7 +55,7 @@ describe('streamhub-input/upload/button', function () {
             });
 
             it('.pipe()s to the destination', function () {
-                upldBtn.push('something');
+                upldBtn._input.writeToDestination('something');
                 expect(writable._write).toHaveBeenCalled();
             });
 
@@ -75,13 +76,13 @@ describe('streamhub-input/upload/button', function () {
 
                 it('can receive and pipe the value returned by Upload', function () {
                     upldBtn = new UploadButton(opts);
-                    spyOn(upldBtn._upload, '_processResponse').andCallThrough();
+                    spyOn(upldBtn._input, '_processResponse').andCallThrough();
                     upldBtn.render();
                     upldBtn._command.execute(function (err, data) {});
 
                     waitsFor(function() {
                         return window.filepicker &&
-                            upldBtn._upload._processResponse.calls.length;
+                            upldBtn._input._processResponse.calls.length;
                     }, 'filepicker to load', 2000);
                     runs(function () {
                         expect(writable._write).toHaveBeenCalled();

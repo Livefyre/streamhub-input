@@ -25,6 +25,7 @@ describe('streamhub-input/content-editor/button', function () {
         beforeEach(function () {
             cmtBtn = new CommentButton();
             writable = new Writable();
+            writable._write = function () {};
             spyOn(writable, '_write').andCallFake(function (data, clbk) {
                 clbk();
             });
@@ -32,7 +33,7 @@ describe('streamhub-input/content-editor/button', function () {
 
         it('can pipe data to a writable', function () {
             cmtBtn.pipe(writable);
-            cmtBtn.push(testString);
+            cmtBtn._input.writeToDestination(testString);
             expect(writable._write).toHaveBeenCalled();
         });
 
@@ -48,7 +49,7 @@ describe('streamhub-input/content-editor/button', function () {
             });
 
             it('.pipe()s to destination', function () {
-                cmtBtn.push('something');
+                cmtBtn._input.writeToDestination('something');
                 expect(writable._write).toHaveBeenCalled();
             });
 

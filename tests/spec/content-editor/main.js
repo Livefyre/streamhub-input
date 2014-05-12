@@ -31,10 +31,6 @@ describe('streamhub-input/content-editor', function () {
 
         afterEach(function () {
             commentInput.destroy();
-        })
-
-        it('returns null when read() from before rendering', function () {
-            expect(commentInput.read()).toBeNull();
         });
 
         it('can launchModal(), then returnModal()', function () {
