@@ -1,11 +1,10 @@
 /**
  * @fileoverview The upload button, as a mini icon
  */
-'use strict';
-
-
 var inherits = require('inherits');
 var UploadButton = require('streamhub-input/upload/button');
+
+'use strict';
 
 /**
  * @constructor
@@ -14,7 +13,7 @@ var UploadButton = require('streamhub-input/upload/button');
 function UploadButtonIcon(opts) {
     opts = opts || {};
     UploadButton.call(this, opts);
-};
+}
 inherits(UploadButtonIcon, UploadButton);
 
 /** @override */
@@ -24,8 +23,6 @@ UploadButtonIcon.prototype.elClass = 'editor-upload';
 UploadButtonIcon.prototype.elTag = 'span';
 
 /** @override */
-UploadButtonIcon.prototype.template = function () {
-    return '<span class="fycon-composer-photo" />';
-};
+UploadButtonIcon.prototype.template = require('hgn!streamhub-input/templates/upload-button');
 
 module.exports = UploadButtonIcon;

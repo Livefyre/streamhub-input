@@ -1,6 +1,4 @@
 var inherits = require('inherits');
-var log = require('streamhub-sdk/debug')
-        ('streamhub-input/modal/launchable-modal');
 var ModalView = require('streamhub-sdk/modal');
 var util = require('streamhub-input/util');
 

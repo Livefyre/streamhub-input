@@ -20,7 +20,7 @@ var util = require('streamhub-input/util');
 function ModalInputCommand(view, opts) {
     opts = opts || {};
     if (!view) {
-        throw 'Can\'t instanciate a ModalInputCommand without specifying a view'
+        throw 'Can\'t instanciate a ModalInputCommand without specifying a view';
     }
     var self = this;
     function cmd(cb) {
@@ -34,7 +34,7 @@ function ModalInputCommand(view, opts) {
     this.view = view;
 
     Command.call(this, cmd, opts);
-};
+}
 inherits(ModalInputCommand, Command);
 
 /** @override */

@@ -1,3 +1,3 @@
 module.exports = {
     nullFunction: function () {}
-}
+};

@@ -16,7 +16,6 @@ var Writable = require('stream/writable');
 describe('streamhub-input/upload', function () {
     it('is an constructor that subclasses View and implements Input and LaunchableModal', function () {
         expect(typeof(Upload)).toBe('function');
-        //TODO (joao) Test for abstract implementations
     });
 
     describe('when constructed', function () {

@@ -41,35 +41,22 @@ function Upload(opts) {
         this._cacheUrl = opts.filepicker.cache;
     }
     this.name = opts.name || this.name;
-};
+}
 inherits(Upload, View);
 inherits.parasitically(Upload, LaunchableModal);
 inherits.parasitically(Upload, Pipeable);
 
 /**
- * privider_name attribute assigned to written data
+ * provider_name attribute assigned to written data
  * @type {!string}
  */
 Upload.prototype.name = 'Streamhub-Input/Upload';
 
-/**
- * The default element tag.
- * @override
- * @type {!string}
- */
+/** @override */
 Upload.prototype.elTag = 'iframe';
 
-/**
- * Template for el
- * @override
- * @param [context] {Object}
- */
-Upload.prototype.template = function (context) {
-    return ['<iframe id="',
-            context.container,
-            '" class="hub-upload">',
-            '</iframe>'].join('');
-};
+/** @override */
+Upload.prototype.template = require('hgn!streamhub-input/templates/upload')
 
 /**
  * Get contextual data for a template.
@@ -100,7 +87,6 @@ Upload.prototype._initFilepicker = function () {
         if (status !== 'success') {
             picker = false;
             throw 'There was an error loading ' + src;
-            return;
         }
 
         picker = filepicker;
@@ -114,14 +100,14 @@ Upload.prototype._initFilepicker = function () {
  * @type {!string}
  * @private
  */
-Upload.prototype._filepickerKey = 'AtvGm2B6RR9mDKb8bImIHz';  // uhhh
+Upload.prototype._filepickerKey = 'AtvGm2B6RR9mDKb8bImIHz';
 
 /**
  * The URL where uploads are cached
  * @type {!string}
  * @private
  */
-Upload.prototype._cacheUrl = 'http://dazfoe7f6de09.cloudfront.net/';  // mrr
+Upload.prototype._cacheUrl = 'http://dazfoe7f6de09.cloudfront.net/';
 
 /**
  * The default options for using FilePicker and pickAndStore
@@ -157,17 +143,17 @@ Upload.prototype._processResponse = function (err, inkBlob) {
     }
 
     var contents = [];
+    var self = this;
     if (inkBlob) {
         if (!inkBlob.length) {
             inkBlob = [inkBlob];
         }
 
-        inkBlob.forEach(function (blob) {
-            var content = this._packageInput(blob);
+        $.each(inkBlob, function (i, blob) {
+            var content = self._packageInput(blob);
             contents.push(content);
-            //Perform the essential function of _read() for non-flowing mode
-            this.writeToDestination(content);
-        }, this);
+            self.writeToDestination(content);
+        });
     }
     return contents;
 };
@@ -180,23 +166,23 @@ Upload.prototype._processResponse = function (err, inkBlob) {
  */
 Upload.prototype.launchModal = function(callback) {
     var self = this;
-    callback = callback || this.onStore;
     if (!picker) {
         this.once('pickerLoaded', this.launchModal.bind(this, callback));
         return this._initFilepicker();
     }
 
-    // ok...
-    this.opts.pick.container = this.name + this.uid;
-
     LaunchableModal.prototype.launchModal.apply(this, arguments);
-    var successFn = function(inkBlob) {
-        self.returnModal(null, self._processResponse(undefined, inkBlob));
-    };
-    var errorFn = function(err) {
-        self._processResponse(err);
-        self.returnModal(err);  // TODO: (joao) Maybe don't do this. Need error flow.
-    };
+
+    function errBack(err, data) {
+        self._processResponse(err, data);
+        self.returnModal();
+    }
+    function successFn(inkBlob) {
+        errBack(null, inkBlob);
+    }
+    function errorFn(err) {
+        errBack(err);
+    }
 
     picker.pickAndStore(this.opts.pick, this.opts.store, successFn, errorFn);
 };
@@ -222,11 +208,7 @@ Upload.prototype._packageInput = function (input) {
     return content;
 };
 
-/**
- * Displays an error message to the user.
- * @param msg
- * @override
- */
+/** @override */
 Upload.prototype.showError = function (msg) {
     //TODO (joao) Real implementation
     log(msg);

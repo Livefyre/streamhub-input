@@ -1,20 +1,18 @@
-'use strict';
-
-var Button = require('streamhub-sdk/ui/button');
 var Command = require('streamhub-sdk/ui/command');
-var Content = require('streamhub-sdk/content');
 var InputButton = require('streamhub-input/button');
-var Passthrough = require('stream/passthrough');
 var Pipeable = require('streamhub-input/pipeable');
-var Readable = require('stream/readable');
 var Writable = require('stream/writable');
 
+'use strict';
+
 describe('streamhub-input/button', function () {
+    var input;
     var inputButton;
     var opts;
     var writable;
-    var input = new Pipeable();
-    beforeEach(function () {
+
+    it('has a pipeable and a destination (if specified)', function () {
+        input = new Pipeable();
         writable = new Writable();
         writable._write = function () {};
         opts = {
@@ -23,11 +21,31 @@ describe('streamhub-input/button', function () {
         };
 
         inputButton = new InputButton(null, opts);
-    });
-
-    it('has a pipeable and a destination', function () {
         spyOn(writable, 'write');
         inputButton._input.writeToDestination('something', 'cb');
         expect(writable.write).toHaveBeenCalledWith('something', 'cb');
+    });
+
+    it('wraps the pipeable for post-construction piping', function () {
+        input = new Pipeable();
+        writable = new Writable();
+        writable._write = function () {};
+        opts = {
+            input: input
+        };
+
+        inputButton = new InputButton(null, opts);
+        inputButton.pipe(writable);
+        spyOn(writable, 'write');
+        inputButton._input.writeToDestination('something', 'cb');
+        expect(writable.write).toHaveBeenCalledWith('something', 'cb');
+    });
+
+    it('throws no error if no input is specified', function () {
+        writable = new Writable();
+        writable._write = function () {};
+
+        inputButton = new InputButton(null, opts);
+        inputButton.pipe(writable);  // no error
     });
 });

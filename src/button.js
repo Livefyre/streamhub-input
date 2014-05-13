@@ -22,7 +22,7 @@ var inherits = require('inherits');
     opts.destination && this.pipe(opts.destination);
 
     Button.apply(this, arguments);
-};
+}
 inherits(InputButton, Button);
 
 /** @override */

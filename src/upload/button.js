@@ -29,7 +29,7 @@ function UploadButton(opts) {
 
     opts.input = opts.input || input;
     InputButton.call(this, command, opts);
-};
+}
 inherits(UploadButton, InputButton);
 
 /**

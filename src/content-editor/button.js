@@ -32,7 +32,7 @@ function EditorLaunchButton(opts) {
 
     opts.input = opts.input || input;
     InputButton.call(this, command, opts);
-};
+}
 inherits(EditorLaunchButton, InputButton);
 
 /**

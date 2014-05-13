@@ -12,7 +12,7 @@ inherits(AttachmentView, View);
 AttachmentView.prototype.getTemplateContext = function () {
     return {
         url: this.opts.oembed.url
-    }
+    };
 };
 
 /** @override */

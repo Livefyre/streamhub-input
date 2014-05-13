@@ -40,7 +40,7 @@ function ContentEditor(opts) {
     this._user = Auth.get('livefyre');
     Auth.on('login.livefyre', handleLogin.bind(this));
     Auth.on('logout.livefyre', handleLogout.bind(this));
-};
+}
 inherits(ContentEditor, Editor);
 inherits.parasitically(ContentEditor, LaunchableModal);
 inherits.parasitically(ContentEditor, Pipeable);
@@ -154,7 +154,7 @@ ContentEditor.prototype.getTemplateContext = function () {
 };
 
 /**
- * This probably doesn't
+ * TODO(jj): Grow Mustache
  * Template for el when .launchModal()
  * @param [context] {Object}
  * @returns {!string}
@@ -193,7 +193,7 @@ ContentEditor.prototype.render = function () {
     this._postButton = new Button(this._postCmd, {el: this.$postEl});
 
     if (this.opts.mediaEnabled) {
-        this._addUploadButton()
+        this._addUploadButton();
     }
 };
 
