@@ -1,3 +1,4 @@
+var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Command = require('streamhub-sdk/ui/command');
 var InputButton = require('streamhub-input/button');
 var Pipeable = require('streamhub-input/pipeable');
@@ -47,5 +48,19 @@ describe('streamhub-input/button', function () {
 
         inputButton = new InputButton(null, opts);
         inputButton.pipe(writable);  // no error
+    });
+
+    it('wraps the command in a auth required command by default', function () {
+        var command = new Command(function () {});
+        inputButton = new InputButton(command, opts);
+        expect(command instanceof AuthRequiredCommand).toBeTruthy;
+    });
+
+    it('can skip the auth required command', function () {
+        var command = new Command(function () {});
+        inputButton = new InputButton(command, {
+            authRequired: false
+        });
+        expect(command instanceof AuthRequiredCommand).not.toBeTruthy;
     });
 });

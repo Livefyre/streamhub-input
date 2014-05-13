@@ -37,7 +37,7 @@ LaunchableModal.prototype.launchModal = function(callback) {
      * @type {!ModalView}
      */
     this._modal = new ModalView();
-    this._modal.show(this); //Will .render()
+    this._modal.show(this); // Will .render()
 };
 
 /**
@@ -62,7 +62,7 @@ LaunchableModal.prototype._returnModal = function (err, data) {
 
     this._callback(err, data);
     this._callback = null;
-    this._modal.$el.trigger('hideModal.hub');//Will _modal.hide()
+    this._modal.$el.trigger('hideModal.hub');  // Will _modal.hide()
 };
 
 module.exports = LaunchableModal;

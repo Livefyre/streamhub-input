@@ -1,8 +1,6 @@
-//var $ = require('streamhub-sdk/jquery');
-var inherits = require('inherits');
-var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
-var InputButton = require('streamhub-input/button');
 var ContentEditor = require('streamhub-input/content-editor');
+var inherits = require('inherits');
+var InputButton = require('streamhub-input/button');
 var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
 
 'use strict';
@@ -20,10 +18,6 @@ function EditorLaunchButton(opts) {
     opts = opts || {};
     var input = new ContentEditor();
     var command = new ModalInputCommand(input);
-
-    if (opts.authRequired !== false) {
-        command = new AuthRequiredCommand(command);
-    }
 
     opts.input = opts.input || input;
     InputButton.call(this, command, opts);

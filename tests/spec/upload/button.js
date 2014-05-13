@@ -40,12 +40,6 @@ describe('streamhub-input/upload/button', function () {
             expect(writable._write).toHaveBeenCalled();
         });
 
-        describe('without a complete Auth flow', function () {
-            xit('maintains a disabled state', function () {
-                throw 'TODO (joao) Implement this!';
-            });
-        });
-
         describe('with opts.destination', function () {
             beforeEach(function () {
                 upldBtn = new UploadButton({
@@ -87,30 +81,6 @@ describe('streamhub-input/upload/button', function () {
                     runs(function () {
                         expect(writable._write).toHaveBeenCalled();
                     });
-                });
-            });
-
-            describe('and with additional opts', function () {
-                var cmd;
-                var cmdSpy;
-                var input;
-                beforeEach(function () {
-                    cmdSpy = jasmine.createSpy('command spy');
-                    cmd = new Command(cmdSpy);
-                    input = new Command();
-                    input.getInput = function() { return 'stuff'; };
-                    input._validate = function() { return true; };
-                    input._inputToContent = function(data) { return new Content(data); };
-
-                    opts.command = cmd,
-                    opts.destination = writable;
-                    opts.pick.container = 'fake';
-
-                    upldBtn = new UploadButton(opts);
-                });
-
-                xit('doesn\'t wrap the command with AuthRequired when opts.authRequired is false', function () {
-                    throw 'TODO (joao) Implement this test!';
                 });
             });
         });

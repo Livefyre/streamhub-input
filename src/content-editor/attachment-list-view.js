@@ -39,7 +39,7 @@ AttachmentListView.prototype._handleRemove = function (ev) {
 };
 
 /** @override */
-AttachmentListView.prototype.add = function (content, attachment) {
+AttachmentListView.prototype.add = function (content) {
     var newView = new AttachmentView({
         oembed: content.attachments[0]
     });

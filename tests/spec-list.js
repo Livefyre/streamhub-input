@@ -2,6 +2,7 @@ define(function () {
     var specs = [
         'tests/spec/button',
         'tests/spec/pipeable',
+        'tests/spec/content-editor/attachment-list-view',
         'tests/spec/content-editor/button',
         'tests/spec/content-editor/main',
         'tests/spec/modal/launchable-modal',

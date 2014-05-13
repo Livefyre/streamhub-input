@@ -2,12 +2,8 @@
 
 var Auth = require('streamhub-sdk/auth');
 var Button = require('streamhub-sdk/ui/button');
-var Command = require('streamhub-sdk/ui/command');
 var CommentButton = require('streamhub-input/content-editor/button');
-var Content = require('streamhub-sdk/content');
 var InputButton = require('streamhub-input/button');
-var Passthrough = require('stream/passthrough');
-var Readable = require('stream/readable');
 var Writable = require('stream/writable');
 
 describe('streamhub-input/content-editor/button', function () {
@@ -35,12 +31,6 @@ describe('streamhub-input/content-editor/button', function () {
             cmtBtn.pipe(writable);
             cmtBtn._input.writeToDestination(testString);
             expect(writable._write).toHaveBeenCalled();
-        });
-
-        describe('without a complete Auth flow', function () {
-            xit('maintains a disabled state', function () {
-                throw 'TODO (joao) Implement this!';
-            });
         });
 
         describe('with opts.destination', function () {
@@ -71,33 +61,6 @@ describe('streamhub-input/content-editor/button', function () {
                     $editor.val(testString);
                     $post.click();
                     expect(writable._write).toHaveBeenCalled();
-                });
-            });
-
-            describe('and with additional opts', function () {
-                var cmd;
-                var cmdSpy;
-                var input;
-                var opts;
-                beforeEach(function () {
-                    cmdSpy = jasmine.createSpy('command spy');
-                    cmd = new Command(cmdSpy);
-                    input = new Command();
-                    input.getInput = function() { return 'stuff'; };
-                    input._validate = function() { return true; };
-                    input._inputToContent = function(data) { return new Content(data); };
-
-                    opts = {
-                        command: cmd,
-                        destination: writable,
-                        input: input
-                    };
-
-                    cmtBtn = new CommentButton(opts);
-                });
-
-                xit('doesn\'t wrap the command with AuthRequired when opts.authRequired is false', function () {
-                    throw 'TODO (joao) Implement this test!';
                 });
             });
         });

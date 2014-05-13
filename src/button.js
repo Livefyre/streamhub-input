@@ -1,3 +1,4 @@
+var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Button = require('streamhub-sdk/ui/button');
 var inherits = require('inherits');
 
@@ -9,6 +10,9 @@ var inherits = require('inherits');
  * @param [opts.input] {Pipeable} The Input source.
  * @param [opts.destination] {Writable} The collection or other Writable that
  *      will receive this input. it is recommended that this is specified.
+ * @param [opts.authRequired] {boolean} True by default. Wraps the command in an
+ *      auth-required-command, disabling the button unless there is an
+ *      authentication route.
  * @constructor
  * @extends {Button}
  */
@@ -21,7 +25,11 @@ var inherits = require('inherits');
 
     opts.destination && this.pipe(opts.destination);
 
-    Button.apply(this, arguments);
+    if (opts.authRequired !== false) {
+        command = new AuthRequiredCommand(command);
+    }
+
+    Button.call(this, command, opts);
 }
 inherits(InputButton, Button);
 
