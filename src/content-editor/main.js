@@ -5,14 +5,17 @@ var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Button = require('streamhub-sdk/ui/button');
 var Command = require('streamhub-sdk/ui/command');
 var Content = require('streamhub-sdk/content');
+var contentEditorTemplate = require('hgn!streamhub-input/templates/content-editor');
 var Editor = require('streamhub-editor/editor');
+var editorTemplate = require('hgn!streamhub-editor/templates/editor');
 var inherits = require('inherits');
 var LaunchableModal = require('streamhub-input/modal/launchable-modal');
 var log = require('streamhub-sdk/debug')('streamhub-input/content-editor');
 var ModalView = require('streamhub-sdk/modal');
+var modalTemplate = require('hgn!streamhub-input/templates/content-editor-modal');
 var Pipeable = require('streamhub-input/pipeable');
 var UploadButtonIcon = require('streamhub-input/upload/button-icon');
-var Util = require('streamhub-sdk/util');
+var util = require('streamhub-input/util');
 var View = require('streamhub-sdk/view');
 
 'use strict';
@@ -21,38 +24,43 @@ var View = require('streamhub-sdk/view');
  * A view that takes text input from a user and posts it to a collection/Writable.
  * Implements Input.
  * @param [opts] {Object}
- * @param [opts.destination] {Writable} The collection or other Writable that
- *      will receive this input. it is recommended that this is specified.
- * @param [opts.i8n.emptyText] {string} Suggestive text to display in an empty editor.
+ * @param [opts.i18n] {Object.<string>} Display strng overrides
+ * @param [opts.mediaEnabled] {boolean} Are media uploads allowed?
  * @constructor
  * @extends {Editor}
+ * @extends {Pipeable}
+ * @extends {LaunchableModal}
  */
 function ContentEditor(opts) {
     opts = opts || {};
-    opts.mediaEnabled = true;
     Editor.call(this, opts);
     LaunchableModal.call(this);
     Pipeable.call(this, opts);
 
-    this._postCmd = new Command(function () {});
+    this._postCmd = new Command(this._handlePostBtnClick.bind(this));
     this._authCmd = new AuthRequiredCommand(this._postCmd);
 
     this._user = Auth.get('livefyre');
     Auth.on('login.livefyre', handleLogin.bind(this));
-    Auth.on('logout.livefyre', handleLogout.bind(this));
+    Auth.on('logout', handleLogout.bind(this));
 }
 inherits(ContentEditor, Editor);
 inherits.parasitically(ContentEditor, LaunchableModal);
 inherits.parasitically(ContentEditor, Pipeable);
 
-function handleLogin(self, livefyreUser) {
-    self._user = livefyreUser;
-    self.render();
+/**
+ * Set the user and rerender
+ * @param {?User} livefyreUser
+ */
+function handleLogin(livefyreUser) {
+    this._user = livefyreUser;
+    this.render();
 }
 
-function handleLogout(self) {
-    self._user = null;
-    self.render();
+/** Unset the user and rerender */
+function handleLogout() {
+    this._user = null;
+    this.render();
 }
 
 /**
@@ -72,6 +80,14 @@ ContentEditor.prototype._addUploadButton = function   () {
     $containerWrapper.append(this._attachmentsList.$el);
 };
 
+/** @override */
+ContentEditor.prototype._i18n = (function () {
+    var strings = $.extend(true, {}, Editor.prototype._i18n);
+    strings.PLACEHOLDERTEXT = 'What would you like to say?';
+    strings.POST = 'Post Your Comment';
+    return strings;
+})();
+
 /**
  * Post failure callback.
  * @private
@@ -85,9 +101,9 @@ ContentEditor.prototype._handlePostFailure = function () {
  * Post success callback.
  * @private
  */
-ContentEditor.prototype._handlePostSuccess = function (newContent) {
+ContentEditor.prototype._handlePostSuccess = function () {
     this.reset();
-    this.returnModal(null);
+    this.returnModal();
     this._postCmd.enable();
 };
 
@@ -113,7 +129,7 @@ ContentEditor.prototype.buildPostEventObj = function () {
 ContentEditor.prototype.classes = (function () {
     var classes = $.extend({}, Editor.prototype.classes);
     classes.BTN_WRAPPER = 'lf-btn-wrapper';
-    classes.POST_BTN = 'lf-editor-post-btn';
+    classes.POST_BTN = 'lf-content-editor-post';
     classes.UPLOAD_CONTAINER = 'lf-upload-container';
     return classes;
 })();
@@ -135,7 +151,11 @@ ContentEditor.prototype.elTag = 'article';
 ContentEditor.prototype.destroy = function () {
     View.prototype.destroy.call(this);
     Auth.removeListener('login.livefyre', handleLogin.bind(this));
-    Auth.removeListener('logout.livefyre', handleLogout.bind(this));
+    Auth.removeListener('logout', handleLogout.bind(this));
+    this._uploadButton && this._uploadButton.destroy();
+    this._uploadButton = null;
+    this._attachmentsList && this._attachmentsList.destroy();
+    this._attachmentsList = null;
 };
 
 /**
@@ -154,32 +174,21 @@ ContentEditor.prototype.getTemplateContext = function () {
 };
 
 /**
- * TODO(jj): Grow Mustache
  * Template for el when .launchModal()
  * @param [context] {Object}
  * @returns {!string}
  */
 ContentEditor.prototype.modalTemplate = function (context) {
-    return [
-        '<article class="hub-modal-input-wrapper">',
-        '<header class="hub-modal-input-header">',
-        'Post Your Comment',
-        '</header>',
-        '<div class="lf-modal-body">',
-        ContentEditor.prototype.template.apply(this, arguments),
-        '</div>',
-        '</article>'
-    ].join('');
+    return modalTemplate(context, {
+        contentEditor: contentEditorTemplate.template,
+        editor: editorTemplate.template
+    });
 };
 
-/**
- * If a template is set, render it in this.el
- * Subclasses will want to setElement on child views after rendering,
- *     then call .render() on those sub-elements
- */
+/** @override */
 ContentEditor.prototype.render = function () {
     this.$el.html(this.template(this.getTemplateContext(), {
-        editor: require('hgn!streamhub-input/templates/editor').template,
+        editor: editorTemplate.template,
     }));
 
     // this is called in the base render, unfortunate duplication
@@ -190,7 +199,7 @@ ContentEditor.prototype.render = function () {
     this.$textareaEl = this.$('.' + this.classes.FIELD);
     this.$postEl = this.$('.' + this.classes.POST_BTN);
 
-    this._postButton = new Button(this._postCmd, {el: this.$postEl});
+    this._postButton = new Button(this._authCmd, {el: this.$postEl});
 
     if (this.opts.mediaEnabled) {
         this._addUploadButton();
@@ -223,6 +232,6 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
 };
 
 /**@override */
-ContentEditor.prototype.template = require('hgn!streamhub-input/templates/content-editor');
+ContentEditor.prototype.template = contentEditorTemplate;
 
 module.exports = ContentEditor;

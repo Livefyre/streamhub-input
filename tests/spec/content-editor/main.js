@@ -101,12 +101,19 @@ describe('streamhub-input/content-editor', function () {
                 expect(commentInput.$textareaEl.val()).toBe('');
             });
 
-            xit('reset()s after successfully submitting a comment', function () {
-                throw 'TODO (joao) Implement this!';
+            it('reset()s after successfully submitting a comment', function () {
+                spyOn(commentInput, 'reset').andCallThrough();
+                commentInput._handlePostSuccess();
+                expect(commentInput.reset).toHaveBeenCalled();
             });
 
-            xit('can showError(msg) in its view', function () {
-                throw 'TODO (joao) Pending design input!';
+            it('disables the post button on submit and reenables when the content is posted', function () {
+                commentInput.sendPostEvent({
+                    body: 'Batman',
+                });
+                expect(commentInput._postCmd.canExecute()).not.toBeTruthy();
+                commentInput._handlePostSuccess();
+                expect(commentInput._postCmd.canExecute()).toBeTruthy();
             });
 
             it('has a .$textareaEl and .$postEl', function () {
@@ -114,13 +121,21 @@ describe('streamhub-input/content-editor', function () {
                 expect(commentInput.$postEl).toBeTruthy();
             });
 
-            xit('sets the user\'s display name on "login"', function () {
-                throw 'TODO (joao) Implement this!';
+            it('sets the user\'s display name when there is a user', function () {
+                var name = 'Batman';
+                commentInput._user = {
+                    get: function () { return name }
+                }
+                commentInput.render();
+                expect(commentInput.$('.lf-name').html()).toEqual(name);
             });
 
-            xit('gets the user info when delegate is set', function () {
-                throw 'TODO (joao) Implement this!';
+            it('unsets the user\'s display name when there is no user', function () {
+                commentInput._user = null;
+                commentInput.render();
+                expect(commentInput.$('.lf-name').html()).toEqual('');
             });
+
 
             describe('with an opts.destination', function () {
                 beforeEach(function () {
@@ -130,6 +145,40 @@ describe('streamhub-input/content-editor', function () {
                     });
 
                     commentInput.render();
+                });
+
+                it('should auto-pipe', function () {
+                    var spy = spyOn(writable, 'write');
+                    commentInput.writeToDestination('Batman', 'Batman');
+                    expect(writable.write).toHaveBeenCalledWith('Batman', 'Batman');
+                });
+            });
+
+            describe('with authentication', function () {
+                beforeEach(function () {
+                    commentInput = new Edit({
+                        el: $('#sandbox')[0],
+                    });
+
+                    // Lazy man's mock
+                    commentInput._authCmd = new Command(commentInput._postCmd);
+                    commentInput.render();
+                });
+
+                it('does not trigger a post event when the user is not authenticated', function () {
+                    commentInput._authCmd.disable();
+                    var spy = spyOn(commentInput, 'buildPostEventObj').andCallThrough();
+                    commentInput.delegateEvents();
+                    commentInput._postButton.$el.click();
+                    expect(spy).not.toHaveBeenCalled();
+                });
+
+                it('triggers a post event when the user is authenticated', function () {
+                    commentInput._authCmd.enable();
+                    var spy = spyOn(commentInput, 'buildPostEventObj').andCallThrough();
+                    commentInput.delegateEvents();
+                    commentInput._postButton.$el.click();
+                    expect(spy).toHaveBeenCalled();
                 });
             });
         });
@@ -144,10 +193,12 @@ describe('streamhub-input/content-editor', function () {
                     el: $('#sandbox')[0],
                     i18n : {
                         emptyText: testString
-                    }
+                    },
+                    mediaEnabled: true
                 };
 
                 commentInput = new Edit(opts);
+                commentInput.render();
             });
 
             afterEach(function () {
@@ -156,6 +207,14 @@ describe('streamhub-input/content-editor', function () {
 
             it('assigns opts.i18n to ._18n', function () {
                 expect(commentInput._i18n.emptyText).toBe(testString);
+            });
+
+            it('renders an upload icon', function () {
+                expect(commentInput.$el.has(commentInput._uploadButton.$el)).toBeTruthy();
+            });
+
+            it('renders an attachment list', function () {
+                expect(commentInput.$el.has(commentInput._attachmentsList.$el)).toBeTruthy();
             });
         });
     });

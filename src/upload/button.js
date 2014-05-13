@@ -10,18 +10,16 @@ var Upload = require('streamhub-input/upload');
 
 /**
  * @param [opts] {Object}
- * @param [opts.destination] {Writable} The collection or other Writable that
- *      will receive this input. it is recommended that this is specified.
  * @param [opts.authRequired] {boolean} True by default. Wraps the command in an
  *      auth-required-command, disabling the button unless there is an
  *      authentication route.
  * @constructor
- * @extends {Button}
+ * @extends {InputButton}
  */
 function UploadButton(opts) {
     opts = opts || {};
-    var input = new Upload(opts);
-    var command = new ModalInputCommand(input, opts);
+    var input = new Upload();
+    var command = new ModalInputCommand(input);
 
     if (opts.authRequired !== false) {
         command = new AuthRequiredCommand(command);

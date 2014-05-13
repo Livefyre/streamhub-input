@@ -10,11 +10,6 @@ var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
 /**
  *
  * @param [opts] {Object}
- * @param [opts.command] {Command} A Command to replace the default,
- *          incase it isn't good enough for you.
- * @param [opts.input] {*} The input source.
- * @param [opts.destination] {Writable} The collection or other Writable that
- *      will receive this input. it is recommended that this is specified.
  * @param [opts.authRequired] {boolean} True by default. Wraps the command in an
  *      auth-required-command, disabling the button unless there is an
  *      authentication route.
@@ -23,8 +18,8 @@ var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
  */
 function EditorLaunchButton(opts) {
     opts = opts || {};
-    var input = new ContentEditor(opts);
-    var command = new ModalInputCommand(input, opts);
+    var input = new ContentEditor();
+    var command = new ModalInputCommand(input);
 
     if (opts.authRequired !== false) {
         command = new AuthRequiredCommand(command);
