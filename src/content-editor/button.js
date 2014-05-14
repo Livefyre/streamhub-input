@@ -1,4 +1,4 @@
-var ContentEditor = require('streamhub-input/content-editor');
+var ContentEditor = require('streamhub-input/content-editor/view');
 var inherits = require('inherits');
 var InputButton = require('streamhub-input/button');
 var ModalInputCommand = require('streamhub-input/modal/modal-input-command');

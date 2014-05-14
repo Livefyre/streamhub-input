@@ -3,7 +3,7 @@
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Command = require('streamhub-sdk/ui/command');
 var debug = require('streamhub-sdk/debug');
-var Edit = require('streamhub-input/content-editor');
+var ContentEditor = require('streamhub-input/content-editor/view');
 var inherits = require('inherits');
 var jasmineJquery = require('jasmine-jquery');//For sandbox()
 var LaunchableModal = require('streamhub-input/modal/launchable-modal');
@@ -12,9 +12,9 @@ var util = require('streamhub-sdk/util');
 var View = require('view');
 var Writable = require('stream/writable');
 
-describe('streamhub-input/content-editor', function () {
+describe('streamhub-input/content-editor/view', function () {
     it('is an constructor that subclasses Editor and implements Input and LaunchableModal', function () {
-        expect(typeof(Edit)).toBe('function');
+        expect(typeof(ContentEditor)).toBe('function');
         //TODO (joao) Test for abstract implementations
     });
 
@@ -23,7 +23,7 @@ describe('streamhub-input/content-editor', function () {
         var writable;
         beforeEach(function () {
             sandbox();
-            commentInput = new Edit({
+            commentInput = new ContentEditor({
                 el: $('#sandbox')[0]
             });
             writable = new Writable();
@@ -139,7 +139,7 @@ describe('streamhub-input/content-editor', function () {
 
             describe('with an opts.destination', function () {
                 beforeEach(function () {
-                    commentInput = new Edit({
+                    commentInput = new ContentEditor({
                         destination: writable,
                         el: $('#sandbox')[0],
                     });
@@ -156,7 +156,7 @@ describe('streamhub-input/content-editor', function () {
 
             describe('with authentication', function () {
                 beforeEach(function () {
-                    commentInput = new Edit({
+                    commentInput = new ContentEditor({
                         el: $('#sandbox')[0],
                     });
 
@@ -197,7 +197,7 @@ describe('streamhub-input/content-editor', function () {
                     mediaEnabled: true
                 };
 
-                commentInput = new Edit(opts);
+                commentInput = new ContentEditor(opts);
                 commentInput.render();
             });
 

@@ -17,9 +17,9 @@ Pipeable.prototype.pipe = function (writable) {
 };
 
 /**
- * @param {Writable} writable
+ * Set the destination to null
  */
-Pipeable.prototype.unpipe = function (writable) {
+Pipeable.prototype.unpipe = function () {
     this._destination = null;
 };
 

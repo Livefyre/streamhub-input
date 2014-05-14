@@ -1,9 +1,7 @@
-var Command = require('streamhub-sdk/ui/command');
-var Duplex = require('stream/duplex');
 var inherits = require('inherits');
 var InputButton = require('streamhub-input/button');
 var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
-var Upload = require('streamhub-input/upload');
+var Upload = require('streamhub-input/upload/view');
 
 'use strict';
 

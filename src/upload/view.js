@@ -2,11 +2,8 @@ var $ = require('jquery');
 var Content = require('streamhub-sdk/content');
 var inherits = require('inherits');
 var LaunchableModal = require('streamhub-input/modal/launchable-modal');
-var log = require('streamhub-sdk/debug')('streamhub-input/upload');
-var ModalView = require('streamhub-sdk/modal');
-var Oembed = require('streamhub-sdk/content/types/oembed');
+var log = require('streamhub-sdk/debug')('streamhub-input/upload/view');
 var Pipeable = require('streamhub-input/pipeable');
-var Util = require('streamhub-sdk/util');
 var View = require('streamhub-sdk/view');
 
 'use strict';
@@ -56,7 +53,7 @@ Upload.prototype.name = 'Streamhub-Input/Upload';
 Upload.prototype.elTag = 'iframe';
 
 /** @override */
-Upload.prototype.template = require('hgn!streamhub-input/templates/upload')
+Upload.prototype.template = require('hgn!streamhub-input/templates/upload');
 
 /**
  * Get contextual data for a template.
@@ -83,13 +80,13 @@ Upload.prototype._initFilepicker = function () {
     $.getScript(src, scriptLoadCallback);
 
     var self = this;
-    function scriptLoadCallback(script, status, data) {
+    function scriptLoadCallback(script, status) {
         if (status !== 'success') {
             picker = false;
             throw 'There was an error loading ' + src;
         }
 
-        picker = filepicker;
+        picker = window.filepicker;
         picker.setKey(self._filepickerKey);
         self.emit('pickerLoaded');
     }

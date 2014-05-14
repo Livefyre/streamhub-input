@@ -1,8 +1,5 @@
 var Command = require('streamhub-sdk/ui/command');
 var inherits = require('inherits');
-var log = require('streamhub-sdk/debug')
-        ('streamhub-input/modal/modal-input-command');
-var LaunchableModal = require('streamhub-input/modal/launchable-modal');
 var util = require('streamhub-input/util');
 
 'use strict';

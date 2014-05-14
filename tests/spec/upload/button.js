@@ -7,7 +7,7 @@ var Content = require('streamhub-sdk/content');
 var InputButton = require('streamhub-input/button');
 var Passthrough = require('stream/passthrough');
 var Readable = require('stream/readable');
-var Upload = require('streamhub-input/upload');
+var Upload = require('streamhub-input/upload/view');
 var UploadButton = require('streamhub-input/upload/button');
 var Writable = require('stream/writable');
 

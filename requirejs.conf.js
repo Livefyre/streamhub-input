@@ -63,18 +63,6 @@ require.config({
     name: 'streamhub-input',
     location: 'src'
   },{
-    name: 'streamhub-input/content-editor',
-    location: 'src/content-editor'
-  },{
-    name: 'streamhub-input/modal',
-    location: 'src/modal'
-  },{
-    name: 'streamhub-input/upload',
-    location: 'src/upload'
-  },{
-    name: 'streamhub-input/templates',
-    location: 'src/templates'
-  },{
     name: 'streamhub-wall',
     location: 'lib/streamhub-wall/src'
   },{

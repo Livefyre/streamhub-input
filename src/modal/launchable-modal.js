@@ -1,4 +1,3 @@
-var inherits = require('inherits');
 var ModalView = require('streamhub-sdk/modal');
 var util = require('streamhub-input/util');
 

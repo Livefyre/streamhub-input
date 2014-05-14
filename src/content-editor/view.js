@@ -10,12 +10,9 @@ var Editor = require('streamhub-editor/editor');
 var editorTemplate = require('hgn!streamhub-editor/templates/editor');
 var inherits = require('inherits');
 var LaunchableModal = require('streamhub-input/modal/launchable-modal');
-var log = require('streamhub-sdk/debug')('streamhub-input/content-editor');
-var ModalView = require('streamhub-sdk/modal');
 var modalTemplate = require('hgn!streamhub-input/templates/content-editor-modal');
 var Pipeable = require('streamhub-input/pipeable');
 var UploadButtonIcon = require('streamhub-input/upload/button-icon');
-var util = require('streamhub-input/util');
 var View = require('streamhub-sdk/view');
 
 'use strict';
@@ -213,7 +210,7 @@ ContentEditor.prototype.reset = function () {
 };
 
 /** @override */
-ContentEditor.prototype.returnModal = function (err, data) {
+ContentEditor.prototype.returnModal = function () {
     LaunchableModal.prototype.returnModal.apply(this, arguments);
 };
 
