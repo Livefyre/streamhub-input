@@ -71,12 +71,6 @@ describe('streamhub-input/upload/view', function () {
             expect(typeof(uploadInput.template(cxt))).toBe('string');
         });
 
-        it('has a modalTemplate()', function () {
-            expect(typeof(uploadInput.modalTemplate)).toBe('function');
-            var cxt = uploadInput.getTemplateContext();
-            expect(typeof(uploadInput.modalTemplate(cxt))).toBe('string');
-        });
-
         it('Returns Array.<Content> when it _processResponse()s a successful response', function () {
             var retVal = uploadInput._processResponse(undefined, response);
             expect(retVal).toBeTruthy();

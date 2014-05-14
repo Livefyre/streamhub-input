@@ -37,24 +37,6 @@ describe('streamhub-input/modal/launchable-modal', function () {
             expect(typeof(view.template({}))).toBe('string');
         });
 
-        it('adds modalTemplate() for modal rendering, which defaults to util.abstractFunction when template() is not defined', function () {
-            view = new SubView({noTemplate: true});
-            expect(view.modalTemplate).toBe(null);
-        });
-
-        it('adds modalTemplate() for modal rendering, which defaults to template() when defined', function () {
-            expect(typeof(view.modalTemplate)).toBe('function');
-            expect(view.modalTemplate).toBe(view.template);
-        });
-
-        it('allows a custom modalTemplate() to replace template() for modal rendering', function () {
-            fn = function () { return '<span></span>'; };
-            SubView.prototype.modalTemplate = fn;
-            view = new SubView();
-
-            expect(view.modalTemplate).toBe(fn);
-        });
-
         it('can launchModal without a callback', function () {
             expect(function () {
                 view.launchModal();

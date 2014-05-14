@@ -7,15 +7,7 @@ var util = require('streamhub-input/util');
  * A view that can be displayed and interacted with in an otherwise generic modal.
  * @constructor
  */
-var LaunchableModal = function() {
-    /**
-     * Modal template for el
-     * @override
-     * @param [context] {Object}
-     * @returns {!string}
-     */
-    this.modalTemplate = this.modalTemplate || this.template;
-};
+function LaunchableModal() {};
 
 /**
  * Displays and operates this view as a modal.
@@ -23,8 +15,6 @@ var LaunchableModal = function() {
  *      Called after a successful interaction
  */
 LaunchableModal.prototype.launchModal = function(callback) {
-    this.template = this.modalTemplate;
-
     /**
      * Function to call after a successful interaction.
      * @type {!function(err: Object, data: Object)}
@@ -35,7 +25,7 @@ LaunchableModal.prototype.launchModal = function(callback) {
      * Modal representation of this view.
      * @type {!ModalView}
      */
-    this._modal = new ModalView();
+    this._modal = this._modal || new ModalView();
     this._modal.show(this);  // Will .render()
 };
 

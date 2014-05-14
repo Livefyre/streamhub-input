@@ -1,6 +1,6 @@
-var ContentEditor = require('streamhub-input/content-editor/view');
 var inherits = require('inherits');
 var InputButton = require('streamhub-input/button');
+var ModalContentEditor = require('streamhub-input/content-editor/modal-view');
 var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
 
 'use strict';
@@ -17,13 +17,17 @@ var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
  */
 function ContentEditorButton(opts) {
     opts = opts || {};
-    var input = new ContentEditor({
+    var input = new ModalContentEditor({
         mediaEnabled: opts.mediaEnabled
     });
     var command = new ModalInputCommand(input);
 
-    opts.input = opts.input || input;
-    InputButton.call(this, command, opts);
+    InputButton.call(this, command, {
+        el: opts.el,
+        input: opts.input || input,
+        destination: opts.destination,
+        authRequired: opts.authRequired
+    });
 }
 inherits(ContentEditorButton, InputButton);
 

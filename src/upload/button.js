@@ -15,8 +15,12 @@ function UploadButton(opts) {
     var input = new Upload();
     var command = new ModalInputCommand(input);
 
-    opts.input = opts.input || input;
-    InputButton.call(this, command, opts);
+    InputButton.call(this, command, {
+        el: opts.el,
+        input: opts.input || input,
+        destination: opts.destination,
+        authRequired: opts.authRequired
+    });
 }
 inherits(UploadButton, InputButton);
 

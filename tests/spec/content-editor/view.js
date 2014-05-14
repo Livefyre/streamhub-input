@@ -6,16 +6,14 @@ var debug = require('streamhub-sdk/debug');
 var ContentEditor = require('streamhub-input/content-editor/view');
 var inherits = require('inherits');
 var jasmineJquery = require('jasmine-jquery');//For sandbox()
-var LaunchableModal = require('streamhub-input/modal/launchable-modal');
 var ModalInputCommand= require('streamhub-input/modal/modal-input-command');
 var util = require('streamhub-sdk/util');
 var View = require('view');
 var Writable = require('stream/writable');
 
 describe('streamhub-input/content-editor/view', function () {
-    it('is an constructor that subclasses Editor and implements Input and LaunchableModal', function () {
+    it('is an constructor', function () {
         expect(typeof(ContentEditor)).toBe('function');
-        //TODO (joao) Test for abstract implementations
     });
 
     describe('when constructed', function () {
@@ -31,16 +29,6 @@ describe('streamhub-input/content-editor/view', function () {
 
         afterEach(function () {
             commentInput.destroy();
-        });
-
-        it('can launchModal(), then returnModal()', function () {
-            expect(typeof(commentInput.launchModal)).toBe('function');
-            expect(typeof(commentInput.returnModal)).toBe('function');
-
-            expect(function () {
-                commentInput.launchModal();
-                commentInput.returnModal();
-            }).not.toThrow();
         });
 
         it('adds the class "lf-edit"', function () {
@@ -62,18 +50,9 @@ describe('streamhub-input/content-editor/view', function () {
             expect(typeof(commentInput.template())).toBe('string');
         });
 
-        it('has a modalTemplate()', function () {
-            expect(typeof(commentInput.modalTemplate)).toBe('function');
-            expect(typeof(commentInput.modalTemplate())).toBe('string');
-        });
-
-        it('reset()s and returnModal()s when it _handlePostSuccess()', function () {
-            spyOn(commentInput, 'returnModal').andCallThrough();
+        it('reset()s and when it _handlePostSuccess()', function () {
             spyOn(commentInput, 'reset');
-
             commentInput._handlePostSuccess({});
-
-            expect(commentInput.returnModal).toHaveBeenCalled();
             expect(commentInput.reset).toHaveBeenCalled();
         });
 

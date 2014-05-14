@@ -9,8 +9,6 @@ var contentEditorTemplate = require('hgn!streamhub-input/templates/content-edito
 var Editor = require('streamhub-editor/editor');
 var editorTemplate = require('hgn!streamhub-editor/templates/editor');
 var inherits = require('inherits');
-var LaunchableModal = require('streamhub-input/modal/launchable-modal');
-var modalTemplate = require('hgn!streamhub-input/templates/content-editor-modal');
 var Pipeable = require('streamhub-input/pipeable');
 var UploadButtonIcon = require('streamhub-input/upload/button-icon');
 var View = require('streamhub-sdk/view');
@@ -26,12 +24,10 @@ var View = require('streamhub-sdk/view');
  * @constructor
  * @extends {Editor}
  * @extends {Pipeable}
- * @extends {LaunchableModal}
  */
 function ContentEditor(opts) {
     opts = opts || {};
     Editor.call(this, opts);
-    LaunchableModal.call(this);
     Pipeable.call(this, opts);
 
     this._postCmd = new Command(this._handlePostBtnClick.bind(this));
@@ -42,7 +38,6 @@ function ContentEditor(opts) {
     Auth.on('logout', handleLogout.bind(this));
 }
 inherits(ContentEditor, Editor);
-inherits.parasitically(ContentEditor, LaunchableModal);
 inherits.parasitically(ContentEditor, Pipeable);
 
 /**
@@ -100,7 +95,6 @@ ContentEditor.prototype._handlePostFailure = function () {
  */
 ContentEditor.prototype._handlePostSuccess = function () {
     this.reset();
-    this.returnModal();
     this._postCmd.enable();
 };
 
@@ -170,30 +164,9 @@ ContentEditor.prototype.getTemplateContext = function () {
     };
 };
 
-/**
- * Template for el when .launchModal()
- * @param [context] {Object}
- * @returns {!string}
- */
-ContentEditor.prototype.modalTemplate = function (context) {
-    return modalTemplate(context, {
-        contentEditor: contentEditorTemplate.template,
-        editor: editorTemplate.template
-    });
-};
-
 /** @override */
 ContentEditor.prototype.render = function () {
-    this.$el.html(this.template(this.getTemplateContext(), {
-        editor: editorTemplate.template,
-    }));
-
-    // this is called in the base render, unfortunate duplication
-    this.$resizeEl = this.$('.' + this.classes.RESIZE);
-    this.$textareaEl = this.$('.' + this.classes.FIELD);
-    this._processPlaceholders();
-
-    this.$textareaEl = this.$('.' + this.classes.FIELD);
+    Editor.prototype.render.call(this);
     this.$postEl = this.$('.' + this.classes.POST_BTN);
 
     this._postButton = new Button(this._authCmd, {el: this.$postEl});
@@ -210,11 +183,6 @@ ContentEditor.prototype.reset = function () {
 };
 
 /** @override */
-ContentEditor.prototype.returnModal = function () {
-    LaunchableModal.prototype.returnModal.apply(this, arguments);
-};
-
-/** @override */
 ContentEditor.prototype.sendPostEvent = function (ev) {
     var newContent = new Content();
     newContent.body = ev.body;
@@ -224,11 +192,15 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
         if (err) {
             ev.failure(err);
         }
-        ev.success(newContent);
+        ev.success();
     });
 };
 
 /**@override */
-ContentEditor.prototype.template = contentEditorTemplate;
+ContentEditor.prototype.template = function (context) {
+    return contentEditorTemplate(context, {
+        editor: editorTemplate.template
+    });
+};
 
 module.exports = ContentEditor;
