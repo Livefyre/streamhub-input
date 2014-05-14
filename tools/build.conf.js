@@ -7,19 +7,7 @@
   baseUrl: '..',
   name: "streamhub-input",
   include: [
-    'almond',
-    'streamhub-input/content-editor/button',
-    'streamhub-input/upload/button',
-    'streamhub-sdk',
-    'streamhub-sdk/jquery',
-    'streamhub-sdk/collection',
-    'streamhub-sdk/content',
-    'streamhub-sdk/content/views/content-list-view',
-    'streamhub-sdk/views/list-view',
-    'streamhub-sdk/auth',
-    'streamhub-sdk/modal',
-    'streamhub-wall',
-    'auth-delegates/delegates/livefyre'
+    'almond'
   ],
   stubModules: ['text', 'hgn', 'json'],
   out: "../dist/streamhub-input.min.js",
