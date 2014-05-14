@@ -37,7 +37,7 @@ LaunchableModal.prototype.launchModal = function(callback) {
      * @type {!ModalView}
      */
     this._modal = new ModalView();
-    this._modal.show(this); // Will .render()
+    this._modal.show(this);  // Will .render()
 };
 
 /**

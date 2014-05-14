@@ -64,5 +64,15 @@ describe('streamhub-input/content-editor/button', function () {
                 });
             });
         });
+
+        describe('with opts.mediaEnabled', function () {
+            beforeEach(function () {
+                cmtBtn = new CommentButton({mediaEnabled: true });
+            });
+
+            it('should enable media on its ContentEditor input', function () {
+                expect(cmtBtn._input.opts.mediaEnabled).toBeTruthy();
+            });
+        });
     });
 });
