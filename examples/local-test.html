@@ -3,10 +3,6 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/dev/css/hub-input.css">
     <style>
-    #wall {
-        /*width:500px;*/
-    }
-
     #comment-editor {
         width:500px;
         position: absolute;
@@ -34,8 +30,6 @@
     }
 
     </style>
-    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
-
 </head>
     <body class="lf">
         <legend>authentication</legend>
@@ -111,7 +105,8 @@
             });
 
             topCom = new CommentButton({
-                el: document.getElementById("top-comment")
+                el: document.getElementById("top-comment"),
+                mediaEnabled: true
             });
 
             btmUp = new UploadButton({
@@ -119,7 +114,8 @@
             });
 
             btmCom = new CommentButton({
-                el: document.getElementById("btm-comment")
+                el: document.getElementById("btm-comment"),
+                mediaEnabled: true
             });
 
             inputs = [embCom, topUp, topCom, btmUp, btmCom];

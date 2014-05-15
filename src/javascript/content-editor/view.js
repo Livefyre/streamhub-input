@@ -34,6 +34,7 @@ function ContentEditor(opts) {
     this._authCmd = new AuthRequiredCommand(this._postCmd);
 
     this._user = Auth.get('livefyre');
+    // TODO: observer
     Auth.on('login.livefyre', handleLogin.bind(this));
     Auth.on('logout', handleLogout.bind(this));
 }
@@ -60,16 +61,15 @@ function handleLogout() {
  * render the contianer where photo upload thumbnails will live.
  * @private
  */
-ContentEditor.prototype._addUploadButton = function   () {
-    this._uploadButton = new UploadButtonIcon();
+ContentEditor.prototype._addUploadButton = function () {
+    this._uploadButton = this._uploadButton || new UploadButtonIcon();
+    this._attachmentsList = this._attachmentsList || new AttachmentListView();
+
+    this._uploadButton.setElement(this.getElementsByClass(this.classes.EDITOR_UPLOAD));
+    this._attachmentsList.setElement(this.getElementsByClass(this.classes.ATTACHMENT_LIST));
     this._uploadButton.render();
-    this._attachmentsList = new AttachmentListView();
     this._attachmentsList.render();
     this._uploadButton.pipe(this._attachmentsList);
-    var $buttonWrapper = this.$('.' + this.classes.BTN_WRAPPER);
-    var $containerWrapper = this.$('.' + this.classes.UPLOAD_CONTAINER);
-    $buttonWrapper.prepend(this._uploadButton.$el);
-    $containerWrapper.append(this._attachmentsList.$el);
 };
 
 /** @override */
@@ -119,9 +119,9 @@ ContentEditor.prototype.buildPostEventObj = function () {
 /** @enum {string} */
 ContentEditor.prototype.classes = (function () {
     var classes = $.extend({}, Editor.prototype.classes);
-    classes.BTN_WRAPPER = 'lf-btn-wrapper';
+    classes.EDITOR_UPLOAD = 'lf-editor-upload';
     classes.POST_BTN = 'lf-content-editor-post';
-    classes.UPLOAD_CONTAINER = 'lf-upload-container';
+    classes.ATTACHMENT_LIST = 'lf-attachment-list-view';
     return classes;
 })();
 
@@ -157,6 +157,7 @@ ContentEditor.prototype.destroy = function () {
 ContentEditor.prototype.getTemplateContext = function () {
     var username = this._user && this._user.get('displayName') || '';
     return {
+        mediaEnabled: this.opts.mediaEnabled,
         strings: {
             post: this._i18n.POST,
             username: username
@@ -196,7 +197,7 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
     });
 };
 
-/**@override */
+/** @override */
 ContentEditor.prototype.template = function (context) {
     return contentEditorTemplate(context, {
         editor: editorTemplate.template

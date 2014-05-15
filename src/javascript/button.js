@@ -40,7 +40,7 @@ InputButton.prototype.elClass += ' input-btn';
 InputButton.prototype.elTag = 'button';
 
 /**
- * Pass through to button's input.
+ * Facade for button's input.
  * @param {Writable} writable
  */
 InputButton.prototype.pipe = function (writeable) {
@@ -48,7 +48,7 @@ InputButton.prototype.pipe = function (writeable) {
 };
 
 /**
- * Pass through to button's input.
+ * Facade for button's input.
  * @param {Writable} writable
  */
 InputButton.prototype.unpipe = function (writeable) {

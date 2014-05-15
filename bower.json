@@ -6,15 +6,15 @@
   ],
   "dependencies": {
     "cajon": "git://github.com/requirejs/cajon.git#~0.1.11",
-    "livefyre-bootstrap": "git@github.com:Livefyre/livefyre-bootstrap.git#1.0.0",
+    "livefyre-bootstrap": "git@github.com:Livefyre/livefyre-bootstrap.git#~1.0.0",
     "requirejs": "2.1.9",
     "inherits": "git://github.com/Livefyre/inherits.git",
     "jquery": "~1.10.1",
     "requirejs-hogan-plugin": "*",
     "stream": "git://github.com/Livefyre/stream.git#~0.1",
     "streamhub-editor": "git@github.com:Livefyre/streamhub-editor.git#~1.1.0",
-    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#~2.9.0",
-    "view": "git://github.com/Livefyre/view.git#~1.1"
+    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#ks_stacking_modal",
+    "view": "git://github.com/Livefyre/view.git#~1.2"
   },
   "devDependencies": {
     "auth": "git://github.com/Livefyre/auth",
@@ -26,8 +26,8 @@
     "livefyre-auth": "Livefyre/livefyre-auth"
   },
   "resolutions": {
-    "view": "~1.1",
-    "livefyre-bootstrap": "1.0.0",
-    "streamhub-sdk": "~2.9.0"
+    "view": "~1.2",
+    "livefyre-bootstrap": "~1.0.0",
+    "streamhub-sdk": "ks_stacking_modal"
   }
 }

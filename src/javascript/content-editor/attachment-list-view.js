@@ -59,6 +59,14 @@ AttachmentListView.prototype.clearAttachments = function () {
     this._viewMap = {};
 };
 
+/** @override */
+AttachmentListView.prototype.render = function () {
+    ListView.prototype.render.call(this);
+    for (var i = 0; i < this.views.length; i++) {
+        ListView.prototype._insert.call(this, this.views[i]);
+    }
+};
+
 /**
  * Get all the attachments in view
  * @return {Array.<Oembed>}

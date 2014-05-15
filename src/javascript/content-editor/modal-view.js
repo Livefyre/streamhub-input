@@ -21,6 +21,12 @@ inherits(ModalContentEditor, ContentEditor);
 inherits.parasitically(ContentEditor, LaunchableModal);
 
 /** @override */
+ModalContentEditor.prototype.classes = {
+    EDITOR_SECTION: 'lf-content-editor'
+};
+$.extend(ModalContentEditor.prototype.classes, ContentEditor.prototype.classes);
+
+/** @override */
 ModalContentEditor.prototype.template = function (context) {
     return modalTemplate(context, {
         contentEditor: contentEditorTemplate.template,
@@ -32,6 +38,13 @@ ModalContentEditor.prototype.template = function (context) {
 ModalContentEditor.prototype._handlePostSuccess = function () {
     ContentEditor.prototype._handlePostSuccess.call(this);
     this.returnModal();
+};
+
+/** @override */
+ModalContentEditor.prototype.render = function () {
+    ContentEditor.prototype.render.call(this);
+    var classes = ModalContentEditor.prototype.classes.EDITOR_SECTION;
+    this.$errorContainer = this.getElementsByClass(classes);
 };
 
 module.exports = ModalContentEditor;
