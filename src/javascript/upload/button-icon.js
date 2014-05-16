@@ -23,6 +23,6 @@ UploadButtonIcon.prototype.elClass = 'editor-upload';
 UploadButtonIcon.prototype.elTag = 'span';
 
 /** @override */
-UploadButtonIcon.prototype.template = require('hgn!streamhub-input/templates/upload-button');
+UploadButtonIcon.prototype.template = require('hgn!streamhub-input/templates/upload-button-icon');
 
 module.exports = UploadButtonIcon;

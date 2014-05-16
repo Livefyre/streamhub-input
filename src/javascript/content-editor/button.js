@@ -17,6 +17,7 @@ var ModalInputCommand = require('streamhub-input/javascript/modal/modal-input-co
  */
 function ContentEditorButton(opts) {
     opts = opts || {};
+    this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
     var input = new ModalContentEditor({
         mediaEnabled: opts.mediaEnabled
     });
@@ -30,6 +31,16 @@ function ContentEditorButton(opts) {
     });
 }
 inherits(ContentEditorButton, InputButton);
+
+/** @enum {string} */
+ContentEditorButton.prototype._i18n = {
+    POST: 'Post Your Comment'
+};
+
+/** @override */
+ContentEditorButton.prototype.template = function () {
+    return this._i18n.POST
+};
 
 /**
  * @override
