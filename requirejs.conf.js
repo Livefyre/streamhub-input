@@ -63,6 +63,7 @@ require.config({
   },{
     name: 'streamhub-input',
     location: 'src',
+    main: 'javascript/main'
   },{
     name: 'streamhub-wall',
     location: 'lib/streamhub-wall/src'
