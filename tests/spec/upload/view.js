@@ -6,14 +6,14 @@ var Content = require('streamhub-sdk/content');
 var debug = require('streamhub-sdk/debug');
 var inherits = require('inherits');
 var jasmineJquery = require('jasmine-jquery');//For sandbox()
-var LaunchableModal = require('streamhub-input/modal/launchable-modal');
-var ModalInputCommand= require('streamhub-input/modal/modal-input-command');
-var Upload = require('streamhub-input/upload/view');
+var LaunchableModal = require('streamhub-input/javascript/modal/launchable-modal');
+var ModalInputCommand= require('streamhub-input/javascript/modal/modal-input-command');
+var Upload = require('streamhub-input/javascript/upload/view');
 var util = require('streamhub-sdk/util');
 var View = require('view');
 var Writable = require('stream/writable');
 
-describe('streamhub-input/upload/view', function () {
+describe('streamhub-input/javascript/upload/view', function () {
     it('is an constructor that subclasses View and implements Input and LaunchableModal', function () {
         expect(typeof(Upload)).toBe('function');
     });

@@ -2,11 +2,11 @@
 
 var Auth = require('streamhub-sdk/auth');
 var Button = require('streamhub-sdk/ui/button');
-var CommentButton = require('streamhub-input/content-editor/button');
-var InputButton = require('streamhub-input/button');
+var CommentButton = require('streamhub-input/javascript/content-editor/button');
+var InputButton = require('streamhub-input/javascript/button');
 var Writable = require('stream/writable');
 
-describe('streamhub-input/content-editor/button', function () {
+describe('streamhub-input/javascript/content-editor/button', function () {
     it('is a constructor that extends InputButton', function () {
         expect(typeof(CommentButton)).toBe('function');
 

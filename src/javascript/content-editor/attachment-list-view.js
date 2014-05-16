@@ -1,6 +1,6 @@
 var inherits = require('inherits');
 var ListView = require('streamhub-sdk/views/list-view');
-var AttachmentView = require('streamhub-input/content-editor/attachment-view');
+var AttachmentView = require('streamhub-input/javascript/content-editor/attachment-view');
 
 'use strict';
 

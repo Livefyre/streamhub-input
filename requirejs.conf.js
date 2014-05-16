@@ -62,10 +62,7 @@ require.config({
     main: 'jquery'
   },{
     name: 'streamhub-input',
-    location: 'src/javascript',
-  },{
-    name: 'streamhub-input/templates',
-    location: 'src/templates'
+    location: 'src',
   },{
     name: 'streamhub-wall',
     location: 'lib/streamhub-wall/src'

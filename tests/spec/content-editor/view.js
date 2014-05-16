@@ -3,15 +3,15 @@
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Command = require('streamhub-sdk/ui/command');
 var debug = require('streamhub-sdk/debug');
-var ContentEditor = require('streamhub-input/content-editor/view');
+var ContentEditor = require('streamhub-input/javascript/content-editor/view');
 var inherits = require('inherits');
 var jasmineJquery = require('jasmine-jquery');//For sandbox()
-var ModalInputCommand= require('streamhub-input/modal/modal-input-command');
+var ModalInputCommand= require('streamhub-input/javascript/modal/modal-input-command');
 var util = require('streamhub-sdk/util');
 var View = require('view');
 var Writable = require('stream/writable');
 
-describe('streamhub-input/content-editor/view', function () {
+describe('streamhub-input/javascript/content-editor/view', function () {
     it('is an constructor', function () {
         expect(typeof(ContentEditor)).toBe('function');
     });

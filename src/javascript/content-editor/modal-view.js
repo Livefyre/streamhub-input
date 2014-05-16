@@ -1,9 +1,9 @@
-var ContentEditor = require('streamhub-input/content-editor/view');
+var ContentEditor = require('streamhub-input/javascript/content-editor/view');
 var contentEditorTemplate = require('hgn!streamhub-input/templates/content-editor');
 var editorTemplate = require('hgn!streamhub-editor/templates/editor');
 var inherits = require('inherits');
 var modalTemplate = require('hgn!streamhub-input/templates/content-editor-modal');
-var LaunchableModal = require('streamhub-input/modal/launchable-modal');
+var LaunchableModal = require('streamhub-input/javascript/modal/launchable-modal');
 
 'use strict';
 

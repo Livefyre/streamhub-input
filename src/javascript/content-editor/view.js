@@ -1,5 +1,5 @@
 var $ = require('jquery');
-var AttachmentListView = require('streamhub-input/content-editor/attachment-list-view');
+var AttachmentListView = require('streamhub-input/javascript/content-editor/attachment-list-view');
 var Auth = require('auth');
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Button = require('streamhub-sdk/ui/button');
@@ -10,8 +10,8 @@ var Editor = require('streamhub-editor/editor');
 var editorTemplate = require('hgn!streamhub-editor/templates/editor');
 var inherits = require('inherits');
 var Observer = require('observer');
-var Pipeable = require('streamhub-input/pipeable');
-var UploadButtonIcon = require('streamhub-input/upload/button-icon');
+var Pipeable = require('streamhub-input/javascript/pipeable');
+var UploadButtonIcon = require('streamhub-input/javascript/upload/button-icon');
 var View = require('streamhub-sdk/view');
 
 'use strict';

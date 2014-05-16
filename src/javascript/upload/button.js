@@ -1,7 +1,7 @@
 var inherits = require('inherits');
-var InputButton = require('streamhub-input/button');
-var ModalInputCommand = require('streamhub-input/modal/modal-input-command');
-var Upload = require('streamhub-input/upload/view');
+var InputButton = require('streamhub-input/javascript/button');
+var ModalInputCommand = require('streamhub-input/javascript/modal/modal-input-command');
+var Upload = require('streamhub-input/javascript/upload/view');
 
 'use strict';
 

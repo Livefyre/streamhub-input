@@ -1,12 +1,12 @@
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Command = require('streamhub-sdk/ui/command');
-var InputButton = require('streamhub-input/button');
-var Pipeable = require('streamhub-input/pipeable');
+var InputButton = require('streamhub-input/javascript/button');
+var Pipeable = require('streamhub-input/javascript/pipeable');
 var Writable = require('stream/writable');
 
 'use strict';
 
-describe('streamhub-input/button', function () {
+describe('streamhub-input/javascript/button', function () {
     var input;
     var inputButton;
     var opts;

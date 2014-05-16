@@ -1,9 +1,9 @@
 var $ = require('jquery');
 var Content = require('streamhub-sdk/content');
 var inherits = require('inherits');
-var LaunchableModal = require('streamhub-input/modal/launchable-modal');
-var log = require('streamhub-sdk/debug')('streamhub-input/upload/view');
-var Pipeable = require('streamhub-input/pipeable');
+var LaunchableModal = require('streamhub-input/javascript/modal/launchable-modal');
+var log = require('streamhub-sdk/debug')('streamhub-input/javascript/upload/view');
+var Pipeable = require('streamhub-input/javascript/pipeable');
 var View = require('streamhub-sdk/view');
 
 'use strict';

@@ -1,9 +1,9 @@
-var AttachmentView = require('streamhub-input/content-editor/attachment-view');
-var AttachmentListView = require('streamhub-input/content-editor/attachment-list-view');
+var AttachmentView = require('streamhub-input/javascript/content-editor/attachment-view');
+var AttachmentListView = require('streamhub-input/javascript/content-editor/attachment-list-view');
 var Content = require('streamhub-sdk/content');
 var View = require('streamhub-sdk/view');
 
-describe('streamhub-input/content-editor/attachment-list-view', function () {
+describe('streamhub-input/javascript/content-editor/attachment-list-view', function () {
     var attachmentListView;
     var content;
     var url = 'www.io.xxx';

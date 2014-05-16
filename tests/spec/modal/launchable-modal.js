@@ -1,11 +1,11 @@
 'use strict';
 
 var inherits = require('inherits');
-var LaunchableModal = require('streamhub-input/modal/launchable-modal');
+var LaunchableModal = require('streamhub-input/javascript/modal/launchable-modal');
 var util = require('streamhub-sdk/util');
 var View = require('view');
 
-describe('streamhub-input/modal/launchable-modal', function () {
+describe('streamhub-input/javascript/modal/launchable-modal', function () {
     describe('inherits.parasitically() by a View and', function () {
         var clbk;
         var data;

@@ -2,7 +2,7 @@
  * @fileoverview The upload button, as a mini icon
  */
 var inherits = require('inherits');
-var UploadButton = require('streamhub-input/upload/button');
+var UploadButton = require('streamhub-input/javascript/upload/button');
 
 'use strict';
 

@@ -1,9 +1,9 @@
-var Pipeable = require('streamhub-input/pipeable');
+var Pipeable = require('streamhub-input/javascript/pipeable');
 var Writable = require('stream/writable');
 
 'use strict';
 
-describe('streamhub-input/pipeable', function () {
+describe('streamhub-input/javascript/pipeable', function () {
     it('can pipe, unpipe, and writeToDestination', function () {
         var writable = new Writable();
         var pipeable = new Pipeable();

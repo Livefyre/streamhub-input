@@ -1,6 +1,6 @@
 var Command = require('streamhub-sdk/ui/command');
 var inherits = require('inherits');
-var util = require('streamhub-input/util');
+var util = require('streamhub-input/javascript/util');
 
 'use strict';
 
