@@ -8,12 +8,13 @@ function AttachmentView () {
 }
 inherits(AttachmentView, View);
 
-/* Ensure that the image does not render with an unreasonable aspect ratio */
+/* Ensure thehat the image does not render with an unreasonable aspect ratio */
 AttachmentView.prototype._loadImage = function () {
     var image = new Image();
     image.className = this.classes.THUMBNAIL;
     image.onload = this._handleImageLoaded.bind(this, image);
     image.src = this.opts.oembed.url;
+    return image;
 };
 
 /*
@@ -26,9 +27,11 @@ AttachmentView.prototype._handleImageLoaded = function (image) {
         var div = document.createElement('div');
         div.className = this.classes.THUMBNAIL_CONTAINED;
         div.style = 'background-image: ' + this.opts.oembed.url;
-        return this.$el.append(div);
+        this.$el.append(div);
+        return div;
     }
     this.$el.append(image);
+    return image;
 };
 
 /** @enum {string} */

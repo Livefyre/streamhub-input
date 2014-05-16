@@ -1,6 +1,7 @@
 var AttachmentView = require('streamhub-input/content-editor/attachment-view');
 var AttachmentListView = require('streamhub-input/content-editor/attachment-list-view');
 var Content = require('streamhub-sdk/content');
+var View = require('streamhub-sdk/view');
 
 describe('streamhub-input/content-editor/attachment-list-view', function () {
     var attachmentListView;
@@ -46,9 +47,18 @@ describe('streamhub-input/content-editor/attachment-list-view', function () {
             attachmentListView.delegateEvents();
             attachmentListView.add(content);
             var view = attachmentListView.views[0];
+            View.prototype.render.call(view);  // Hack b/c the image url won't ever load.
             view.$('.' + AttachmentListView.prototype.classes.DISCARD_X).click();
             expect(attachmentListView._handleRemove).toHaveBeenCalled();
             expect(attachmentListView.views.length).toEqual(0);
+        });
+    });
+
+    describe('#render', function () {
+        it('should insert added views', function () {
+            attachmentListView.add(content);
+            attachmentListView.render();
+            expect(attachmentListView.$('.hub-list').children().length).toEqual(1);
         });
     });
 });

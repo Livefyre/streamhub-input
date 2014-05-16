@@ -9,6 +9,7 @@ var contentEditorTemplate = require('hgn!streamhub-input/templates/content-edito
 var Editor = require('streamhub-editor/editor');
 var editorTemplate = require('hgn!streamhub-editor/templates/editor');
 var inherits = require('inherits');
+var Observer = require('observer');
 var Pipeable = require('streamhub-input/pipeable');
 var UploadButtonIcon = require('streamhub-input/upload/button-icon');
 var View = require('streamhub-sdk/view');
@@ -29,14 +30,15 @@ function ContentEditor(opts) {
     opts = opts || {};
     Editor.call(this, opts);
     Pipeable.call(this, opts);
+    Observer(this);
 
     this._postCmd = new Command(this._handlePostBtnClick.bind(this));
     this._authCmd = new AuthRequiredCommand(this._postCmd);
 
     this._user = Auth.get('livefyre');
-    // TODO: observer
-    Auth.on('login.livefyre', handleLogin.bind(this));
-    Auth.on('logout', handleLogout.bind(this));
+
+    this.listenTo(Auth, 'login.livefyre', handleLogin.bind(this));
+    this.listenTo(Auth, 'logout', handleLogout.bind(this));
 }
 inherits(ContentEditor, Editor);
 inherits.parasitically(ContentEditor, Pipeable);
@@ -141,8 +143,7 @@ ContentEditor.prototype.elTag = 'article';
 /** @override */
 ContentEditor.prototype.destroy = function () {
     View.prototype.destroy.call(this);
-    Auth.removeListener('login.livefyre', handleLogin.bind(this));
-    Auth.removeListener('logout', handleLogout.bind(this));
+    this.stopListening();
     this._uploadButton && this._uploadButton.destroy();
     this._uploadButton = null;
     this._attachmentsList && this._attachmentsList.destroy();

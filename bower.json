@@ -6,6 +6,7 @@
   ],
   "dependencies": {
     "cajon": "git://github.com/requirejs/cajon.git#~0.1.11",
+    "event-emitter": "git@github.com:Livefyre/event-emitter.git#~0.1.0",
     "livefyre-bootstrap": "git@github.com:Livefyre/livefyre-bootstrap.git#~1.0.0",
     "requirejs": "2.1.9",
     "inherits": "git://github.com/Livefyre/inherits.git",
