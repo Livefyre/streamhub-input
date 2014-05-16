@@ -53,8 +53,8 @@ AttachmentListView.prototype.add = function (content) {
  * Clear all currently displayed attachments
  */
 AttachmentListView.prototype.clearAttachments = function () {
-    for (var i = 0; i < this.views.length; i++) {
-        this.remove(this.views[i]);
+    while (this.views.length) {
+        this.remove(this.views[0]);
     }
     this._viewMap = {};
 };

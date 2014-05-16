@@ -27,6 +27,7 @@ describe('streamhub-input/content-editor/attachment-list-view', function () {
     describe('#clearAttachments', function () {
         it('destroy all attachment views', function () {
             attachmentListView.add(content);
+            attachmentListView.add(content);
             attachmentListView.clearAttachments();
             expect(attachmentListView.views.length).toEqual(0);
         });

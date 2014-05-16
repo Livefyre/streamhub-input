@@ -24,13 +24,12 @@ AttachmentView.prototype._loadImage = function () {
 AttachmentView.prototype._handleImageLoaded = function (image) {
     View.prototype.render.call(this);
     if (image.height / image.width < 0.5) {
-        var div = document.createElement('div');
-        div.className = this.classes.THUMBNAIL_CONTAINED;
-        div.style = 'background-image: ' + this.opts.oembed.url;
-        this.$el.append(div);
-        return div;
+        image = document.createElement('div');
+        image.className = this.classes.THUMBNAIL_CONTAINED;
+        image.style = 'background-image: ' + this.opts.oembed.url;
     }
     this.$el.append(image);
+    this.$el.show();
     return image;
 };
 
@@ -45,6 +44,7 @@ AttachmentView.prototype.elClass = 'lf-attachment';
 
 /** @override */
 AttachmentView.prototype.render = function () {
+    this.$el.hide();
     this._loadImage();
 };
 

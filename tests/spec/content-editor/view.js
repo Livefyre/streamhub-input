@@ -90,9 +90,9 @@ describe('streamhub-input/content-editor/view', function () {
                 commentInput.sendPostEvent({
                     body: 'Batman',
                 });
-                expect(commentInput._postCmd.canExecute()).not.toBeTruthy();
+                expect(commentInput._authCmd._canExecute).not.toBeTruthy();
                 commentInput._handlePostSuccess();
-                expect(commentInput._postCmd.canExecute()).toBeTruthy();
+                expect(commentInput._authCmd._canExecute).toBeTruthy();
             });
 
             it('has a .$textareaEl and .$postEl', function () {
