@@ -189,7 +189,7 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
     var newContent = new Content();
     newContent.body = ev.body;
     newContent.attachments = ev.attachments;
-    this._authCmd.disable();
+    this._authCmd.disable();  // TODO(jj): Enable/disable button.
     this.writeToDestination(newContent, function(err) {
         if (err) {
             ev.failure(err);
