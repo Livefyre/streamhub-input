@@ -11,7 +11,7 @@ require.config({
     'jasmine-html': 'lib/jasmine/lib/jasmine-core/jasmine-html',
     'jasmine-jquery': 'lib/jasmine-jquery/lib/jasmine-jquery',
     'event-emitter': 'lib/event-emitter/src/event-emitter',
-    'observer': 'lib/event-emitter/src/observer',
+    'observer': 'lib/observer/src/observer',
     inherits: 'lib/inherits/inherits',
     blanket: 'lib/blanket/dist/qunit/blanket',
     'blanket-jasmine': 'lib/blanket/dist/jasmine/blanket_jasmine'
