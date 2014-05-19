@@ -28,7 +28,12 @@ Pipeable.prototype.unpipe = function () {
  * @param {function(?Error, Object)} cb
  */
 Pipeable.prototype.writeToDestination = function (data, cb) {
-    this._destination && this._destination.write(data, cb);
+    if (!this._destination) {
+        debugger
+        throw 'No destination to write to';
+        return;
+    }
+    this._destination.write(data, cb);
 };
 
 module.exports = Pipeable;

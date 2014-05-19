@@ -25,6 +25,7 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                 el: $('#sandbox')[0]
             });
             writable = new Writable();
+            writable._write = function () {};
         });
 
         afterEach(function () {
@@ -48,12 +49,6 @@ describe('streamhub-input/javascript/content-editor/view', function () {
         it('has a template()', function () {
             expect(typeof(commentInput.template)).toBe('function');
             expect(typeof(commentInput.template())).toBe('string');
-        });
-
-        it('reset()s and when it _handlePostSuccess()', function () {
-            spyOn(commentInput, 'reset');
-            commentInput._handlePostSuccess({});
-            expect(commentInput.reset).toHaveBeenCalled();
         });
 
         describe('and rendered', function () {
@@ -86,13 +81,21 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                 expect(commentInput.reset).toHaveBeenCalled();
             });
 
+            it('reset()s and when it _handlePostSuccess()', function () {
+                spyOn(commentInput, 'reset');
+                commentInput._handlePostSuccess({});
+                expect(commentInput.reset).toHaveBeenCalled();
+            });
+
             it('disables the post button on submit and reenables when the content is posted', function () {
+                commentInput.pipe(writable);
                 commentInput.sendPostEvent({
                     body: 'Batman',
                 });
-                expect(commentInput._authCmd._canExecute).not.toBeTruthy();
+                expect(commentInput._postButton._disabled).toBeTruthy();
                 commentInput._handlePostSuccess();
-                expect(commentInput._authCmd._canExecute).toBeTruthy();
+                expect(commentInput._postButton._disabled).not.toBeTruthy();
+                commentInput.unpipe(writable);
             });
 
             it('has a .$textareaEl and .$postEl', function () {

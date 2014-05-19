@@ -39,6 +39,7 @@ describe('streamhub-input/javascript/upload/view', function () {
             uploadInput = new Upload(opts);
             writable = new Writable();
             writable._write = function () {};
+            uploadInput.pipe(writable);
         });
 
         afterEach(function () {

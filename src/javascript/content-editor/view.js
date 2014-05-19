@@ -88,7 +88,7 @@ ContentEditor.prototype._i18n = (function () {
  */
 ContentEditor.prototype._handlePostFailure = function () {
     this.showError(this._i18n.ERRORS.GENERIC);
-    this._authCmd.enable();
+    this._postButton.enable();
 };
 
 /**
@@ -97,7 +97,7 @@ ContentEditor.prototype._handlePostFailure = function () {
  */
 ContentEditor.prototype._handlePostSuccess = function () {
     this.reset();
-    this._authCmd.enable();
+    this._postButton.enable();
 };
 
 /** @override */
@@ -189,7 +189,7 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
     var newContent = new Content();
     newContent.body = ev.body;
     newContent.attachments = ev.attachments;
-    this._authCmd.disable();  // TODO(jj): Enable/disable button.
+    this._postButton.disable();  // TODO(jj): Enable/disable button.
     this.writeToDestination(newContent, function(err) {
         if (err) {
             ev.failure(err);

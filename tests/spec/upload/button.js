@@ -70,6 +70,7 @@ describe('streamhub-input/javascript/upload/button', function () {
 
                 it('can receive and pipe the value returned by Upload', function () {
                     upldBtn = new UploadButton(opts);
+                    upldBtn.pipe(writable);
                     spyOn(upldBtn._input, '_processResponse').andCallThrough();
                     upldBtn.render();
                     upldBtn._command.execute(function (err, data) {});

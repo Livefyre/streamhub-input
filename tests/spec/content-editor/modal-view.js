@@ -45,6 +45,7 @@ describe('streamhub-input/javascript/content-editor/modal-view', function () {
         });
 
         it('reset()s and returnModal()s when it _handlePostSuccess()', function () {
+            commentInput.render();
             spyOn(commentInput, 'returnModal').andCallThrough();
             spyOn(commentInput, 'reset');
 
