@@ -17,3 +17,6 @@ lib
 
 .DS_Store
 .DS_Store?
+
+coverage/
+dev/css/

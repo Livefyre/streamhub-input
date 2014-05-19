@@ -1,4 +1,5 @@
 require.config({
+  baseUrl: '/',
   paths: {
     jquery: 'lib/jquery/jquery',
     text: 'lib/requirejs-text/text',
@@ -10,6 +11,7 @@ require.config({
     'jasmine-html': 'lib/jasmine/lib/jasmine-core/jasmine-html',
     'jasmine-jquery': 'lib/jasmine-jquery/lib/jasmine-jquery',
     'event-emitter': 'lib/event-emitter/src/event-emitter',
+    'observer': 'lib/observer/src/observer',
     inherits: 'lib/inherits/inherits',
     blanket: 'lib/blanket/dist/qunit/blanket',
     'blanket-jasmine': 'lib/blanket/dist/jasmine/blanket_jasmine'
@@ -18,11 +20,24 @@ require.config({
     name: 'stream',
     location: 'lib/stream/src'
   },{
+    name: 'auth',
+    location: 'lib/auth/src'
+  },{
     name: 'auth-delegates',
     location: 'lib/auth-delegates/src'
   },{
+    name: 'debug',
+    location: 'lib/debug',
+    main: 'debug'
+  },{
+    name: 'livefyre-auth',
+    location: 'lib/livefyre-auth/src'
+  },{
     name: 'streamhub-editor',
     location: 'lib/streamhub-editor/src/javascript'
+  },{
+    name: 'streamhub-editor/templates',
+    location: 'lib/streamhub-editor/src/templates'
   },{
     name: 'streamhub-sdk',
     location: 'lib/streamhub-sdk/src'
@@ -47,16 +62,8 @@ require.config({
     main: 'jquery'
   },{
     name: 'streamhub-input',
-    location: 'src'
-  },{
-    name: 'streamhub-input/comment',
-    location: 'src/comment'
-  },{
-    name: 'streamhub-input/modal',
-    location: 'src/modal'
-  },{
-    name: 'streamhub-input/upload',
-    location: 'src/upload'
+    location: 'src',
+    main: 'javascript/main'
   },{
     name: 'streamhub-wall',
     location: 'lib/streamhub-wall/src'

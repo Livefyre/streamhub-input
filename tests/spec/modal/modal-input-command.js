@@ -4,12 +4,12 @@ var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Command = require('streamhub-sdk/ui/command');
 var debug = require('streamhub-sdk/debug');
 var inherits = require('inherits');
-var LaunchableModal = require('streamhub-input/modal/abstract/launchable-modal');
-var ModalInputCommand= require('streamhub-input/modal/modal-input-command');
-var util = require('streamhub-sdk/util');
+var LaunchableModal = require('streamhub-input/javascript/modal/launchable-modal');
+var ModalInputCommand= require('streamhub-input/javascript/modal/modal-input-command');
+var util = require('streamhub-input/javascript/util');
 var View = require('view');
 
-describe('streamhub-input/modal/modal-input-command', function () {
+describe('streamhub-input/javascript/modal/modal-input-command', function () {
 
     it('is an constructor that subclasses Command', function () {
         expect(typeof(ModalInputCommand)).toBe('function');
@@ -20,7 +20,7 @@ describe('streamhub-input/modal/modal-input-command', function () {
             new ModalInputCommand();
         }).toThrow();
     });
-    
+
     describe('when constructed', function () {
         var LaunchableView = function (opts) {
             if (!opts || !opts.noTemplate) {
@@ -51,7 +51,9 @@ describe('streamhub-input/modal/modal-input-command', function () {
         });
 
         it('passes .callback to launchModal() on execute()', function () {
-            inputCmd.callback = clbk;
+            inputCmd = new ModalInputCommand(view, {
+                callback: clbk
+            });
             inputCmd.execute()
             inputCmd.view.returnModal();
             expect(clbk).toHaveBeenCalled();
@@ -69,24 +71,6 @@ describe('streamhub-input/modal/modal-input-command', function () {
             inputCmd.execute(clbk)
             inputCmd.view.returnModal();
             expect(clbk).toHaveBeenCalled();
-        });
-
-        it('has a default callback() that logs', function () {
-            if (debug.enabled('streamhub-input/modal/modal-input-command')) {
-                spyOn(console, 'log').andCallThrough();
-
-                inputCmd.execute();
-                inputCmd.view.returnModal();
-
-                waitsFor(function () {
-                    return console.log.wasCalled;
-                }, 'console.log to get called', 200);
-                runs(function () {
-                    expect(console.log).toHaveBeenCalled();
-                });
-            } else {
-                throw 'This test requires debugging enabled for modal/modal-input-command';
-            }
         });
 
         describe('with opts', function() {
@@ -112,14 +96,6 @@ describe('streamhub-input/modal/modal-input-command', function () {
                 inputCmd.execute();
                 inputCmd.view.returnModal();
                 expect(clbk2).toHaveBeenCalled();
-            });
-
-            it('uses opts.fn as the executing function instead of the default function', function () {
-                //Control
-                expect(fn).not.toHaveBeenCalled();
-
-                inputCmd.execute();
-                expect(fn).toHaveBeenCalled();
             });
         });
     });

@@ -1,68 +1,66 @@
-'use strict';
-
-var Button = require('streamhub-sdk/ui/button');
+var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Command = require('streamhub-sdk/ui/command');
-var Content = require('streamhub-sdk/content');
-var Input = require('streamhub-input');
-var InputButton = require('streamhub-input/button');
-var Passthrough = require('stream/passthrough');
-var Readable = require('stream/readable');
+var InputButton = require('streamhub-input/javascript/button');
+var Pipeable = require('streamhub-input/javascript/pipeable');
 var Writable = require('stream/writable');
 
-describe('streamhub-input/button', function () {
-    it('is a constructor that extends Button and inherits parasitically from Passthrough', function () {
-        expect(typeof(InputButton)).toBe('function');
+'use strict';
 
-        var inputButton = new InputButton(new Command(function () {}));
-        expect(inputButton instanceof Button).toBe(true);
-        //TODO (joao) Improve the check for Passthrough
-        expect(typeof(inputButton.read)).toBe('function');
-        expect(typeof(inputButton.write)).toBe('function');
+describe('streamhub-input/javascript/button', function () {
+    var input;
+    var inputButton;
+    var opts;
+    var writable;
+
+    it('has a pipeable and a destination (if specified)', function () {
+        input = new Pipeable();
+        writable = new Writable();
+        writable._write = function () {};
+        opts = {
+            destination: writable,
+            input: input
+        };
+
+        inputButton = new InputButton(null, opts);
+        spyOn(writable, 'write');
+        inputButton._input.writeToDestination('something', 'cb');
+        expect(writable.write).toHaveBeenCalledWith('something', 'cb');
     });
 
-    it('can\'t be constructed without a command specified', function  () {
-        expect(function () {
-            new InputButton();
-        }).toThrow();
+    it('wraps the pipeable for post-construction piping', function () {
+        input = new Pipeable();
+        writable = new Writable();
+        writable._write = function () {};
+        opts = {
+            input: input
+        };
+
+        inputButton = new InputButton(null, opts);
+        inputButton.pipe(writable);
+        spyOn(writable, 'write');
+        inputButton._input.writeToDestination('something', 'cb');
+        expect(writable.write).toHaveBeenCalledWith('something', 'cb');
     });
-    
-    describe('when constructed', function () {
-        var inputButton;
-        var cmd;
-        var cmdSpy;
-        beforeEach(function () {
-            cmdSpy = jasmine.createSpy('command');
-            cmd = new Command(cmdSpy);
-            inputButton = new InputButton(cmd);
+
+    it('throws no error if no input is specified', function () {
+        writable = new Writable();
+        writable._write = function () {};
+
+        inputButton = new InputButton(null, opts);
+        inputButton.pipe(writable);  // no error
+    });
+
+    it('wraps the command in a auth required command by default', function () {
+        var command = new Command(function () {});
+        inputButton = new InputButton(command, opts);
+        expect(command instanceof AuthRequiredCommand).toBeTruthy;
+    });
+
+    it('can skip the auth required command', function () {
+        var command = new Command(function () {});
+        inputButton = new InputButton(command, {
+            authRequired: false
         });
-
-        describe('with opts', function () {
-            var input;
-            var opts;
-            var writable;
-            beforeEach(function () {
-                input = new Input();
-                input.getInput = function() { return 'stuff'; };
-                input._validate = function() { return true; };
-                input._inputToContent = function(data) { return new Content(data); };
-
-                writable = new Writable();
-                writable._write = function () {};
-                opts = {
-                    destination: writable,
-                    input: input
-                };
-
-                inputButton = new InputButton(cmd, opts);
-            });
-
-            it('assigns opts.destination to ._destination and .pipe()s to it', function () {
-                expect(inputButton._destination).toBe(writable);
-
-                spyOn(writable, 'write');
-                inputButton.write('something');
-                expect(writable.write).toHaveBeenCalledWith('something');
-            });
-        });
+        expect(command instanceof AuthRequiredCommand).not.toBeTruthy;
     });
 });
