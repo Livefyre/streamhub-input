@@ -1,29 +1,17 @@
 ({
   mainConfigFile: '../requirejs.conf.js',
   paths: {
-    jquery: 'lib/jquery/jquery.min',
-    almond: 'lib/almond/almond'
+    almond: 'lib/almond/almond',
+    auth: 'tools/auth-stub',
+    jquery: 'lib/jquery/jquery.min'
   },
   baseUrl: '..',
   name: "streamhub-input",
   include: [
-    'almond',
-    'streamhub-input/comment/button',
-    'streamhub-input/upload/button',
-    'streamhub-sdk',
-    'streamhub-sdk/jquery',
-    'streamhub-sdk/collection',
-    'streamhub-sdk/content',
-    'streamhub-sdk/content/views/content-list-view',
-    'streamhub-sdk/views/list-view',
-    'streamhub-sdk/auth',
-    'streamhub-sdk/modal',
-    'streamhub-wall',
-    'auth-delegates/delegates/livefyre'
+    'almond'
   ],
   stubModules: ['text', 'hgn', 'json'],
   out: "../dist/streamhub-input.min.js",
-  namespace: 'HubInput',
   pragmasOnSave: {
     excludeHogan: true
   },
@@ -35,6 +23,10 @@
       unsafe: true
     },
     mangle: true
+  },
+  wrap: {
+    startFile: 'wrap-start.frag',
+    endFile: 'wrap-end.frag'
   },
   generateSourceMaps: true,
   onBuildRead: function(moduleName, path, contents) {

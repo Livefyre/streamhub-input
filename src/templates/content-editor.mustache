@@ -1,0 +1,17 @@
+<section class="lf-content-editor">
+    <div class="lf-user-info">
+        <span class="lf-name">{{ strings.username }}</span>
+    </div>
+    <div class="lf-editor-container">
+        {{> editor}}
+    </div>
+    {{#mediaEnabled}}
+        <div class="lf-attachment-list-view"></div>
+    {{/mediaEnabled}}
+    <div class="lf-btn-wrapper">
+        {{#mediaEnabled}}
+            <div class="lf-editor-upload"></div>
+        {{/mediaEnabled}}
+        <button class="lf-btn lf-input-btn lf-content-editor-post">{{ strings.post }} </button>
+    </div>
+</section>
