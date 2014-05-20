@@ -4,6 +4,7 @@ var editorTemplate = require('hgn!streamhub-editor/templates/editor');
 var inherits = require('inherits');
 var modalTemplate = require('hgn!streamhub-input/templates/content-editor-modal');
 var LaunchableModal = require('streamhub-input/javascript/modal/launchable-modal');
+var $ = require('jquery');
 
 'use strict';
 
