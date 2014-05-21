@@ -2,6 +2,7 @@ var inherits = require('inherits');
 var InputButton = require('streamhub-input/javascript/button');
 var ModalContentEditor = require('streamhub-input/javascript/content-editor/modal-view');
 var ModalInputCommand = require('streamhub-input/javascript/modal/modal-input-command');
+var $ = require('jquery');
 
 'use strict';
 
