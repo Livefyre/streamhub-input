@@ -3586,7 +3586,7 @@ AttachmentView.prototype._handleImageLoaded = function (image) {
     if (image.height / image.width < 0.5) {
         image = document.createElement('div');
         image.className = this.classes.THUMBNAIL_CONTAINED;
-        image.style = 'background-image: ' + this.opts.oembed.url;
+        image.style.backgroundImage = 'url(' + this.opts.oembed.url +')';
     }
     this.$el.append(image);
     this.$el.show();
@@ -4808,9 +4808,7 @@ Pipeable.prototype.unpipe = function () {
  */
 Pipeable.prototype.writeToDestination = function (data, cb) {
     if (!this._destination) {
-        debugger
         throw 'No destination to write to';
-        return;
     }
     this._destination.write(data, cb);
 };
@@ -4880,15 +4878,8 @@ module.exports = InputButton;
 
 });
 
-define('streamhub-input/javascript/util',['require','exports','module'],function (require, exports, module) {module.exports = {
-    nullFunction: function () {}
-};
-
-});
-
-define('streamhub-input/javascript/modal/modal-input-command',['require','exports','module','streamhub-sdk/ui/command','inherits','streamhub-input/javascript/util'],function (require, exports, module) {var Command = require('streamhub-sdk/ui/command');
+define('streamhub-input/javascript/modal/modal-input-command',['require','exports','module','streamhub-sdk/ui/command','inherits'],function (require, exports, module) {var Command = require('streamhub-sdk/ui/command');
 var inherits = require('inherits');
-var util = require('streamhub-input/javascript/util');
 
 
 
@@ -4897,19 +4888,16 @@ var util = require('streamhub-input/javascript/util');
  * the view implements LaunchableModal
  * @param view {LaunchableModal} View to launch as a modal
  * @param [opts] {Object}
- * @param [opts.callback] {function(err: Object, data: Object)}
- *      Called when the modal view has accomplished its goal.
  * @constructor
  * @extends {Command}
  */
 function ModalInputCommand(view, opts) {
     opts = opts || {};
     if (!view) {
-        throw 'Can\'t instanciate a ModalInputCommand without specifying a view';
+        throw 'Can\'t instantiate a ModalInputCommand without specifying a view';
     }
-    var self = this;
-    function cmd(cb) {
-        self.view.launchModal(cb || opts.callback || util.nullFunction);
+    function cmd() {
+        view.launchModal(opts.modal);
     }
 
     /**
@@ -5976,8 +5964,7 @@ define('streamhub-sdk/modal/main',[
 
 define('streamhub-sdk/modal', ['streamhub-sdk/modal/main'], function (main) { return main; });
 
-define('streamhub-input/javascript/modal/launchable-modal',['require','exports','module','streamhub-sdk/modal','streamhub-input/javascript/util'],function (require, exports, module) {var ModalView = require('streamhub-sdk/modal');
-var util = require('streamhub-input/javascript/util');
+define('streamhub-input/javascript/modal/launchable-modal',['require','exports','module','streamhub-sdk/modal'],function (require, exports, module) {var ModalView = require('streamhub-sdk/modal');
 
 
 
@@ -5985,51 +5972,27 @@ var util = require('streamhub-input/javascript/util');
  * A view that can be displayed and interacted with in an otherwise generic modal.
  * @constructor
  */
-function LaunchableModal() {};
+function LaunchableModal() {
+    this._showing = false;
+}
 
 /**
  * Displays and operates this view as a modal.
- * @param [callback] {function(err: Object, data: Object)}
- *      Called after a successful interaction
+ * Modal representation of this view.
+ * @param {!ModalView} modal
  */
-LaunchableModal.prototype.launchModal = function(callback) {
-    /**
-     * Function to call after a successful interaction.
-     * @type {!function(err: Object, data: Object)}
-     */
-    this._callback = callback || util.nullFunction;
-
-    /**
-     * Modal representation of this view.
-     * @type {!ModalView}
-     */
-    this._modal = this._modal || new ModalView();
+LaunchableModal.prototype.launchModal = function(modal) {
+    this._modal = modal || this._modal || new ModalView();
     this._modal.show(this, true);  // Will .render() and stack
+    this._showing = true;
 };
 
 /**
  * Called when the modal view has competed its task and can be closed/hidden.
- * @param [err] {Object}
- * @param [data] {Object}
  */
-LaunchableModal.prototype.returnModal = function (err, data) {
-    this._returnModal(err, data);
-};
-
-/**
- * Called by returnModal to hand closing necessities.
- * @param [err] {Object}
- * @param [data] {Object}
- * @private
- */
-LaunchableModal.prototype._returnModal = function (err, data) {
-    if (!this._modal || !this._callback) {
-        return;
-    }
-
-    this._callback(err, data);
-    this._callback = null;
-    this._modal.$el.trigger('hideModal.hub');  // Will _modal.hide()
+LaunchableModal.prototype.returnModal = function () {
+    this._showing && this._modal.$el.trigger('hideModal.hub');  // Will _modal.hide()
+    this._showing = false;
 };
 
 module.exports = LaunchableModal;
@@ -6274,7 +6237,9 @@ function UploadButton(opts) {
     opts = opts || {};
     this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
     var input = new Upload();
-    var command = new ModalInputCommand(input);
+    var command = new ModalInputCommand(input, {
+        modal: opts.modal
+    });
 
     InputButton.call(this, command, {
         el: opts.el,
@@ -6623,10 +6588,8 @@ var $ = require('jquery');
 /**
  *
  * @param [opts] {Object}
- * @param [opts.authRequired] {boolean} True by default. Wraps the command in an
- *      auth-required-command, disabling the button unless there is an
- *      authentication route.
  * @param [opts.mediaEnabled] {boolean} Are media uploads allowed?
+ * @param [opts.modal] {ModalView} Optional modal to use for launching
  * @constructor
  * @extends {InputButton}
  */
@@ -6636,7 +6599,9 @@ function ContentEditorButton(opts) {
     var input = new ModalContentEditor({
         mediaEnabled: opts.mediaEnabled
     });
-    var command = new ModalInputCommand(input);
+    var command = new ModalInputCommand(input, {
+        modal: opts.modal
+    });
 
     InputButton.call(this, command, {
         el: opts.el,
@@ -6654,7 +6619,7 @@ ContentEditorButton.prototype._i18n = {
 
 /** @override */
 ContentEditorButton.prototype.template = function () {
-    return this._i18n.POST
+    return this._i18n.POST;
 };
 
 /**
