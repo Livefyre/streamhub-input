@@ -29,9 +29,7 @@ Pipeable.prototype.unpipe = function () {
  */
 Pipeable.prototype.writeToDestination = function (data, cb) {
     if (!this._destination) {
-        debugger
         throw 'No destination to write to';
-        return;
     }
     this._destination.write(data, cb);
 };

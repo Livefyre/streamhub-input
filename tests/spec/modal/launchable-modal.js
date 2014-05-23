@@ -2,6 +2,7 @@
 
 var inherits = require('inherits');
 var LaunchableModal = require('streamhub-input/javascript/modal/launchable-modal');
+var ModalView = require('streamhub-sdk/modal');
 var util = require('streamhub-sdk/util');
 var View = require('view');
 
@@ -26,7 +27,6 @@ describe('streamhub-input/javascript/modal/launchable-modal', function () {
             inherits(SubView, View);
             inherits.parasitically(SubView, LaunchableModal);
 
-            clbk = jasmine.createSpy('callback');
             data = 'stuff';
             err = 'error';
             view = new SubView();
@@ -45,25 +45,23 @@ describe('streamhub-input/javascript/modal/launchable-modal', function () {
             expect(view._modal._modalSubView).toBe(view);
         });
 
-        it('can launchModal with a callback, then calls it and passes err and/or data during returnModal()', function () {
-            view.launchModal(clbk);
-            view.returnModal(err, data);
-            expect(clbk).toHaveBeenCalledWith(err, data);
-        });
-
         it('does nothing when returnModal() is called out of turn', function () {
+            view.launchModal();
+
+            var spy = spyOn(view._modal.$el, 'trigger').andCallThrough();
             //Do it right
-            view.launchModal(clbk)
             view.returnModal();
-            expect(clbk.calls.length).toBe(1);
+            expect(spy).toHaveBeenCalled();
+
+            spy.reset();
 
             //Do it wrong
             view.returnModal();
-            expect(clbk.calls.length).toBe(1);
+            expect(spy).not.toHaveBeenCalled();
         });
 
         it('hide()s the modal when returnModal', function () {
-            view.launchModal(clbk)
+            view.launchModal()
             expect(view._modal).toBeTruthy();
 
             spyOn(view._modal, 'hide').andCallThrough();
@@ -71,14 +69,10 @@ describe('streamhub-input/javascript/modal/launchable-modal', function () {
             expect(view._modal.hide).toHaveBeenCalled();
         });
 
-        it('can launchModal() and returnModal(), then do it again, even with another callback', function () {
-            var clbk2 = jasmine.createSpy('other callback');
-            view.launchModal(clbk)
-            view.returnModal();
-            view.launchModal(clbk2)
-            view.returnModal();
-            expect(clbk.calls.length).toBe(1);
-            expect(clbk2.calls.length).toBe(1);
+        it('can launchModal() with a specified modal', function () {
+            var modal = new ModalView();
+            view.launchModal(modal);
+            expect(view._modal).toEqual(modal);
         });
     });
 });

@@ -1,6 +1,5 @@
 var Command = require('streamhub-sdk/ui/command');
 var inherits = require('inherits');
-var util = require('streamhub-input/javascript/util');
 
 'use strict';
 
@@ -9,19 +8,16 @@ var util = require('streamhub-input/javascript/util');
  * the view implements LaunchableModal
  * @param view {LaunchableModal} View to launch as a modal
  * @param [opts] {Object}
- * @param [opts.callback] {function(err: Object, data: Object)}
- *      Called when the modal view has accomplished its goal.
  * @constructor
  * @extends {Command}
  */
 function ModalInputCommand(view, opts) {
     opts = opts || {};
     if (!view) {
-        throw 'Can\'t instanciate a ModalInputCommand without specifying a view';
+        throw 'Can\'t instantiate a ModalInputCommand without specifying a view';
     }
-    var self = this;
-    function cmd(cb) {
-        self.view.launchModal(cb || opts.callback || util.nullFunction);
+    function cmd() {
+        view.launchModal(opts.modal);
     }
 
     /**
