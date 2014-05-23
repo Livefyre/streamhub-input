@@ -10,7 +10,8 @@
   "scripts": {
     "postinstall": "./node_modules/bower/bin/bower install",
     "start": "node ./dev/server.js",
-    "build": "npm run-script clean-build && ./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js && npm run-script build-css && npm run-script fonts",
+    "build": "npm run-script clean-build && npm run-script build-non-min && ./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js && npm run-script build-css && npm run-script fonts",
+    "build-non-min": "./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js optimize=none out=./dist/streamhub-input.js",
     "build-css": "mkdir -p dist && ./node_modules/less/bin/lessc --include-path=lib/ --clean-css src/styles/hub-input.less dist/streamhub-input.min.css",
     "clean-build": "rm -rf dist",
     "hint": "./node_modules/jshint/bin/jshint src/ tests/; echo",
