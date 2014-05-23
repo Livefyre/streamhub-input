@@ -26,7 +26,7 @@ AttachmentView.prototype._handleImageLoaded = function (image) {
     if (image.height / image.width < 0.5) {
         image = document.createElement('div');
         image.className = this.classes.THUMBNAIL_CONTAINED;
-        image.style = 'background-image: ' + this.opts.oembed.url;
+        image.style.backgroundImage = 'url(' + this.opts.oembed.url +')';
     }
     this.$el.append(image);
     this.$el.show();

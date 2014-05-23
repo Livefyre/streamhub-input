@@ -15,7 +15,9 @@ function UploadButton(opts) {
     opts = opts || {};
     this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
     var input = new Upload();
-    var command = new ModalInputCommand(input);
+    var command = new ModalInputCommand(input, {
+        modal: opts.modal
+    });
 
     InputButton.call(this, command, {
         el: opts.el,

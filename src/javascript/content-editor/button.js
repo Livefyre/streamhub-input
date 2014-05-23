@@ -9,10 +9,8 @@ var $ = require('jquery');
 /**
  *
  * @param [opts] {Object}
- * @param [opts.authRequired] {boolean} True by default. Wraps the command in an
- *      auth-required-command, disabling the button unless there is an
- *      authentication route.
  * @param [opts.mediaEnabled] {boolean} Are media uploads allowed?
+ * @param [opts.modal] {ModalView} Optional modal to use for launching
  * @constructor
  * @extends {InputButton}
  */
@@ -22,7 +20,9 @@ function ContentEditorButton(opts) {
     var input = new ModalContentEditor({
         mediaEnabled: opts.mediaEnabled
     });
-    var command = new ModalInputCommand(input);
+    var command = new ModalInputCommand(input, {
+        modal: opts.modal
+    });
 
     InputButton.call(this, command, {
         el: opts.el,
@@ -40,7 +40,7 @@ ContentEditorButton.prototype._i18n = {
 
 /** @override */
 ContentEditorButton.prototype.template = function () {
-    return this._i18n.POST
+    return this._i18n.POST;
 };
 
 /**
