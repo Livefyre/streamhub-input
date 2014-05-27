@@ -3721,7 +3721,6 @@ define('auth/main',['require','exports','module','streamhub-sdk/auth/auth-option
 var auth;
 
 auth = authOptional;
-console.log('stub');
 
 if (typeof Livefyre !== 'undefined' &&
     typeof Livefyre['auth'] === 'object') {

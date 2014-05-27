@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/dev/css/hub-input.css">
+    <style>
+    #listView {
+        width:500px;
+        float: left;
+    }
+    </style>
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+</head>
+    <body>
+        <div>
+            <button id="auth-button">Log in</button>
+        </div>
+        <div>
+            <button id="editor-button"></button>
+        </div>
+        <div>
+            <button id="upload-button"></button>
+        </div>
+        <div id="listView"></div>
+
+        <script src="http://cdn.livefyre.com/Livefyre.js"></script>
+        <script type="text/javascript">
+            Livefyre.require(['streamhub-input#v0.2'], function (Input) {
+                console.log('Haz Input: ' + !!Input);
+            });
+        </script>
+    </body>
+</html>

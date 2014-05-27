@@ -10,7 +10,7 @@ Load the javascript using the Livefyre loader:
 ```
 <script src="http://cdn.livefyre.com/Livefyre.js"></script>
 <script type="text/javascript">
-    Livefyre.require('streamhub-input#v0.2', function (Input) {
+    Livefyre.require(['streamhub-input#v0.2'], function (Input) {
         var editorButton = new Input.ContentEditorButton({
             el: document.getElementById('editor-button'),
             mediaEnabled: true
