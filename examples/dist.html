@@ -12,20 +12,23 @@
 </head>
     <body>
         <div>
-            <button id="auth-button">Log in</button>
-        </div>
-        <div>
             <button id="editor-button"></button>
         </div>
-        <div>
-            <button id="upload-button"></button>
-        </div>
         <div id="listView"></div>
+        <div>
+            Hi there! this is just a POC that the Input module can be loaded successfully.
+            Check the console for errors. Errors are bad, no errors are good!
+        </div>
 
         <script src="http://cdn.livefyre.com/Livefyre.js"></script>
         <script type="text/javascript">
             Livefyre.require(['streamhub-input#v0.2'], function (Input) {
-                console.log('Haz Input: ' + !!Input);
+                var button = new Input.ContentEditorButton({
+                    el: document.getElementById('editor-button')
+                });
+                button.render();
+                // TODO(jj): authy goodness
+                // TODO(jj): pipe to ListView once it is Livefyre.requireable
             });
         </script>
     </body>
