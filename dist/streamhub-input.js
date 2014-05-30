@@ -446,6 +446,581 @@ var requirejs, require, define;
 
 define("almond", function(){});
 
+/*
+ * css.normalize.js
+ *
+ * CSS Normalization
+ *
+ * CSS paths are normalized based on an optional basePath and the RequireJS config
+ *
+ * Usage:
+ *   normalize(css, fromBasePath, toBasePath);
+ *
+ * css: the stylesheet content to normalize
+ * fromBasePath: the absolute base path of the css relative to any root (but without ../ backtracking)
+ * toBasePath: the absolute new base path of the css relative to the same root
+ * 
+ * Absolute dependencies are left untouched.
+ *
+ * Urls in the CSS are picked up by regular expressions.
+ * These will catch all statements of the form:
+ *
+ * url(*)
+ * url('*')
+ * url("*")
+ * 
+ * @import '*'
+ * @import "*"
+ *
+ * (and so also @import url(*) variations)
+ *
+ * For urls needing normalization
+ *
+ */
+
+define('less/normalize',[],function() {
+  
+  // regular expression for removing double slashes
+  // eg http://www.example.com//my///url/here -> http://www.example.com/my/url/here
+  var slashes = /([^:])\/+/g
+  var removeDoubleSlashes = function(uri) {
+    return uri.replace(slashes, '$1/');
+  }
+
+  // given a relative URI, and two absolute base URIs, convert it from one base to another
+  var protocolRegEx = /[^\:\/]*:\/\/([^\/])*/;
+  var absUrlRegEx = /^(\/|data:)/;
+  function convertURIBase(uri, fromBase, toBase) {
+    if (uri.match(absUrlRegEx) || uri.match(protocolRegEx))
+      return uri;
+    uri = removeDoubleSlashes(uri);
+    // if toBase specifies a protocol path, ensure this is the same protocol as fromBase, if not
+    // use absolute path at fromBase
+    var toBaseProtocol = toBase.match(protocolRegEx);
+    var fromBaseProtocol = fromBase.match(protocolRegEx);
+    if (fromBaseProtocol && (!toBaseProtocol || toBaseProtocol[1] != fromBaseProtocol[1] || toBaseProtocol[2] != fromBaseProtocol[2]))
+      return absoluteURI(uri, fromBase);
+    
+    else {
+      return relativeURI(absoluteURI(uri, fromBase), toBase);
+    }
+  };
+  
+  // given a relative URI, calculate the absolute URI
+  function absoluteURI(uri, base) {
+    if (uri.substr(0, 2) == './')
+      uri = uri.substr(2);
+
+    // absolute urls are left in tact
+    if (uri.match(absUrlRegEx) || uri.match(protocolRegEx))
+      return uri;
+    
+    var baseParts = base.split('/');
+    var uriParts = uri.split('/');
+    
+    baseParts.pop();
+    
+    while (curPart = uriParts.shift())
+      if (curPart == '..')
+        baseParts.pop();
+      else
+        baseParts.push(curPart);
+    
+    return baseParts.join('/');
+  };
+
+
+  // given an absolute URI, calculate the relative URI
+  function relativeURI(uri, base) {
+    
+    // reduce base and uri strings to just their difference string
+    var baseParts = base.split('/');
+    baseParts.pop();
+    base = baseParts.join('/') + '/';
+    i = 0;
+    while (base.substr(i, 1) == uri.substr(i, 1))
+      i++;
+    while (base.substr(i, 1) != '/')
+      i--;
+    base = base.substr(i + 1);
+    uri = uri.substr(i + 1);
+
+    // each base folder difference is thus a backtrack
+    baseParts = base.split('/');
+    var uriParts = uri.split('/');
+    out = '';
+    while (baseParts.shift())
+      out += '../';
+    
+    // finally add uri parts
+    while (curPart = uriParts.shift())
+      out += curPart + '/';
+    
+    return out.substr(0, out.length - 1);
+  };
+  
+  var normalizeCSS = function(source, fromBase, toBase) {
+
+    fromBase = removeDoubleSlashes(fromBase);
+    toBase = removeDoubleSlashes(toBase);
+
+    var urlRegEx = /@import\s*("([^"]*)"|'([^']*)')|url\s*\(\s*(\s*"([^"]*)"|'([^']*)'|[^\)]*\s*)\s*\)/ig;
+    var result, url, source;
+
+    while (result = urlRegEx.exec(source)) {
+      url = result[3] || result[2] || result[5] || result[6] || result[4];
+      var newUrl;
+      newUrl = convertURIBase(url, fromBase, toBase);
+      var quoteLen = result[5] || result[6] ? 1 : 0;
+      source = source.substr(0, urlRegEx.lastIndex - url.length - quoteLen - 1) + newUrl + source.substr(urlRegEx.lastIndex - quoteLen - 1);
+      urlRegEx.lastIndex = urlRegEx.lastIndex + (newUrl.length - url.length);
+    }
+    
+    return source;
+  };
+  
+  normalizeCSS.convertURIBase = convertURIBase;
+  normalizeCSS.absoluteURI = absoluteURI;
+  normalizeCSS.relativeURI = relativeURI;
+  
+  return normalizeCSS;
+});
+
+define('css/parse-module-path',['require','exports','module'],function (require, exports, module) {/**
+ * The moduleId after css! can have params prefixed, and the params will
+ * be passed to transform functions e.g.
+ * Params will only be parsed if they start with '?'
+ * in: 'css!?prefix=[data-lf-module=streamhub-wall#3.0.0]:./styles/wall-component.css'
+ * out: { params: { prefix: '[data-...', cssId: './styles/wall-...' }}
+ */
+var cssIdParamsPattern = /^\?([^:]+)\:(.*)/;
+
+/**
+ * in: 'blah=foo&bar:module/path'
+ * out: { cssId: 'module/path',
+ *        params: { blah: 'foo', bar: undefined } }
+ */
+var parseCssId = module.exports = function (cssId) {
+  var paramPatternMatch = cssId.match(cssIdParamsPattern);
+  if ( ! paramPatternMatch) {
+    return parsedObj(cssId);
+  }
+  var paramsStr = paramPatternMatch[1];
+  var cssId = paramPatternMatch[2];
+  return parsedObj(cssId, paramsStrToObj(paramsStr));
+}
+
+function parsedObj(cssId, params) {
+  return {
+    cssId: cssId,
+    params: params
+  };
+}
+
+/**
+ * in: 'blah=foo&bar'
+ * out: { blah: 'foo', bar: undefined }
+ */
+function paramsStrToObj(paramsStr) {
+  var paramParts = paramsStr.split('&');
+  var param;
+  var key;
+  var val;
+  var paramsObj = {};
+  for (var i=0; i < paramParts.length; i++) {
+    param = paramParts[i].split('=');
+    key = param[0];
+    val = (param.length > 1 ? unescape(param.slice(1).join('=')) : undefined);
+    paramsObj[key] = val;
+  }
+  return paramsObj;
+}
+
+});
+
+define('css/transform-css',['require','exports','module','./parse-module-path'],function (require, exports, module) {var parseModuleName = require('./parse-module-path');
+
+/**
+ * Get the transformed CSS from a given CSS file URL
+ */
+var transformedCss = exports = module.exports = function (req, loadModule, transformModuleNames, moduleName, callback) {
+    var parsed = parseModuleName(moduleName);
+    // TODO: move into parseModuleName
+    var cssModule = parsed.cssId + '.css';
+    // Load file URL as string
+    console.log('getting transformed css for ', cssModule);
+    loadModule(cssModule, function (cssStr) {
+        exports.fromCssStr(req, transformModuleNames, parsed.params, cssStr, callback);
+    });
+};
+
+exports.fromCssStr = function (req, transformModuleNames, params, cssStr, callback) {
+    var transformedCss = cssStr;
+    req(transformModuleNames, function () {
+        var transforms = [].slice.call(arguments);
+        transforms.forEach(function (transform) {
+            transformedCss = transform(transformedCss, params);
+        });
+        callback(transformedCss);
+    });
+};
+
+/**
+ * Get an array of module names to load, each of which will
+ * export a function that transforms a css string
+ * @param key {string} 'requirejs' or 'node'
+ */
+exports.getTransformEaches = function getTransformEaches(config, key) {
+    var cssConfig = config.css || {};
+    var transformEaches = cssConfig.transformEach;
+    if ( ! (transformEaches instanceof Array)) {
+      transformEaches = [transformEaches];
+    }
+    var transforms = transformEaches.map(function (transformEach) {
+      // It could just be a function to use for all platforms
+      if (typeof transformEach === 'function' || typeof transformEach === 'string') {
+        return transformEach;
+      }
+      // or it could be an object with requirejs and node keys
+      var keyed = transformEach[key];
+      if (keyed) {
+        return keyed;
+      }
+      // dont support this
+      throw new Error("Couldn't extract transform from " + transformEach);
+    });
+    return transforms;
+};
+
+});
+
+;
+define('css/css-builder',['require', './normalize', './parse-module-path', './transform-css'],
+function(req, normalize, parseModulePath, getTransformedCss) {
+  var cssAPI = {};
+
+  var isWindows = !!process.platform.match(/^win/);
+
+  function compress(css) {
+    if (typeof process !== "undefined" && process.versions && !!process.versions.node && require.nodeRequire) {
+      try {
+        var csso = require.nodeRequire('csso');
+      }
+      catch(e) {
+        console.log('Compression module not installed. Use "npm install csso -g" to enable.');
+        return css;
+      }
+      var csslen = css.length;
+      try {
+        css =  csso.justDoIt(css);
+      }
+      catch(e) {
+        console.log('Compression failed due to a CSS syntax error.');
+        return css;
+      }
+      console.log('Compressed CSS output to ' + Math.round(css.length / csslen * 100) + '%.');
+      return css;
+    }
+    console.log('Compression not supported outside of nodejs environments.');
+    return css;
+  }
+
+  //load file code - stolen from text plugin
+  function loadFile(path) {
+    if (typeof process !== "undefined" && process.versions && !!process.versions.node && require.nodeRequire) {
+      var fs = require.nodeRequire('fs');
+      var file = fs.readFileSync(path, 'utf8');
+      if (file.indexOf('\uFEFF') === 0)
+        return file.substring(1);
+      return file;
+    }
+    else {
+      var file = new java.io.File(path),
+        lineSeparator = java.lang.System.getProperty("line.separator"),
+        input = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(file), 'utf-8')),
+        stringBuffer, line;
+      try {
+        stringBuffer = new java.lang.StringBuffer();
+        line = input.readLine();
+        if (line && line.length() && line.charAt(0) === 0xfeff)
+          line = line.substring(1);
+        stringBuffer.append(line);
+        while ((line = input.readLine()) !== null) {
+          stringBuffer.append(lineSeparator).append(line);
+        }
+        return String(stringBuffer.toString());
+      }
+      finally {
+        input.close();
+      }
+    }
+  }
+
+
+  function saveFile(path, data) {
+    if (typeof process !== "undefined" && process.versions && !!process.versions.node && require.nodeRequire) {
+      var fs = require.nodeRequire('fs');
+      fs.writeFileSync(path, data, 'utf8');
+    }
+    else {
+      var content = new java.lang.String(data);
+      var output = new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(path), 'utf-8'));
+
+      try {
+        output.write(content, 0, content.length());
+        output.flush();
+      }
+      finally {
+        output.close();
+      }
+    }
+  }
+
+  //when adding to the link buffer, paths are normalised to the baseUrl
+  //when removing from the link buffer, paths are normalised to the output file path
+  function escape(content) {
+    return content.replace(/(["'\\])/g, '\\$1')
+      .replace(/[\f]/g, "\\f")
+      .replace(/[\b]/g, "\\b")
+      .replace(/[\n]/g, "\\n")
+      .replace(/[\t]/g, "\\t")
+      .replace(/[\r]/g, "\\r");
+  }
+
+  // NB add @media query support for media imports
+  var importRegEx = /@import\s*(url)?\s*(('([^']*)'|"([^"]*)")|\(('([^']*)'|"([^"]*)"|([^\)]*))\))\s*;?/g;
+  var absUrlRegEx = /^([^\:\/]+:\/)?\//;
+
+
+  var siteRoot;
+
+  var baseParts = req.toUrl('base_url').split('/');
+  baseParts[baseParts.length - 1] = '';
+  var baseUrl = baseParts.join('/');
+
+  var curModule = 0;
+  var config;
+
+  var layerBuffer = [];
+
+  cssAPI.addToBuffer = function (str) {
+    layerBuffer.push(str);
+  };
+
+  cssAPI.clearBuffer = function () {
+    layerBuffer.length = 0;
+  };
+
+  cssAPI.getBuffer = function () {
+    return layerBuffer;
+  };
+
+  var cssBuffer = {};
+
+  // Load a file path on disk
+  function loadModuleAsync(toUrl, module, callback) {
+    var str = loadFile(toUrl(module));
+    callback(str);
+  }
+
+  var didClearFile = false;
+  cssAPI.load = function(name, req, load, _config) {
+    //store config
+    config = config || _config;
+    var cssConfig = config.css || {};
+
+    // The config.css.clearFileEachBuild option, if present
+    // indicates a file that should be emptied on each new build
+    // Otherwise the file will always be appended to
+    if (cssConfig.clearFileEachBuild && ! didClearFile) {
+      saveFile(cssConfig.clearFileEachBuild, '');
+    }
+
+    if (!siteRoot) {
+      siteRoot = path.resolve(config.dir || path.dirname(config.out), config.siteRoot || '.') + '/';
+      if (isWindows)
+        siteRoot = siteRoot.replace(/\\/g, '/');
+    }
+
+    //external URLS don't get added (just like JS requires)
+    if (name.match(absUrlRegEx))
+      return load();
+
+    function nodeReq(depNames, callback) {
+      var depUrls = depNames.map(req.toUrl);
+      var deps = depUrls.map(require.nodeRequire);
+      callback.apply({}, deps);
+    }
+    console.log('transforming css for', name);
+    getTransformedCss(
+      nodeReq,
+      loadModuleAsync.bind({}, req.toUrl),
+      getTransformedCss.getTransformEaches(config, 'node'),
+      name,
+      function withTransformedCss(cssStr) {
+        var parsed = parseModulePath(name);
+        var fileUrl = req.toUrl(parsed.cssId + '.css');
+        var normalizedCssStr = normalize(cssStr, isWindows ? fileUrl.replace(/\\/g, '/') : fileUrl, siteRoot);
+        cssBuffer[name] = normalizedCssStr;
+        load();
+      });
+  };
+
+  cssAPI.normalize = function(name, normalize) {
+    if (name.substr(name.length - 4, 4) == '.css')
+      name = name.substr(0, name.length - 4);
+    return normalize(name);
+  };
+
+  cssAPI.write = function(pluginName, moduleName, write, parse) {
+    //external URLS don't get added (just like JS requires)
+    if (moduleName.match(absUrlRegEx))
+      return;
+
+    cssAPI.addToBuffer(cssBuffer[moduleName]);
+
+    if (config.buildCSS != false)
+    write.asModule(pluginName + '!' + moduleName, 'define(function(){})');
+  }
+
+  cssAPI.onLayerEnd = function(write, data) {
+    this.flushBuffer(config, write, data);
+  }
+
+  cssAPI.flushBuffer = function(config, write, data) {
+    var layerBuffer = cssAPI.getBuffer();
+
+    if (config.separateCSS && config.IESelectorLimit)
+      throw 'RequireCSS: separateCSS option is not compatible with ensuring the IE selector limit';
+
+    if (config.separateCSS) {
+      console.log('Writing CSS! file: ' + data.name + '\n');
+      var outPath;
+
+      if (config.dir) {
+        outPath = path.resolve(config.dir, config.baseUrl, data.name + '.css');
+      } else {
+        outPath = config.out.replace(/(\.js)?$/, '.css');
+      }
+
+      var css = layerBuffer.join('');
+      var toWrite = compress(css);
+      debugger;
+      if (fs.existsSync(outPath)) {
+        var existingCss = loadFile(outPath);
+        toWrite = existingCss +'\n' + toWrite;
+        console.log('RequireCSS: Warning, separateCSS module path "' + outPath + '" already exists and is being appended to by the layer CSS.');
+        saveFile(outPath, toWrite);
+      } else {
+        saveFile(outPath, toWrite);
+      }
+
+    }
+    if (config.buildCSS != false) {
+      var styles = config.IESelectorLimit ? layerBuffer : [layerBuffer.join('')];
+      for (var i = 0; i < styles.length; i++) {
+        if (styles[i] == '')
+          return;
+        console.log('writing something');
+        write(
+          "(function(c){var d=document,a='appendChild',i='styleSheet',s=d.createElement('style');s.type='text/css';d.getElementsByTagName('head')[0][a](s);s[i]?s[i].cssText=c:s[a](d.createTextNode(c));})\n"
+          + "('" + escape(compress(styles[i])) + "');\n"
+        );
+      }
+    }
+    //clear layer buffer for next layer
+    cssAPI.clearBuffer();
+  }
+
+  return cssAPI;
+});
+
+define('less/less',['require', 'css'], function(require, cssAPI) {
+  
+  var lessAPI = {};
+  
+  lessAPI.pluginBuilder = './less-builder';
+  
+  if (typeof window == 'undefined') {
+    lessAPI.load = function(n, r, load) { load(); }
+    return lessAPI;
+  }
+  
+  lessAPI.normalize = function(name, normalize) {
+    if (name.substr(name.length - 5, 5) == '.less')
+      name = name.substr(0, name.length - 5);
+
+    name = normalize(name);
+
+    return name;
+  }
+  
+  var head = document.getElementsByTagName('head')[0];
+
+  var base = document.getElementsByTagName('base');
+  base = base && base[0] && base[0] && base[0].href;
+  var pagePath = (base || window.location.href.split('#')[0].split('?')[0]).split('/');
+  pagePath[pagePath.length - 1] = '';
+  pagePath = pagePath.join('/');
+
+  var styleCnt = 0;
+  var curStyle;
+  lessAPI.inject = function(css) {
+    if (styleCnt < 31) {
+      curStyle = document.createElement('style');
+      curStyle.type = 'text/css';
+      head.appendChild(curStyle);
+      styleCnt++;
+    }
+    if (curStyle.styleSheet)
+      curStyle.styleSheet.cssText += css;
+    else
+      curStyle.appendChild(document.createTextNode(css));
+  }
+
+  // If config.less.browserLoad is set, then the user does not want to 
+  // run less.js in the browser. They just want to include another,
+  // probably already built, css file.
+  var insertedBrowerLoad = false;
+
+  lessAPI.load = function(lessId, req, load, config) {
+    var lessConfig = window.less = config.less || {};
+    window.less.env = 'development';
+
+    if (lessConfig.browserLoad) {
+      if ( ! insertedBrowerLoad) {
+        insertedBrowerLoad = true;
+        config.css.transform = false;
+        return cssAPI.load(lessConfig.browserLoad, req, load, config);        
+      }
+      return load();
+    }
+
+    require(['./lessc', './normalize'], function(lessc, normalize) {
+
+      var fileUrl = req.toUrl(lessId + '.less');
+      fileUrl = normalize.absoluteURI(fileUrl, pagePath);
+
+      var parser = new lessc.Parser(window.less);
+
+      parser.parse('@import (multiple) "' + fileUrl + '";', function(err, tree) {
+        if (err)
+          return load.error(err);
+
+        lessAPI.inject(normalize(tree.toCSS(config.less), fileUrl, pagePath));
+
+        setTimeout(load, 7);
+      });
+
+    });
+  }
+  
+  return lessAPI;
+});
+
+define('less', ['less/less'], function (main) { return main; });
+
+define('less!streamhub-input/styles/streamhub-input',[],function(){});
 define('jquery',[], function(require, exports, module) {/*! jQuery v1.10.2 | (c) 2005, 2013 jQuery Foundation, Inc. | jquery.org/license
 //@ sourceMappingURL=jquery.min.map
 */
@@ -6631,7 +7206,10 @@ module.exports = ContentEditorButton;
 
 });
 
-define('streamhub-input/javascript/main',['require','exports','module','streamhub-input/javascript/content-editor/view','streamhub-input/javascript/content-editor/button','streamhub-input/javascript/upload/button'],function (require, exports, module) {module.exports = {
+define('streamhub-input/javascript/main',['require','exports','module','less!streamhub-input/styles/streamhub-input','streamhub-input/javascript/content-editor/view','streamhub-input/javascript/content-editor/button','streamhub-input/javascript/upload/button'],function (require, exports, module) {// Package the CSS
+var INPUT_STYLE = require('less!streamhub-input/styles/streamhub-input');
+
+module.exports = {
     ContentEditor: require('streamhub-input/javascript/content-editor/view'),
     ContentEditorButton: require('streamhub-input/javascript/content-editor/button'),
     UploadButton: require('streamhub-input/javascript/upload/button')
@@ -6640,6 +7218,9 @@ define('streamhub-input/javascript/main',['require','exports','module','streamhu
 });
 
 define('streamhub-input', ['streamhub-input/javascript/main'], function (main) { return main; });
+
+(function(c){var d=document,a='appendChild',i='styleSheet',s=d.createElement('style');s.type='text/css';d.getElementsByTagName('head')[0][a](s);s[i]?s[i].cssText=c:s[a](d.createTextNode(c));})
+('@charset \"UTF-8\";\n\n[data-lf-package=\"streamhub-input#0.2.2\"] @font-face {\n  font-family: \"fycons\";\n  src: url(\"../src/styles/src/styles/fonts/fycons.eot\");\n  src: url(\"../src/styles/src/styles/fonts/fycons.eot?#iefix\") format(\"embedded-opentype\"), url(\"../src/styles/src/styles/fonts/fycons.woff\") format(\"woff\"), url(\"../src/styles/src/styles/fonts/fycons.ttf\") format(\"truetype\"), url(\"../src/styles/src/styles/fonts/fycons.svg#fycons\") format(\"svg\");\n  font-weight: normal;\n  font-style: normal;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] [class^=\"fycon-\"]:before,\n[data-lf-package=\"streamhub-input#0.2.2\"] [class*=\" fycon-\"]:before {\n  font-family: \"fycons\" !important;\n  font-style: normal !important;\n  font-weight: normal !important;\n  font-variant: normal !important;\n  text-transform: none !important;\n  speak: none;\n  line-height: inherit;\n  display: inline-block;\n  vertical-align: middle;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .btn [class^=\"fycon-\"]:before,\n[data-lf-package=\"streamhub-input#0.2.2\"] .btn-lg [class^=\"fycon-\"]:before,\n[data-lf-package=\"streamhub-input#0.2.2\"] .btn-sm [class^=\"fycon-\"]:before,\n[data-lf-package=\"streamhub-input#0.2.2\"] .btn [class*=\" fycon-\"]:before,\n[data-lf-package=\"streamhub-input#0.2.2\"] .btn-lg [class*=\" fycon-\"]:before,\n[data-lf-package=\"streamhub-input#0.2.2\"] .btn-sm [class*=\" fycon-\"]:before {\n  margin-top: -2px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-lg {\n  font-size: 2em;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-sm {\n  font-size: 0.5em;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-inherit {\n  font-size: inherit;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-etc:before {\n  content: \"\\e000\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-favorite:before {\n  content: \"\\e001\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-favorite-empty:before {\n  content: \"\\e002\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-favorite-half:before {\n  content: \"\\e003\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-helpful:before {\n  content: \"\\e004\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-like:before {\n  content: \"\\e005\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-reply:before {\n  content: \"\\e006\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-reply-1:before {\n  content: \"\\e007\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-retweet:before {\n  content: \"\\e008\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-retweet-1:before {\n  content: \"\\e009\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-share:before {\n  content: \"\\e00a\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-unhelpful:before {\n  content: \"\\e00b\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-action-view:before {\n  content: \"\\e00c\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-admin-ban:before {\n  content: \"\\e00d\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-admin-bozo:before {\n  content: \"\\e00e\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-admin-delete:before {\n  content: \"\\e00f\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-admin-flag:before {\n  content: \"\\e010\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-alert:before {\n  content: \"\\e011\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-analytics:before {\n  content: \"\\e012\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-archive:before {\n  content: \"\\e013\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-arrow-back:before {\n  content: \"\\e014\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-arrow-down:before {\n  content: \"\\e015\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-arrow-down-circle:before {\n  content: \"\\e016\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-arrow-left:before {\n  content: \"\\e017\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-arrow-right:before {\n  content: \"\\e018\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-arrow-up:before {\n  content: \"\\e019\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-arrow-up-circle:before {\n  content: \"\\e01a\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-article:before {\n  content: \"\\e01b\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-bell:before {\n  content: \"\\e01c\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-bolt:before {\n  content: \"\\e01d\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-calendar:before {\n  content: \"\\e01e\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-check:before {\n  content: \"\\e01f\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-check-funky:before {\n  content: \"\\e020\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-clock:before {\n  content: \"\\e021\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-collections:before {\n  content: \"\\e022\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-composer-emoticons:before {\n  content: \"\\e023\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-composer-format1:before {\n  content: \"\\e024\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-composer-format2:before {\n  content: \"\\e025\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-composer-mention:before {\n  content: \"\\e026\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-composer-photo:before {\n  content: \"\\e027\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-composer-sad:before {\n  content: \"\\e028\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-connect:before {\n  content: \"\\e029\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-connection-lost:before {\n  content: \"\\e02a\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-content:before {\n  content: \"\\e02b\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-conversation:before {\n  content: \"\\e02c\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-copy-to-clipboard:before {\n  content: \"\\e02d\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-download:before {\n  content: \"\\e02e\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-duplicate:before {\n  content: \"\\e02f\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-edit:before {\n  content: \"\\e030\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-edit-2:before {\n  content: \"\\e031\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-email:before {\n  content: \"\\e032\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-embed:before {\n  content: \"\\e033\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-expand:before {\n  content: \"\\e034\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-experiences:before {\n  content: \"\\e035\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-export:before {\n  content: \"\\e036\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-eye:before {\n  content: \"\\e037\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-feature:before {\n  content: \"\\e038\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-film:before {\n  content: \"\\e039\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-form-checkbox-active:before {\n  content: \"\\e03a\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-form-checkbox-empty:before {\n  content: \"\\e03b\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-form-checkbox-partial:before {\n  content: \"\\e03c\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-form-radio-active:before {\n  content: \"\\e03d\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-form-radio-empty:before {\n  content: \"\\e03e\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-format-bold:before {\n  content: \"\\e03f\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-format-italic:before {\n  content: \"\\e040\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-format-link:before {\n  content: \"\\e041\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-format-link-horiz:before {\n  content: \"\\e042\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-format-orderedlist:before {\n  content: \"\\e043\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-format-strikethrough:before {\n  content: \"\\e044\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-format-underline:before {\n  content: \"\\e045\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-format-unorderedlist:before {\n  content: \"\\e046\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-groups:before {\n  content: \"\\e047\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-groups-add:before {\n  content: \"\\e048\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-hamburger:before {\n  content: \"\\e049\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-home:before {\n  content: \"\\e04a\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-icon-chat:before {\n  content: \"\\e04b\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-icon-comments:before {\n  content: \"\\e04c\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-icon-counter:before {\n  content: \"\\e04d\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-icon-feed:before {\n  content: \"\\e04e\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-icon-liveblog:before {\n  content: \"\\e04f\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-icon-map:before {\n  content: \"\\e050\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-icon-modq:before {\n  content: \"\\e051\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-icon-more:before {\n  content: \"\\e052\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-icon-reviews:before {\n  content: \"\\e053\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-icon-sidenotes:before {\n  content: \"\\e054\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-icon-storify:before {\n  content: \"\\e055\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-icon-wall:before {\n  content: \"\\e056\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-information:before {\n  content: \"\\e057\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-listening-left:before {\n  content: \"\\e058\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-listening-right:before {\n  content: \"\\e059\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-location:before {\n  content: \"\\e05a\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-locked:before {\n  content: \"\\e05b\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-android:before {\n  content: \"\\e05c\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-apple:before {\n  content: \"\\e05d\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-comments:before {\n  content: \"\\e05e\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-counter:before {\n  content: \"\\e05f\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-developers:before {\n  content: \"\\e060\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-feed:before {\n  content: \"\\e061\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-liveblog:before {\n  content: \"\\e062\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-livefyre:before {\n  content: \"\\e063\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-map:before {\n  content: \"\\e064\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-mediawall:before {\n  content: \"\\e065\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-modq:before {\n  content: \"\\e066\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-sidenotes:before {\n  content: \"\\e067\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-storify:before {\n  content: \"\\e068\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-streamhub:before {\n  content: \"\\e069\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-windows:before {\n  content: \"\\e06a\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-minimize:before {\n  content: \"\\e06b\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-minus:before {\n  content: \"\\e06c\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-mobile:before {\n  content: \"\\e06d\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-modal-arrow-left:before {\n  content: \"\\e06e\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-modal-arrow-right:before {\n  content: \"\\e06f\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-nav-close:before {\n  content: \"\\e070\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-nav-expand:before {\n  content: \"\\e071\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-network:before {\n  content: \"\\e072\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-person:before {\n  content: \"\\e073\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-photograph:before {\n  content: \"\\e074\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-plane:before {\n  content: \"\\e075\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-play:before {\n  content: \"\\e076\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-plus:before {\n  content: \"\\e077\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-question:before {\n  content: \"\\e078\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-recent:before {\n  content: \"\\e079\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-redo:before {\n  content: \"\\e07a\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-refresh:before {\n  content: \"\\e07b\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-search:before {\n  content: \"\\e07c\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-settings-admin:before {\n  content: \"\\e07d\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-settings-feedback:before {\n  content: \"\\e07e\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-settings-gear:before {\n  content: \"\\e07f\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-settings-logout:before {\n  content: \"\\e080\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-settings-me:before {\n  content: \"\\e081\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-settings-switch:before {\n  content: \"\\e082\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-drupal:before {\n  content: \"\\e083\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-facebook:before {\n  content: \"\\e084\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-flickr:before {\n  content: \"\\e085\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-foursquare:before {\n  content: \"\\e086\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-google:before {\n  content: \"\\e087\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-googleplus:before {\n  content: \"\\e088\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-instagram:before {\n  content: \"\\e089\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-linkedin:before {\n  content: \"\\e08a\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-livefyre:before {\n  content: \"\\e08b\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-pinterest:before {\n  content: \"\\e08c\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-reddit:before {\n  content: \"\\e08d\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-rss:before {\n  content: \"\\e08e\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-soundcloud:before {\n  content: \"\\e08f\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-storify:before {\n  content: \"\\e090\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-tumblr:before {\n  content: \"\\e091\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-twitter:before {\n  content: \"\\e092\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-twitter2:before {\n  content: \"\\e093\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-vimeo:before {\n  content: \"\\e094\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-vine:before {\n  content: \"\\e095\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-wordpress:before {\n  content: \"\\e096\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-youtube1:before {\n  content: \"\\e097\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-source-youtube2:before {\n  content: \"\\e098\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-spaceship:before {\n  content: \"\\e099\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-style:before {\n  content: \"\\e09a\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-table-of-contents:before {\n  content: \"\\e09b\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-tablet:before {\n  content: \"\\e09c\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-tag:before {\n  content: \"\\e09d\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-tv-4k:before {\n  content: \"\\e09e\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-tv-broadcast:before {\n  content: \"\\e09f\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-tv-hd:before {\n  content: \"\\e0a0\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-tv-sd:before {\n  content: \"\\e0a1\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-undo:before {\n  content: \"\\e0a2\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-unlocked:before {\n  content: \"\\e0a3\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-verified:before {\n  content: \"\\e0a4\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-video:before {\n  content: \"\\e0a5\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-website:before {\n  content: \"\\e0a6\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-website-add:before {\n  content: \"\\e0a7\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-write:before {\n  content: \"\\e0a8\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-x:before {\n  content: \"\\e0a9\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .fycon-logo-snap:before {\n  content: \"\\e0aa\";\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-drupal:before {\n  color: #0077c0;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-facebook:before {\n  color: #3b5998;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-flickr:before {\n  color: #ff0084;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-foursquare:before {\n  color: #0cbadf;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-google:before {\n  color: #4285f4;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-googleplus:before {\n  color: #dd4b39;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-instagram:before {\n  color: #3f729b;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-linkedin:before {\n  color: #0e76a8;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-livefyre:before {\n  color: #e65b3f;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-pinterest:before {\n  color: #c8232c;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-reddit:before {\n  color: #ff4500;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-rss:before {\n  color: #ee802f;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-soundcloud:before {\n  color: #ff7700;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-storify:before {\n  color: #3a98d9;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-tumblr:before {\n  color: #34526f;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-twitter:before {\n  color: #55acee;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-twitter2:before {\n  color: #55acee;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-vimeo:before {\n  color: #44bbff;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-vine:before {\n  color: #00a478;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-wordpress:before {\n  color: #21759b;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-youtube1:before {\n  color: #c4302b;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-source-youtube2:before {\n  color: #c4302b;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-icon-chat:before {\n  color: #63c685;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-icon-comments:before {\n  color: #f53e52;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-icon-liveblog:before {\n  color: #0f98ec;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-icon-map:before {\n  color: #7168a5;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-icon-reviews:before {\n  color: #feb33b;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-icon-sidenotes:before {\n  color: #2f3440;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-icon-storify:before {\n  color: #3a98d9;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .colored.fycon-icon-wall:before {\n  color: #7168a5;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-open {\n  overflow: hidden;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal {\n  display: none;\n  overflow: auto;\n  overflow-y: scroll;\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1050;\n  -webkit-overflow-scrolling: touch;\n  outline: 0;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal.fade .lf-modal-dialog {\n  -webkit-transform: translate(0, -25%);\n  -moz-transform: translate(0, -25%);\n  -ms-transform: translate(0, -25%);\n  -o-transform: translate(0, -25%);\n  transform: translate(0, -25%);\n  -webkit-transition: -webkit-transform 0.3s ease-out;\n  -moz-transition: -moz-transform 0.3s ease-out;\n  -o-transition: -o-transform 0.3s ease-out;\n  transition: transform 0.3s ease-out;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal.in .lf-modal-dialog {\n  -webkit-transform: translate(0, 0);\n  -moz-transform: translate(0, 0);\n  -ms-transform: translate(0, 0);\n  -o-transform: translate(0, 0);\n  transform: translate(0, 0);\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-dialog {\n  position: relative;\n  width: auto;\n  margin: 10px;\n  z-index: 1050;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-content {\n  position: relative;\n  background-color: #ffffff;\n  border: 1px solid #999999;\n  border: 1px solid rgba(0, 0, 0, 0.2);\n  border-radius: 6px;\n  -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);\n  -moz-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);\n  -ms-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);\n  -o-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);\n  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);\n  background-clip: padding-box;\n  outline: 0;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .modal-backdrop {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1040;\n  background-color: #000000;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .modal-backdrop.fade {\n  opacity: 0;\n  filter: alpha(opacity=0);\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)\";\n  -moz-opacity: 0;\n  -khtml-opacity: 0;\n  -webkit-opacity: 0;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .modal-backdrop.in {\n  opacity: 0.7;\n  filter: alpha(opacity=70);\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)\";\n  -moz-opacity: 0.7;\n  -khtml-opacity: 0.7;\n  -webkit-opacity: 0.7;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-header {\n  padding: 15px;\n  border-bottom: 1px solid #e5e5e5;\n  min-height: 16.42857143px;\n  text-align: center;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-header .lf-close {\n  margin-top: -2px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-title {\n  margin: 0;\n  line-height: 1.42857143;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-body {\n  position: relative;\n  padding: 15px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-body.centered {\n  text-align: center;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-footer {\n  padding: 15px;\n  text-align: center;\n  border-top: 1px solid #e5e5e5;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-footer .btn + .btn {\n  margin-left: 5px;\n  margin-bottom: 0;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-footer .btn-group .btn + .btn {\n  margin-left: -1px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-footer .btn-block + .btn-block {\n  margin-left: 0;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-modal-scrollbar-measure {\n  position: absolute;\n  top: -9999px;\n  width: 50px;\n  height: 50px;\n  overflow: scroll;\n}\n\n@media (min-width: 768px) {\n  .lf-modal-dialog {\n    width: 600px;\n    margin: 30px auto;\n  }\n\n  .lf-modal-content {\n    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);\n    -moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);\n    -ms-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);\n    -o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);\n    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);\n  }\n\n  .lf-modal-sm {\n    width: 300px;\n  }\n}\n\n@media (min-width: 992px) {\n  .lf-modal-lg {\n    width: 900px;\n  }\n}\n\n/* GRADIENTS */\n\n/**\n * A direction value of 1 specifies a horizontal gradient, 0 specifies vertical.\n * http://msdn.microsoft.com/en-us/library/ms532887(v=vs.85).aspx\n * start and end values should be hexes\n */\n\n/* RETINA MIXIN */\n\n/* VERTICAL CENTERING */\n\n[data-lf-package=\"streamhub-input#0.2.2\"] textarea.lf-editor-field,\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-editor-resize {\n  border: none;\n  -webkit-border-radius: 0;\n  -moz-border-radius: 0;\n  -ms-border-radius: 0;\n  -o-border-radius: 0;\n  border-radius: 0;\n  -webkit-box-shadow: none;\n  -moz-box-shadow: none;\n  -ms-box-shadow: none;\n  -o-box-shadow: none;\n  box-shadow: none;\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  -ms-box-sizing: border-box;\n  -o-box-sizing: border-box;\n  box-sizing: border-box;\n  font: normal 15px/22px Georgia, \"Times New Roman\", serif;\n  margin: 0;\n  max-height: 200px;\n  min-height: 44px;\n  outline: 0;\n  overflow: hidden;\n  padding: 0 30px;\n  resize: none;\n  vertical-align: top;\n  width: 100%;\n  word-wrap: break-word;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-editor-resize {\n  opacity: 0;\n  filter: alpha(opacity=0);\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)\";\n  -moz-opacity: 0;\n  -khtml-opacity: 0;\n  -webkit-opacity: 0;\n  position: absolute;\n  z-index: -1;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-editor-resize p {\n  min-height: 22px;\n  line-height: 22px;\n  margin: 0;\n  padding: 0;\n}\n\n/* TODO (jj): more centralized mixin? */\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-editor-error {\n  background: #fff;\n  border: 1px solid #ccc;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  -ms-border-radius: 3px;\n  -o-border-radius: 3px;\n  border-radius: 3px;\n  cursor: pointer;\n  height: 100%;\n  left: -1px;\n  opacity: 0;\n  filter: alpha(opacity=0);\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)\";\n  -moz-opacity: 0;\n  -khtml-opacity: 0;\n  -webkit-opacity: 0;\n  position: absolute;\n  top: -1px;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  -o-user-select: none;\n  user-select: none;\n  width: 100%;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-editor-error a.lf-close {\n  color: #999;\n  border: 1px solid transparent;\n  color: #a2a5aa;\n  cursor: pointer;\n  display: inline-block;\n  height: 22px;\n  line-height: 22px;\n  padding: 0 6px;\n  text-decoration: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  -o-user-select: none;\n  user-select: none;\n  position: absolute;\n  right: 10px;\n  top: 10px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-editor-error a.lf-close:hover {\n  background: #f7f7f5;\n  border: 1px solid #b7b8ba;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  -ms-border-radius: 3px;\n  -o-border-radius: 3px;\n  border-radius: 3px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-editor-error a.lf-close:active {\n  background: #eaeae8;\n  border: 1px solid #abacae;\n  -webkit-border-radius: 3px;\n  -moz-border-radius: 3px;\n  -ms-border-radius: 3px;\n  -o-border-radius: 3px;\n  border-radius: 3px;\n  -webkit-box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.3);\n  -moz-box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.3);\n  -ms-box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.3);\n  -o-box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.3);\n  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.3);\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-editor-error span {\n  color: #666;\n  display: block;\n  font-family: \"Helvetica Neue\", Arial, Helvetica, Geneva, sans-serif;\n  line-height: 22px;\n  margin: 0 auto;\n  text-align: center;\n  position: relative;\n  top: 50%;\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Matrix(M11=1, M12=0, M21=0, M22=1, SizingMethod=\'auto expand\')\";\n  -webkit-transform: translateY(-50%);\n  -ms-transform: translateY(-50%);\n  -o-transform: translateY(-50%);\n  transform: translateY(-50%);\n  width: 70%;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-input-btn {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  -ms-box-sizing: border-box;\n  -o-box-sizing: border-box;\n  box-sizing: border-box;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  -o-user-select: none;\n  user-select: none;\n  background-color: #0f98ec;\n  background-image: none;\n  border-radius: 2px;\n  border: 1px solid #1475b3;\n  color: #fff;\n  cursor: pointer;\n  display: inline-block;\n  font-family: \"Helvetica Neue\", Arial, Helvetica, Geneva, sans-serif;\n  font-size: 14px;\n  font-weight: 500;\n  height: 40px;\n  letter-spacing: normal;\n  line-height: 1.428571429;\n  margin: 5px;\n  outline: none;\n  padding: 7px 12px;\n  text-align: center;\n  text-indent: 0px;\n  text-shadow: none;\n  text-transform: none;\n  vertical-align: middle;\n  white-space: nowrap;\n  width: 180px;\n  word-spacing: normal;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-input-btn.disabled {\n  opacity: 0.5;\n  filter: alpha(opacity=50);\n  -ms-filter: \"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)\";\n  -moz-opacity: 0.5;\n  -khtml-opacity: 0.5;\n  -webkit-opacity: 0.5;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-input-btn:hover {\n  background-color: #0f98ec;\n  -webkit-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.1);\n  -moz-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.1);\n  -ms-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.1);\n  -o-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.1);\n  box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.1);\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-input-btn:active {\n  background-color: #118fe0;\n  border-color: #105a89;\n  -webkit-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.3);\n  -moz-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.3);\n  -ms-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.3);\n  -o-box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.3);\n  box-shadow: inset 1px 0px 2px 0px rgba(0, 0, 0, 0.3);\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-hub-upload-btn .fycon-composer-photo {\n  font-size: 16px;\n  margin-left: 10px;\n  position: relative;\n  top: -1px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .hub-upload {\n  min-width: 560px;\n  min-height: 432px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .hub-modal-input-wrapper {\n  -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);\n  -moz-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);\n  -ms-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);\n  -o-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);\n  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);\n  background-clip: padding-box;\n  background-color: #ffffff;\n  border-radius: 3px;\n  border: 0;\n  color: #2f3440;\n  display: block;\n  margin: 100px 20% 0;\n  outline: none;\n  position: relative;\n  text-align: center;\n  max-width: 650px;\n  min-width: 320px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .hub-modal-input-wrapper .lf-modal-body {\n  padding: 30px 30px 50px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .hub-modal-input-header {\n  background-color: #f7f7f5;\n  border-bottom: 1px solid #ececea;\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n  color: #a2a3a7;\n  font: normal 20px/20px \"Helvetica Neue\", Arial, Helvetica, Geneva, sans-serif;\n  padding: 15px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-content-editor {\n  position: relative;\n  border: 1px solid #ececea;\n  text-align: left;\n  border-radius: 3px;\n  background-color: #ffffff;\n  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);\n  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);\n  -ms-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);\n  -o-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);\n  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-content-editor .lf-btn-wrapper {\n  background-color: #f8f8f8;\n  text-align: right;\n  border-top: 1px solid #ececea;\n  padding: 6px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-content-editor .lf-user-info {\n  margin: 26px 30px 20px;\n  font-weight: bold;\n  color: #474C52;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-editor-container {\n  /* !lf-bootstrap */\n  margin-bottom: 20px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .hub-modal-content-view iframe {\n  position: relative;\n  margin: 100px auto 0;\n  display: block;\n  border: 0;\n}\n\n/**\n * Kinda crazy overrides\n */\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-editor-upload {\n  float: left;\n  margin: 5px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-editor-upload > .fycon-composer-photo:before {\n  font-size: 1.3em;\n  opacity: 0.25;\n  padding: 2px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-attachment-list-view > .hub-list {\n  background-color: #f8f8f8;\n  border-color: #ececea;\n  border-style: solid;\n  border-width: 1px 0 0 0;\n  position: relative;\n  width: 100%;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-attachment-discard {\n  background-image: url(data:image/png;base64,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);\n  cursor: pointer;\n  font-size: 30px;\n  height: 32px;\n  position: absolute;\n  right: -15px;\n  text-indent: -9999px;\n  top: -15px;\n  width: 32px;\n}\n\n@media only screen and (-webkit-min-device-pixel-ratio: 2) {\n  .lf-attachment-discard {\n    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIQAAABACAYAAADbPd8FAAASYklEQVR4Ae1dCXRU1RnOAiIJhCSEKEsAiWRhx+VgxYILuKAgjSKWulBUcEEEKsKhlhZrrYgFRUVxobgcjtFKI4gtglio2HIUAYmyIwSBGiAEyCJLkn7f8O7zf3fezLx5MxMnkHvOn7v9997/+/O/u7377sTGRNjV1NS0QBN9QJ1B2aAsUBqoqUHwYo4adAD+FtBm0NeglbGxsfvhnzYO+kgCmC6gtqDWBjGtsUHwYioNOgJ/j0FF8AuhD6ZFzMVGomaAvhD1DgP1BxG823ZqULYQtBQ0H8pYA7/OOegjE0L3BfUEtQOFoo9dKL8WtAL62A4/rM6tYF5CADSf+JGgEaBOXgzhSfgG1cwFvQxlsFeJWgd98Im/BsSHgr1BJBx7DT4sS6AP9iohu5ANAsCTIcVY0BhQSsgSOavgENhmgZ6BIkqdFakdLugjES0NMqhJ7bQaU4Z2FpKgj/JQ2nRtEADOssNBT4E4J/Dlqo4dO/b19h07v924aVvFunVfVW/etqNB6aHS+MOHSxuwULNmySeTU5Krss/vcLJHj25xuTnnJ2R2aH9eo0aNOO+I91Ux0jm/mAiaB0VwePlJHXTSDwIMBzXzJQh4qouLDxxc99XXFZs2b43duHFLo9279zYuKy9rUF5efhbLJSYmHm+S2ORkRkarytzcrGM52R1renTrnJCentYcOON81Y30wyDqYpkfHr9ZrgwCoNgFzgf19lH7iZKSQ/95d8Giovz8vyeUHCr1APXB6zM5NSX5+NCheZVD8m7ISE1N+RkYG/pgXoX0YVAEu9Bad9AHJ84Pg2yHSuRXbd6y7X/5+QXVy5avaHG0rPxsN0I2bZL4w1VX9T1w6y2DY7Ozzj8XeH09LBxan0Z+0BPyoA0C4GgEC0DpNqAq139V+I8Jk6byKXAF2qZOT9I557Q49tSfp8R279blOiRwfNZdMRLyoAQaR6056CMXjU0Gcei0OOSdWPzhsj3TZzyffvjwkQRLZoiR5JSkiofHji6+fkC/1sBs96BwKH0CeRuDaSoogwBAThhfBOlPfNWu3d99NGbc5LJdO3fb/bOCkckvb7v2GZWzZj7RpF1Gm6vBqD8hx5F2H5TAiWfEHfTBIeJ+kOUfgvTq1au//G7KY0+lFhcXR3QekZ6eXvbYlEdKevW6oA1w68PJCcg2G+mOhxBHBgGAVPx00DiQxZWWHln1m0lTitZ8sZ6rjFpzF17U/ehfnnysbXJykt2wNROCTIAiqiIhEPRBxf8aNFivf/v2b/dO+t3jZ2/dsiNVz4tkvGNWh5In//joD5mZ57WyaacAaX+FPqpt8ixJAQ3CMAYOEZw5S1fz6Wer/zZ6zKSI9giyQbvw87OerLzs0l43I0/Hwlk3h5CwGoVhDBwiemny1Lydv2DXk9Ofa6+l12p00oQHd946NM9ur2M1BOEQ4tcodCV6CQ8FzECi3jOUPT/7tYJX577lNW56VVALCXePuK109P138WnVu+eZUMD4cIoAfdyF+iw9w8mTVcd//9i04sUfLm0Tzrbc1nX9gP7fTZ0yMb1Bg3h9aC+APl7zV69fgwB4zhksFVRXVxfd/8Ajq/77+ZpaHSL8gWDeJRdfeHT2C0/1jouL4wpIurughLDMKaAPzhkekpVjqXjk7lHjT2zctKW5TP+pw7k5WQdfnTOjIZawSZosz0IfPucUPg0C4Dk2LweZVkZjGDj4ttV79u77SYcJDaAZbd2qZeWigrd6aUbBieaVUEJIqw/oIxf1/AlkTiBpDAMH3xFfcqgk0RQiigKpKanliwreqNKMghPN30IftqsPfVbqgQPwfMo4bzCNAeEy9gzRagwUnLJRRsrKuOGIYYGBSaUF5aMs9xk4bzCNgcMEe4ZoNQYCpGyUkbIybjhimGxgUmmm72UQYGSvMR8k9xlqOGeItmHCRCEClJGyIknuXBLLfAOb4HYc5KaTnC/VcM4QbcOEHRrKSFmRJ/VBLMTk5bwMAhzDQZalHFcT0TKB9EJgk0BZKbOWRUzDtbSAURgR5w2dJCNXE9EygZRy+QpTVsqs5XcysFmSLXMIMNBytoLSFBf3GS7vdyNfJtU5969l76do+xTcys3C+FnqBAz0wbnBHJD5boL7DDcNHdHKSflo43kvf+5ebZ+C7z5GQR/mCzG9hxgLBtMYEK7iplO0AXMqjyG73IfgXIAYnTruvZjGAAOp5qaT08LRxkfZiUHIRWzEaDrTIMDIZeQYMwcBbkfX9g6kbD/UMGUnBq2eMQZWLdkaBQ9XUhZlcTu6tncgrVKFFqPsxKDVMsjA6kk2DQKxkaAUwVzJdxMiXieDBoZKITwxEmsgx8Mt5kYXlHaC7yYCFYr2fGIgFiEnMRKrx0mDGKES6fOtZaRfVMn2IhUmBmLR6rdg1fJUtL8K0Odby0i/qJLtRSpMDMSi1W9i9UwqYTE8A/mFYDpx9YAh77t9hR0fHx8z/qF7z+/Tp3eriory43NeeWPr8k/+fVDUHzB45RWXpY68+46sxISEhis+/WzvzGfmbK+qktOBgFWYDHx1vmTxO+z+uQZX7iJMptaoiPShj0zEn1FpiFdd3m/wMbevsGPj4mJuuWlQy549uzavqKw8uXDhP/euW194RNXvxO/evUvTGwde0zqhceP4L9duKMFZk3011XI64KSWUzx8df7JRwWNgD9elBqL+HbVQwwTGTE83OLWGFjPuLGjMn817OacjDYtk3CQI+3paX/oNXTI4JayDX9h8j49beolOCmUlpHRutltvxySSwPzV8Zf3vff729ETBqPBbOW11fGebjFrTGwniF5A1ted+1Vbc49J71xh/btmo4ZPTKrb59LHQ8/5H1o9MjsDue1b3ruueckDLiuXxsamJQxmHDpoSMJxKSV8WBWBmF2GWTiSSeNOaho38sutSzLsJUcN3HCgz2dGAV5yMsyslH2NjIebPjdBR/s1spYMGt5PWWcJ51kPNjwBT27Wv75cXGxsXfefmsHJ0ZBHvKyjGyXvY2MBxt++50CuVHF4h7McegOuRTrIiqs4rE3EQ86WF5RISctnvL8BwcyCl/GwAo49AQtiCiQn7+AqwY55nQxsAsubOed+m6inUpE3HPsTcXd+BgmZLueKpwYhS9jYAUcetzIosp8/PGKNGJTcfjtiJ1PYR+QaX04EFvo9gykqvzlV9/YghdhsjFPlj+jMIzhAvKoepTPujgPUXE3PjHxsK8oS8zErjs+HKY+ig+UHHB7BlJV/P6iJXuqq2v0JzLGn1HQGIbfMTRT7xlYJ+viPETV78YnJh72FWWJuQuV31kkxuB09E4ZdxNe/smnJdOmP7fWqVGInsH8R6h2WQfrCnZSqspLnye/ZRxhC3Yjr63kWbdug1yyyizH4fXrC4++/ubbO5waheoZvE/EnTIG1hXspNROWJ781tLbNkBCtkzctHErtzGTZJqbcP67BftYzm4+oHoKVa8dD/OUMai6FL9bn9g65VrgWiJGva1l/Zs3bZFR1+EVKz8rYWG7+YDqKVTldjzMo0HRGFRdit+tT2zX9L9cFm9Ng8iSKWvXb/Dq2mR+MGH1j7T7h0uj8DVMsGdQdQTTri9eYsvLu0FmW7AbGRaD+GbT1rBtVat/pN0/XBqFr2EinMZArDbYPAYh313E8CMaqbFQw+of6sso7OoPd8+g2rDBZsFu8Fl6R35Eo8qHww9kFHZthLtnUG3YYPNMKvkOw3T8osqMhClAo/A1p9CbiJQxsB0bbBbshiwWA+AXVbqMocZpFL7mFHrdkTIGtmODrTEnlRalqM/rdMFCjTsxikgaA+W3wWbBbmC0GIT6vC5U/Hp5J0YRSWOgPDbYPAahy1ofP4M1wB7C8lk9P7yNhD7E0tJrn0G1pyaa5FVp4fRtsFmwG21Zlpn88DacMqi61NLSbgKpeNREk7wqLZy+DbZKL4PgV9jhbJR1OTEG1WYkjcIGW0CD4FfYSrZw+U6MQbUVSaOwweYxiAOqcfr8JF/GQw37MwbOGej0NiJlFNlZmTo2C3ZDDstbSH6Sr8sXStyfMXDOQNLrj5RRtPPGdoQ9hGXnpWf3rl67hbqATuOBjIErD1+rj0gYRY9uXfXhyoLdwLVH4uuU0/EHGQ8lHMgYuPLwtfqIhFFk4+4JDc8eLqk2y8Sc3I48WBqyc2IMao+Cjfnap2A68yUv424cLyLRylmwG3kWg8jOsdu70mpxEHViDGqPgtUF2rySvA6at2XhRSRaxh4+MfKFTwxvbtGYgo5eecXPm+Mf6fNFlb4D6W9JqnoKHpgJWhCtgA02C3aDvUgW480tMu4m3KN7lyS7fzDrslta+luSqp6CB2bcyCLL2GArokGsBJmWwmt8eHOLLBhseNQ9d3TEP9Jr6OF8QTcGVXcgo7jnrttDelSJybiiSDVJzMSuu0IkmPrgNT68uUVnCiY+aNC1rfiP1MvYGYPiCWQUg3B6SvG68YmJ2ERZYi6EmJ5rZ6gE5eJ5jY+KuPETEhLP0sv5MwbF688omiQmNlR8bnwDk9yF5Z2P+/W6kMZJ5S6Vjngcr/FRcTc+jr157Xb6MwbVhj+jSMRROsXnxicmYhNldxG7SlgqMnDk64YMGQ82vHLlqr2yjBNjUPy+jILnKhWPG98GkwWzVudaGeedTjIebHjt2g0HZRknxqD4fRkFz1UqHje+DSYPZmW581HpeFUxL/hCd+L6kO2MZ1/aVhNbU8OjdGXl5Sdeee3NLTwjoeoP5NMo9h84eJxDD3sbGtjMZ+dsD1TOVz4P2RqXlkkWYvblViDjFyqTF3w1a5ZU4fZc5TvvLdyH00gxPEpXjtNTC3FghmckVP2BfBoF2j7JoYe9DQ2Mh2wDlfOVz0O2xKTlE/OPJ4MgMCdY5jeMOLq+4M4RD56lFaqT0dfnPnccl5XlCeG/QfdodzjGZIE+XkDEPCzzweKlOx/9/RPtTYY6HHh86uSdN1zfX2Ipgj4eICQ1ZDA8l3+U421vvOBLxeuqTwzGzXUSggWrzBBhy5DC2954wZfIr5NBYiAWTXgTqzSIl8F0SDA25m1vIl4ngwYG+QaTGIk1kFsCBtMA8AQ15G1vgQpFez4xEIuQkxiJ1eNMgwATx7RZRrrH49V/vO1NptWlMGU3ri+UYs8ysMo0rzB42DsulBm9cPUfb3uTaXUpTNmJQZOZ1yGbI4Fl9oxxMxnM3M5toQrVXwdwBl8HAEsphSFMVMZAn/cr8Oo/mVYXwpRZuxuCYk80MDqCAN5yMM6TzJm4B5JX/8m0uhCmzJRdk5X3YhOj6cwhw0w5pYBVIh7DeyB59Z9Mi+YwZTXurpRiEtM8meAkDIUtA983kpf3QPLqP5kWzWHKatxdKcXkSovYLM4yZKgcDB1cbn0OkvdMld1738OLov2eKV5P+NKLTw+E7HJCXIz4xVBAEfygHfTBIXQGiEOqx/Eir9uH33802u+Z4vWEb86b3VS7s5IP93jow3un1sDn5UEJvZG4HGTuRWDHsf5aQvEF+RlzLSGtA9bDLvY+hpXDC6u2vAeST6FKixafMtncUUnxeBm6ZQh0IzPq2Ihys2VZ3v/IeyD5FMr0aAhTJps7KikaL0MnFltnN4cwGVGQGzgzzQQEaBTskqNpTkFZKBNlk7JSdgODluwuiro45hbI0jQKdsnRNKegLJSJsklZKbuBQUv+MWo7h/gx2/M1NN+qLQANkukI119+blXImXH5OTFjPkGjmA4ax7h09T+PILURE3Pa/zyChAvDGIH4iyBzomnk1/+AilAU9HR6/4CKwMregqsPDiFySapY6n9iSWkCPnR1ev/EksIKoJy88TwBjcPO1f8Im9AK9HX6/gibwgmQnJAOB00Dme8+ENYdf6axkBeR8H4GfpLv72ca+RlADk5+40Bse5yB7ILK/B0V48bKRFDd+plG3ErDi0h4PwM/yff3M438DIAnv3v06No4PS01DasEfyvDw4YuvHYgke7IBVxlBKoFhsHdu7GgMaCUQPxhyucrbL6Zrf8h11MK5Stsvpnlm0vLu4lT2c7/hmwQqikYBo+FjwRx4mmevFL5YfL5ToF7I/U/9XxKoUXweLglen7q+ZRc1r8wjguRMgzUH8Ru363heY6GozxBz4f1r4Ff5xz0kQmh+4J6gtqBQtHHLpRfC1oBfbg+Z4ryts6tYLaV2SVCGZxf9AF1BvFOpyxQGog9ComOW+GkAyCex+AXVV+DVgK01wsYpNdZB30kQXg+JJyYtzaIaTzVpU52VSJMOgLaYxB7A346wLSIuf8DnozfgSu1ZnkAAAAASUVORK5CYII=);\n    background-size: 32px 32px;\n  }\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-attachment {\n  background-color: #fff;\n  display: inline-block;\n  margin: 20px 0 0 20px;\n  position: relative;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-attachment:last-child {\n  margin-bottom: 20px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-attachment-thumbnail-contained {\n  background-size: contain;\n  background-position: center center;\n  background-repeat: no-repeat;\n  height: 200px;\n  width: 200px;\n}\n\n[data-lf-package=\"streamhub-input#0.2.2\"] .lf-attachment-thumbnail {\n  height: 200px;\n  width: auto;\n}');
     //The modules for your project will be inlined above
     //this snippet. Ask almond to synchronously require the
     //module value for 'main' here and return it as the

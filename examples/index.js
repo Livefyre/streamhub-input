@@ -6,9 +6,8 @@ require([
     'streamhub-sdk/jquery',
     'streamhub-sdk/content/views/content-list-view',
     'streamhub-sdk/collection',
-    'streamhub-input/javascript/upload/button',
-    'streamhub-input/javascript/content-editor/button'
-],function (auth, livefyreAuth, createAuthButton, debug, $, ContentListView, Collection, UploadButton, ContentEditorButton) {
+    'streamhub-input',
+],function (auth, livefyreAuth, createAuthButton, debug, $, ContentListView, Collection, Input) {
     livefyreAuth.plugin(auth);
     auth.delegate(livefyreAuth.createDelegate('http://www.qa-ext.livefyre.com'));
 
@@ -28,10 +27,10 @@ require([
         collection.pipe(listView);
 
         createAuthButton(auth, document.getElementById('auth-button'));
-        var uploadButton = window.uploadButton = new UploadButton({
+        var uploadButton = window.uploadButton = new Input.UploadButton({
             el: document.getElementById('upload-button')
         });
-        var editorButton = window.editorButton = new ContentEditorButton({
+        var editorButton = window.editorButton = new Input.ContentEditorButton({
             el: document.getElementById('editor-button'),
             mediaEnabled: true
         });
