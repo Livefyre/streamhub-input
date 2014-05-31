@@ -1,4 +1,5 @@
 var ModalView = require('streamhub-sdk/modal');
+var packageAttribute = require('streamhub-input/javascript/package-attribute');
 
 'use strict';
 
@@ -17,6 +18,7 @@ function LaunchableModal() {
  */
 LaunchableModal.prototype.launchModal = function(modal) {
     this._modal = modal || this._modal || new ModalView();
+    packageAttribute.decorateModal(this._modal);
     this._modal.show(this, true);  // Will .render() and stack
     this._showing = true;
 };

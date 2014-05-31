@@ -1,6 +1,7 @@
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Button = require('streamhub-sdk/ui/button');
 var inherits = require('inherits');
+var packageAttribute = require('streamhub-input/javascript/package-attribute');
 
 'use strict';
 
@@ -38,6 +39,15 @@ InputButton.prototype.elClass += ' input-btn';
 
 /** @override */
 InputButton.prototype.elTag = 'button';
+
+/** @override */
+InputButton.prototype.setElement = function () {
+    if (this.el) {
+        packageAttribute.undecorate(this.el.parentNode);
+    }
+    Button.prototype.setElement.apply(this, arguments);
+    packageAttribute.decorate(this.el.parentNode);
+};
 
 /**
  * Facade for button's input.
