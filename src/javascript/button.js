@@ -31,6 +31,7 @@ var packageAttribute = require('streamhub-input/javascript/package-attribute');
     }
 
     Button.call(this, command, opts);
+    this.wrapWithStylePrefix(this.$el);
 }
 inherits(InputButton, Button);
 
@@ -40,13 +41,15 @@ InputButton.prototype.elClass += ' input-btn';
 /** @override */
 InputButton.prototype.elTag = 'button';
 
-/** @override */
-InputButton.prototype.setElement = function () {
-    if (this.el) {
-        packageAttribute.undecorate(this.el.parentNode);
-    }
-    Button.prototype.setElement.apply(this, arguments);
-    packageAttribute.decorate(this.el.parentNode);
+/**
+ * We need to add a wrapper element with the package style prefix so that it is applied to all
+ * descendants, including this button element.
+ * @param {jQuery.Element} $el
+ */
+InputButton.prototype.wrapWithStylePrefix = function ($el) {
+    var wrapperEl = document.createElement('div');
+    packageAttribute.decorate(wrapperEl);
+    $el.wrap(wrapperEl);
 };
 
 /**
