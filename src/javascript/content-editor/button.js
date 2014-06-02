@@ -11,22 +11,23 @@ var $ = require('jquery');
  * @param [opts] {Object}
  * @param [opts.mediaEnabled] {boolean} Are media uploads allowed?
  * @param [opts.modal] {ModalView} Optional modal to use for launching
+ * @param [opts.input] {Input} Input view to show in the modal
  * @constructor
  * @extends {InputButton}
  */
 function ContentEditorButton(opts) {
     opts = opts || {};
     this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
-    var input = new ModalContentEditor({
-        mediaEnabled: opts.mediaEnabled
-    });
+
+    var input = opts.input || this.createInput();
+
     var command = new ModalInputCommand(input, {
         modal: opts.modal
     });
 
     InputButton.call(this, command, {
         el: opts.el,
-        input: opts.input || input,
+        input: input,
         destination: opts.destination,
         authRequired: opts.authRequired
     });
@@ -48,5 +49,16 @@ ContentEditorButton.prototype.template = function () {
  * @type {string}
  */
 ContentEditorButton.prototype.elClass += ' comment-btn';
+
+/**
+ * Create the editor that will appear in the modal
+ * when the button is clicked
+ */
+ContentEditorButton.prototype.createInput = function () {
+    var input = new ModalContentEditor({
+        mediaEnabled: opts.mediaEnabled
+    });
+    return input;
+}
 
 module.exports = ContentEditorButton;

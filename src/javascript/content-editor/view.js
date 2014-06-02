@@ -64,7 +64,7 @@ function handleLogout() {
  * @private
  */
 ContentEditor.prototype._addUploadButton = function () {
-    this._uploadButton = this._uploadButton || new UploadButtonIcon();
+    this._uploadButton = this._uploadButton || this.createUploadButton();
     this._attachmentsList = this._attachmentsList || new AttachmentListView();
 
     this._uploadButton.setElement(this.getElementsByClass(this.classes.EDITOR_UPLOAD));
@@ -72,6 +72,14 @@ ContentEditor.prototype._addUploadButton = function () {
     this._uploadButton.render();
     this._attachmentsList.render();
     this._uploadButton.pipe(this._attachmentsList);
+};
+
+/**
+ * Return an instance of UploadButton that will be used if
+ * the contentEditor is configured to allow media uploading
+ */
+ContentEditor.prototype.createUploadButton = function () {
+    return new UploadButtonIcon();
 };
 
 /** @override */
