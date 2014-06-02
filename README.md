@@ -5,7 +5,7 @@ A simple comment editor and image filepicker for use with the [Livefyre Streamhu
 
 ## Getting Started
 
-Load the JavaScript using the Livefyre loader and place the CSS on the page:
+Load the JavaScript and CSS using the Livefyre loader:
 
 ```
 <script src="http://cdn.livefyre.com/Livefyre.js"></script>
