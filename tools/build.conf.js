@@ -12,7 +12,8 @@
   include: [
     'almond'
   ],
-  stubModules: ['text', 'hgn', 'json'],
+  stubModules: ['text', 'hgn', 'json', 'less/less'],
+  exclude: ['css/normalize', 'less/normalize'],
   out: "../dist/streamhub-input.min.js",
   pragmasOnSave: {
     excludeHogan: true,

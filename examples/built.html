@@ -1,38 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="/dist/streamhub-input.min.css">
-
-    <!-- ListView styles et el. -->
-
-    <link rel="stylesheet" type="text/css" href="/lib/streamhub-sdk/src/css/style.css">
     <style>
     #listView {
         width:500px;
         float: left;
     }
     </style>
-    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
 </head>
     <body>
         <div>
-            <button id="auth-button">Log in</button>
-        </div>
-        <div>
             <button id="editor-button"></button>
         </div>
-        <div>
-            <button id="upload-button"></button>
-        </div>
         <div id="listView"></div>
-
-        <script src="../../lib/cajon/cajon.js" type="text/javascript"></script>
-        <script src="/requirejs.conf.js" type="text/javascript"></script>
-        <script>
-        requirejs.config({
-            baseUrl: '../',
-            deps: ['examples/index']
-        });
+        <div>
+            Hi there! this is just a POC that the Input module can be built successfully.
+            Check the console for errors. Errors are bad, no errors are good!
+        </div>
+        <script type="text/javascript" src="../dist/streamhub-input.js"></script>
+        <script type="text/javascript">
+            window.onload = function () {
+                var button = new window.Livefyre['streamhub-input'].ContentEditorButton({
+                    el: document.getElementById('editor-button')
+                });
+                button.render();
+            }
         </script>
     </body>
 </html>
