@@ -19,7 +19,7 @@ function ContentEditorButton(opts) {
     opts = opts || {};
     this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
 
-    var input = opts.input || this.createInput();
+    var input = opts.input || this.createInput(opts);
 
     var command = new ModalInputCommand(input, {
         modal: opts.modal
@@ -54,7 +54,7 @@ ContentEditorButton.prototype.elClass += ' comment-btn';
  * Create the editor that will appear in the modal
  * when the button is clicked
  */
-ContentEditorButton.prototype.createInput = function () {
+ContentEditorButton.prototype.createInput = function (opts) {
     var input = new ModalContentEditor({
         mediaEnabled: opts.mediaEnabled
     });
