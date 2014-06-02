@@ -9,7 +9,7 @@
     "event-emitter": "git@github.com:Livefyre/event-emitter.git#~0.0.1",
     "inherits": "git://github.com/Livefyre/inherits.git",
     "jquery": "~1.10.1",
-    "livefyre-bootstrap": "git@github.com:Livefyre/livefyre-bootstrap.git#~1.0.0",
+    "livefyre-bootstrap": "git@github.com:Livefyre/livefyre-bootstrap.git#1.1.0",
     "observer": "git@github.com:Livefyre/Observer.git#0.1.0",
     "requirejs": "2.1.9",
     "requirejs-hogan-plugin": "*",
@@ -31,7 +31,7 @@
   },
   "resolutions": {
     "view": "~1.2",
-    "livefyre-bootstrap": "~1.0.0",
+    "livefyre-bootstrap": "1.1.0",
     "streamhub-sdk": "modalevents"
   }
 }

@@ -119,6 +119,9 @@ require.config({
   less: {
     browserLoad: 'dist/streamhub-input.min',
     paths: ['lib'],
-    relativeUrls: true
+    relativeUrls: true,
+    modifyVars: {
+      "@icon-font-path": "\"../../dist/fonts/\""
+    }
   }
 });
