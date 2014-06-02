@@ -78,8 +78,8 @@ ContentEditor.prototype._addUploadButton = function () {
  * Return an instance of UploadButton that will be used if
  * the contentEditor is configured to allow media uploading
  */
-ContentEditor.prototype.createUploadButton = function () {
-    return new UploadButtonIcon();
+ContentEditor.prototype.createUploadButton = function (opts) {
+    return new UploadButtonIcon(opts);
 };
 
 /** @override */
