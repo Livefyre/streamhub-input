@@ -41,6 +41,15 @@ InputButton.prototype.elClass += ' input-btn';
 /** @override */
 InputButton.prototype.elTag = 'button';
 
+/** @override */
+InputButton.prototype.setElement = function (el) {
+    if (this.$el) {
+        this.$el.unwrap();
+    }
+    Button.prototype.setElement.call(this, el);
+    this.wrapWithStylePrefix(this.$el);
+};
+
 /**
  * We need to add a wrapper element with the package style prefix so that it is applied to all
  * descendants, including this button element.
