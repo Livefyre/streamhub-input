@@ -17,7 +17,7 @@
     "rework": "gobengo/rework#~0.21.0",
     "stream": "git://github.com/Livefyre/stream.git#~0.1",
     "streamhub-editor": "git@github.com:Livefyre/streamhub-editor.git#~1.1.0",
-    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#modalevents",
+    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#~2.11.1",
     "view": "git://github.com/Livefyre/view.git#~1.2"
   },
   "devDependencies": {
@@ -32,6 +32,6 @@
   "resolutions": {
     "view": "~1.2",
     "livefyre-bootstrap": "1.1.0",
-    "streamhub-sdk": "modalevents"
+    "streamhub-sdk": "~2.11.1"
   }
 }

@@ -31,7 +31,6 @@ var packageAttribute = require('streamhub-input/javascript/package-attribute');
     }
 
     Button.call(this, command, opts);
-    this.wrapWithStylePrefix(this.$el);
 }
 inherits(InputButton, Button);
 
