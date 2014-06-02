@@ -27,6 +27,7 @@
     "bower": "1.2.6",
     "cajon": "~0.1.11",
     "coveralls": "~2.3.0",
+    "csso": "^1.3.11",
     "express": "4.0.0",
     "http-server": "*",
     "ink-docstrap": "git://github.com/michaelward82/docstrap.git#line-number-alignment",
@@ -46,7 +47,7 @@
     "karma-script-launcher": "~0.1.0",
     "less": "*",
     "less-middleware": "0.1.15",
-    "phantomjs": "*",
+    "lfcdn": "git+ssh://git@github.com:Livefyre/lfcdn",
     "phantomjs": "~1.9.2-2",
     "requirejs": "2.1.9",
     "rework": "git://github.com/gobengo/rework"
