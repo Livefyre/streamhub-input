@@ -1,5 +1,6 @@
 var packageJson = require('json!streamhub-input/../package.json');
 var packageAttribute = 'data-lf-package';
+var packageAttributeValue = packageName(packageJson);
 
 /**
  * Decorate an HTMLElement with the proper package attribute
@@ -7,19 +8,20 @@ var packageAttribute = 'data-lf-package';
  * data-lf-package="streamhub-wall#3.0.0"
  */
 exports.decorate = function (el) {
-    var currentVal = el.getAttribute(packageAttribute);
-    var newVal = packageName(packageJson);
-    // If there already was this attribute, just add to the attr
-    // space-separated
-    if (currentVal && currentVal.indexOf(newVal) === -1) {
-        newVal = [currentVal, ' ', newVal].join('');
+    var currentVal = el.getAttribute(packageAttribute) || '';
+    var currentPackageAttrs = currentVal.split(' ');
+    var newVal;
+    // Add this package attribute value if it's not already there
+    if (currentPackageAttrs.indexOf(packageAttributeValue) === -1) {
+        currentPackageAttrs.push(packageAttributeValue);
+        newVal = currentPackageAttrs.join(' ');
+        el.setAttribute(packageAttribute, newVal);
     }
-    el.setAttribute(packageAttribute, newVal);
 };
 
 exports.undecorate = function (el) {
     var currentVal = el.getAttribute(packageAttribute) || '';
-    var newVal = currentVal.replace(packageName(packageJson), '');
+    var newVal = currentVal.replace(packageAttributeValue, '');
     el.setAttribute(packageAttribute, newVal);
 };
 
