@@ -4,7 +4,7 @@ all: build
 
 build: node_modules
 
-dist: node_modules tools/build.conf.js
+dist: node_modules tools/build.conf.js requirejs.conf.js
 	npm run build
 
 # if package.json changes, install

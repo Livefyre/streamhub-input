@@ -11,6 +11,7 @@
     <body>
         <div>
             <button id="editor-button"></button>
+            <button id="upload-button"></button>
         </div>
         <div id="listView"></div>
         <div>
@@ -23,7 +24,11 @@
                 var button = new window.Livefyre['streamhub-input'].ContentEditorButton({
                     el: document.getElementById('editor-button')
                 });
+                var button2 = new window.Livefyre['streamhub-input'].UploadButton({
+                    el: document.getElementById('upload-button')
+                });
                 button.render();
+                button2.render();
             }
         </script>
     </body>

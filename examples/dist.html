@@ -11,6 +11,7 @@
     <body>
         <div>
             <button id="editor-button"></button>
+            <button id="upload-button"></button>
         </div>
         <div id="listView"></div>
         <div>
@@ -24,7 +25,11 @@
                 var button = new Input.ContentEditorButton({
                     el: document.getElementById('editor-button')
                 });
+                var button2 = new Input.UploadButton({
+                    el: document.getElementById('upload-button')
+                });
                 button.render();
+                button2.render();
                 // TODO(jj): authy goodness
                 // TODO(jj): pipe to ListView once it is Livefyre.requireable
             });
