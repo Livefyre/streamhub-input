@@ -17,8 +17,10 @@ function LaunchableModal() {
  * @param {!ModalView} modal
  */
 LaunchableModal.prototype.launchModal = function(modal) {
-    this._modal = modal || this._modal || new ModalView();
-    packageAttribute.decorateModal(this._modal);
+    if (!this._modal) {
+        this._modal = modal || new ModalView();
+        packageAttribute.decorateModal(this._modal);
+    }
     this._modal.show(this, true);  // Will .render() and stack
     this._showing = true;
 };

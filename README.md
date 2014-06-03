@@ -8,7 +8,7 @@ A simple comment editor and image filepicker for use with the [Livefyre Streamhu
 Load the JavaScript and CSS using the Livefyre loader:
 
 ```
-<script src="http://cdn.livefyre.com/Livefyre.js"></script>
+<script src="//cdn.livefyre.com/Livefyre.js"></script>
 <script type="text/javascript">
     Livefyre.require(['streamhub-input#v0.3'], function (Input) {
         var editorButton = new Input.ContentEditorButton({

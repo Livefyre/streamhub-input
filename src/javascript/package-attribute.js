@@ -8,7 +8,7 @@ var packageAttributeValue = packageName(packageJson);
  * data-lf-package="streamhub-wall#3.0.0"
  */
 exports.decorate = function (el) {
-    var currentVal = el.getAttribute(packageAttribute) || '';
+    var currentVal = (el.getAttribute(packageAttribute) || '').trim();
     var currentPackageAttrs = currentVal.split(' ');
     var newVal;
     // Add this package attribute value if it's not already there
