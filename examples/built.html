@@ -14,20 +14,17 @@
         </div>
         <div id="listView"></div>
         <div>
-            Hi there! this is just a POC that the Input module can be loaded successfully.
+            Hi there! this is just a POC that the Input module can be built successfully.
             Check the console for errors. Errors are bad, no errors are good!
         </div>
-
-        <script src="http://cdn.livefyre.com/Livefyre.js"></script>
+        <script type="text/javascript" src="../dist/streamhub-input.js"></script>
         <script type="text/javascript">
-            Livefyre.require(['streamhub-input#v0.3'], function (Input) {
-                var button = new Input.ContentEditorButton({
+            window.onload = function () {
+                var button = new window.Livefyre['streamhub-input'].ContentEditorButton({
                     el: document.getElementById('editor-button')
                 });
                 button.render();
-                // TODO(jj): authy goodness
-                // TODO(jj): pipe to ListView once it is Livefyre.requireable
-            });
+            }
         </script>
     </body>
 </html>

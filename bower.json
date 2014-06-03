@@ -1,6 +1,6 @@
 {
   "name": "streamhub-input",
-  "version": "0.2.1",
+  "version": "0.3.4",
   "main": [
     "./src/main.js"
   ],
@@ -9,13 +9,15 @@
     "event-emitter": "git@github.com:Livefyre/event-emitter.git#~0.0.1",
     "inherits": "git://github.com/Livefyre/inherits.git",
     "jquery": "~1.10.1",
-    "livefyre-bootstrap": "git@github.com:Livefyre/livefyre-bootstrap.git#~1.0.0",
+    "livefyre-bootstrap": "git@github.com:Livefyre/livefyre-bootstrap.git#1.1.0",
     "observer": "git@github.com:Livefyre/Observer.git#0.1.0",
     "requirejs": "2.1.9",
     "requirejs-hogan-plugin": "*",
+    "require-less": "git@github.com:gobengo/require-less.git#deponcss",
+    "rework": "gobengo/rework#~0.21.0",
     "stream": "git://github.com/Livefyre/stream.git#~0.1",
     "streamhub-editor": "git@github.com:Livefyre/streamhub-editor.git#~1.1.0",
-    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#~2.10.0",
+    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#~2.11.1",
     "view": "git://github.com/Livefyre/view.git#~1.2"
   },
   "devDependencies": {
@@ -29,7 +31,7 @@
   },
   "resolutions": {
     "view": "~1.2",
-    "livefyre-bootstrap": "~1.0.0",
-    "streamhub-sdk": "~2.10.0"
+    "livefyre-bootstrap": "1.1.0",
+    "streamhub-sdk": "~2.11.1"
   }
 }

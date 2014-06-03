@@ -6,14 +6,18 @@
     jquery: 'lib/jquery/jquery.min'
   },
   baseUrl: '..',
+  buildCSS: true,
+  separateCSS: true,
   name: "streamhub-input",
   include: [
     'almond'
   ],
-  stubModules: ['text', 'hgn', 'json'],
+  stubModules: ['text', 'hgn', 'json', 'less/less'],
+  exclude: ['css/normalize', 'less/normalize'],
   out: "../dist/streamhub-input.min.js",
   pragmasOnSave: {
-    excludeHogan: true
+    excludeHogan: true,
+    excludeRequireCss: true
   },
   cjsTranslate: true,
   optimize: "uglify2",

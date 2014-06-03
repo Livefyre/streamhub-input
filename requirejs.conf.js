@@ -8,6 +8,7 @@ require.config({
     hgn: 'lib/requirejs-hogan-plugin/hgn',
     json: 'lib/requirejs-plugins/src/json',
     jasmine: 'lib/jasmine/lib/jasmine-core/jasmine',
+    rework: 'lib/rework/rework',
     'jasmine-html': 'lib/jasmine/lib/jasmine-core/jasmine-html',
     'jasmine-jquery': 'lib/jasmine-jquery/lib/jasmine-jquery',
     'event-emitter': 'lib/event-emitter/src/event-emitter',
@@ -77,8 +78,19 @@ require.config({
   },{
     name: 'auth-delegates',
     location: 'lib/auth-delegates/src'
+  },{
+    name: 'css',
+    location: 'lib/require-css',
+    main: 'css'
+  },{
+    name: 'less',
+    location: 'lib/require-less',
+    main: 'less'
   }],
   shim: {
+    rework: {
+          exports: 'rework'
+    },
     jquery: {
         exports: '$'
     },
@@ -95,6 +107,21 @@ require.config({
     },
     'jasmine-jquery': {
         deps: ['jquery']
+    }
+  },
+  css: {
+    clearFileEachBuild: 'dist/streamhub-input.min.css',
+    transformEach: {
+      requirejs: 'tools/prefix-css-requirejs',
+      node: 'tools/prefix-css-node'
+    }
+  },
+  less: {
+    browserLoad: 'dist/streamhub-input.min',
+    paths: ['lib'],
+    relativeUrls: true,
+    modifyVars: {
+      "@icon-font-path": "\"../../dist/fonts/\""
     }
   }
 });
