@@ -23,10 +23,10 @@ AttachmentView.prototype._loadImage = function () {
  */
 AttachmentView.prototype._handleImageLoaded = function (image) {
     View.prototype.render.call(this);
-    if (image.height / image.width < 0.5) {
+    if (image.height / image.width < 0.6) {
         image = document.createElement('div');
         image.className = this.classes.THUMBNAIL_CONTAINED;
-        image.style.backgroundImage = 'url(' + this.opts.oembed.url +')';
+        image.style.backgroundImage = 'url("' + this.opts.oembed.url +'")';
     }
     this.$el.append(image);
     this.$el.show();

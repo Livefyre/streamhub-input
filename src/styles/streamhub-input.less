@@ -161,9 +161,10 @@
     top: -15px;
     width: 32px;
 
+    /* TODO(jj): @media does not work with prefixing ATM, hence the important */
     @media only screen and (-webkit-min-device-pixel-ratio: 2) {
-        background-image: data-uri('../images/photo_x@2x.png');
-        background-size: 32px 32px;
+        background-image: data-uri('../images/photo_x@2x.png') !important;
+        background-size: 66px 32px;
     }
 }
 
