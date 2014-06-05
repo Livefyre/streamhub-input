@@ -46,18 +46,7 @@ InputButton.prototype.setElement = function (el) {
         this.$el.unwrap();
     }
     Button.prototype.setElement.call(this, el);
-    this.wrapWithStylePrefix(this.$el);
-};
-
-/**
- * We need to add a wrapper element with the package style prefix so that it is applied to all
- * descendants, including this button element.
- * @param {jQuery.Element} $el
- */
-InputButton.prototype.wrapWithStylePrefix = function ($el) {
-    var wrapperEl = document.createElement('div');
-    packageAttribute.decorate(wrapperEl);
-    $el.wrap(wrapperEl);
+    packageAttribute.wrapWithStylePrefix(this.$el);
 };
 
 /**

@@ -31,6 +31,18 @@ exports.decorateModal = function modalWithPackageSelector(modal) {
     return modal;
 };
 
+/**
+ * We need to add a wrapper element with the package style prefix so that it is applied to all
+ * descendants, including this button element.
+ * @param {jQuery.Element} $el
+ */
+exports.wrapWithStylePrefix = function ($el) {
+    var wrapperEl = document.createElement('div');
+    exports.decorate(wrapperEl);
+    $el.wrap(wrapperEl);
+};
+
+
 function setHasPackageAttribute(modal, shouldHaveAttr) {
     exports[shouldHaveAttr ? 'decorate' : 'undecorate'](modal.parentNode);
 }

@@ -10,6 +10,7 @@ var Editor = require('streamhub-editor/editor');
 var editorTemplate = require('hgn!streamhub-editor/templates/editor');
 var inherits = require('inherits');
 var Observer = require('observer');
+var packageAttribute = require('streamhub-input/javascript/package-attribute');
 var Pipeable = require('streamhub-input/javascript/pipeable');
 var UploadButtonIcon = require('streamhub-input/javascript/upload/button-icon');
 var View = require('streamhub-sdk/view');
@@ -204,6 +205,15 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
         }
         ev.success();
     });
+};
+
+/** @override */
+ContentEditor.prototype.setElement = function (el) {
+    if (this.$el) {
+        this.$el.unwrap();
+    }
+    Editor.prototype.setElement.call(this, el);
+    packageAttribute.wrapWithStylePrefix(this.$el);
 };
 
 /** @override */
