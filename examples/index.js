@@ -34,10 +34,16 @@ require([
             el: document.getElementById('editor-button'),
             mediaEnabled: true
         });
+        var contentEditor = window.editorButton = new Input.ContentEditor({
+            el: document.getElementById('content-editor'),
+            mediaEnabled: true
+        });
 
         uploadButton.render();
         editorButton.render();
+        contentEditor.render();
         uploadButton.pipe(collection);
         editorButton.pipe(collection);
+        contentEditor.pipe(collection);
     });
 });

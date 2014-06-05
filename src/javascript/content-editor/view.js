@@ -133,6 +133,7 @@ ContentEditor.prototype.classes = (function () {
     classes.EDITOR_UPLOAD = 'lf-editor-upload';
     classes.POST_BTN = 'lf-content-editor-post';
     classes.ATTACHMENT_LIST = 'lf-attachment-list-view';
+    classes.CONTENT_EDITOR = 'lf-content-editor';
     return classes;
 })();
 
@@ -179,6 +180,7 @@ ContentEditor.prototype.getTemplateContext = function () {
 ContentEditor.prototype.render = function () {
     Editor.prototype.render.call(this);
     this.$postEl = this.$('.' + this.classes.POST_BTN);
+    this.$errorContainer = this.getElementsByClass(this.classes.CONTENT_EDITOR);
 
     this._postButton = new Button(this._authCmd, {el: this.$postEl});
 
@@ -201,7 +203,7 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
     this._postButton.disable();
     this.writeToDestination(newContent, function(err) {
         if (err) {
-            ev.failure(err);
+            return ev.failure(err);
         }
         ev.success();
     });
