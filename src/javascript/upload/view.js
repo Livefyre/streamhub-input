@@ -116,7 +116,7 @@ Upload.DEFAULT_OPTS = {
         'container': 'picker',
         'maxSize': 4*1024*1024, // allows files < 4MB
         'mimetypes': ['image/*'],
-        'multiple': true,
+        'multiple': false,
         'services': ['COMPUTER', 'WEBCAM', 'IMAGE_SEARCH', 'FACEBOOK', 'INSTAGRAM', 'FLICKR', 'PICASA', 'BOX', 'DROPBOX', 'GOOGLE_DRIVE']
     },
     store: {
