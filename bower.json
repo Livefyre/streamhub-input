@@ -32,6 +32,7 @@
   "resolutions": {
     "view": "~1.2",
     "livefyre-bootstrap": "1.1.0",
-    "streamhub-sdk": "~2.11.1"
+    "streamhub-sdk": "~2.11.1",
+    "base64": "~0.4.0"
   }
 }
