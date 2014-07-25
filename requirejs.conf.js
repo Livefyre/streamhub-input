@@ -69,6 +69,13 @@ require.config({
     name: 'streamhub-wall',
     location: 'lib/streamhub-wall/src'
   },{
+    name: 'streamhub-ui',
+    location: 'lib/streamhub-ui/src'
+  },{
+    name: 'streamhub-share',
+    location: 'lib/streamhub-share/src',
+    main: 'share-button'
+  },{
     name: 'tests',
     location: 'tests'
   },{
@@ -86,6 +93,9 @@ require.config({
     name: 'less',
     location: 'lib/require-less',
     main: 'less'
+  },{
+    name: "livefyre-bootstrap",
+    location: "lib/livefyre-bootstrap/src"
   }],
   shim: {
     rework: {
