@@ -69,6 +69,9 @@ require.config({
     name: 'streamhub-wall',
     location: 'lib/streamhub-wall/src'
   },{
+    name: 'streamhub-ui',
+    location: 'lib/streamhub-ui/src'
+  },{
     name: 'tests',
     location: 'tests'
   },{
