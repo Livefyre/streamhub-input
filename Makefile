@@ -1,6 +1,10 @@
 .PHONY: all build
 
+ENV=dev
+
 all: build
+
+install: build
 
 build: node_modules
 
@@ -28,6 +32,5 @@ server: build
 lint: build
 	npm run hint
 
-env=dev
 deploy: dist
 	./node_modules/.bin/lfcdn -e $(env)
