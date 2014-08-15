@@ -33,4 +33,4 @@ lint: build
 	npm run hint
 
 deploy: dist
-	./node_modules/.bin/lfcdn -e $(env)
+	./node_modules/.bin/lfcdn -e $(ENV)

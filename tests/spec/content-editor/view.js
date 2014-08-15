@@ -59,7 +59,8 @@ describe('streamhub-input/javascript/content-editor/view', function () {
 
             it('can buildPostEventObj() from its view', function () {
                 commentInput.$textareaEl.val(testString);
-                expect(commentInput.buildPostEventObj().body).toBe(testString);
+                expect(commentInput.buildPostEventObj().body).toBeTruthy();
+                expect(commentInput.buildPostEventObj().body.indexOf(testString) !== -1).toBeTruthy();
             });
 
             it('can _validate(data) data', function () {
@@ -139,6 +140,7 @@ describe('streamhub-input/javascript/content-editor/view', function () {
             describe('with authentication', function () {
                 beforeEach(function () {
                     commentInput = new ContentEditor({
+                        destination: writable,
                         el: $('#sandbox')[0],
                     });
 

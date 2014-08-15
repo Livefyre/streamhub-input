@@ -15,7 +15,8 @@ require.config({
     'observer': 'lib/observer/src/observer',
     inherits: 'lib/inherits/inherits',
     blanket: 'lib/blanket/dist/qunit/blanket',
-    'blanket-jasmine': 'lib/blanket/dist/jasmine/blanket_jasmine'
+    'blanket-jasmine': 'lib/blanket/dist/jasmine/blanket_jasmine',
+    'mout': 'lib/mout/src'
   },
   packages: [{
     name: 'stream',
