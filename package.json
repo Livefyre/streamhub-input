@@ -6,7 +6,7 @@
     "name": "Joao Martins",
     "email": "joao@livefyre.com"
   },
-  "version": "0.4.2",
+  "version": "0.4.3",
   "scripts": {
     "postinstall": "./node_modules/bower/bin/bower install",
     "start": "node ./dev/server.js",
