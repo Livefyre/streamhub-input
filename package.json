@@ -8,7 +8,7 @@
   },
   "version": "0.4.3",
   "scripts": {
-    "postinstall": "./node_modules/bower/bin/bower install",
+    "postinstall": "./node_modules/.bin/bower install",
     "start": "node ./dev/server.js",
     "build": "npm run-script clean-build && npm run-script build-non-min && ./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js && npm run-script fonts",
     "build-non-min": "./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js optimize=none out=./dist/streamhub-input.js",

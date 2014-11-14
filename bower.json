@@ -30,8 +30,11 @@
     "livefyre-auth": "Livefyre/livefyre-auth"
   },
   "resolutions": {
+    "event-emitter": "0.1.0",
     "livefyre-bootstrap": "1.1.0",
+    "streamhub-ui": "0.1.3",
     "streamhub-sdk": "~2.12.0",
+    "streamhub-share": "0.1.3",
     "base64": "~0.4.0",
     "auth": "~0.2",
     "view": "~1.3"
