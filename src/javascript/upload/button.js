@@ -20,10 +20,12 @@ function UploadButton(opts) {
     });
 
     InputButton.call(this, command, {
+        authRequired: opts.authRequired,
+        destination: opts.destination,
         el: opts.el,
         input: opts.input || input,
-        destination: opts.destination,
-        authRequired: opts.authRequired
+        stylePrefix: opts.stylePrefix,
+        styles: opts.styles
     });
 }
 inherits(UploadButton, InputButton);

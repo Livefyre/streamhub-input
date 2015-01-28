@@ -1,0 +1,15 @@
+:host.lf-input-btn {
+    background: var(--backgroundColor);
+    border-color: var(--borderColor);
+    color: var(--textColor);
+}
+:host.lf-input-btn:hover {
+    background: var(--hoverBackgroundColor);
+    border-color: var(--hoverBorderColor);
+    color: var(--hoverTextColor);
+}
+:host.lf-input-btn:active {
+    background: var(--activeBackgroundColor);
+    border-color: var(--activeBorderColor);
+    color: var(--activeTextColor);
+}

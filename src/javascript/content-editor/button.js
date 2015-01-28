@@ -19,18 +19,13 @@ function ContentEditorButton(opts) {
     opts = opts || {};
     this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
 
-    var input = opts.input || this.createInput(opts);
+    opts.input = opts.input || this.createInput(opts);
 
-    var command = new ModalInputCommand(input, {
+    var command = new ModalInputCommand(opts.input, {
         modal: opts.modal
     });
 
-    InputButton.call(this, command, {
-        el: opts.el,
-        input: input,
-        destination: opts.destination,
-        authRequired: opts.authRequired
-    });
+    InputButton.call(this, command, opts);
 }
 inherits(ContentEditorButton, InputButton);
 
