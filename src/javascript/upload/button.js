@@ -32,7 +32,7 @@ inherits(UploadButton, InputButton);
 
 /** @enum {string} */
 UploadButton.prototype._i18n = {
-    POST_PHOTO: 'Post Your Photo'
+    POST_PHOTO: "What's on your mind?"
 };
 
 /** @override */
