@@ -16,7 +16,8 @@ require.config({
     inherits: 'lib/inherits/inherits',
     blanket: 'lib/blanket/dist/qunit/blanket',
     'blanket-jasmine': 'lib/blanket/dist/jasmine/blanket_jasmine',
-    'mout': 'lib/mout/src'
+    'mout': 'lib/mout/src',
+    'node-uuid': 'lib/node-tiny-uuid/index'
   },
   packages: [{
     name: 'stream',
@@ -94,6 +95,9 @@ require.config({
     name: 'less',
     location: 'lib/require-less',
     main: 'less'
+  },{
+    name: 'livefyre-theme-styler',
+    location: 'lib/livefyre-theme-styler/src'
   },{
     name: "livefyre-bootstrap",
     location: "lib/livefyre-bootstrap/src"
