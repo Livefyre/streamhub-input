@@ -31,7 +31,7 @@ inherits(ContentEditorButton, InputButton);
 
 /** @enum {string} */
 ContentEditorButton.prototype._i18n = {
-    POST: 'Post Your Comment'
+    POST: "What's on your mind?"
 };
 
 /** @override */
