@@ -17,6 +17,12 @@ function AttachmentListView() {
 inherits(AttachmentListView, ListView);
 
 /** @enum {string} */
+AttachmentListView.EVENTS = {
+    ADD: 'addAttachment',
+    REMOVE: 'removeAttachment'
+};
+
+/** @enum {string} */
 AttachmentListView.prototype.classes = {
     DATA_ID: 'data-lf-id',
     DISCARD_X: 'lf-attachment-discard'
@@ -36,6 +42,7 @@ AttachmentListView.prototype._handleRemove = function (ev) {
     var id = ev.target.parentNode.getAttribute(this.classes.DATA_ID);
     this.remove(this._viewMap[id]);
     this._viewMap[id] = null;
+    this.emit(AttachmentListView.EVENTS.REMOVE, { count: this.views.length });
 };
 
 /** @override */
@@ -46,7 +53,9 @@ AttachmentListView.prototype.add = function (content) {
     newView.$el.attr(this.classes.DATA_ID, newView.uid);
     this._viewMap[newView.uid] = newView;
 
-    return ListView.prototype.add.call(this, newView);
+    newView = ListView.prototype.add.call(this, newView);
+    this.emit(AttachmentListView.EVENTS.ADD, { count: this.views.length });
+    return newView;
 };
 
 /**

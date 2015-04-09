@@ -23,6 +23,7 @@ var View = require('streamhub-sdk/view');
  * @param [opts] {Object}
  * @param [opts.i18n] {Object.<string>} Display strng overrides
  * @param [opts.mediaEnabled] {boolean} Are media uploads allowed?
+ * @param [opts.maxAttachmentsPerPost] {number} Number of media uploads a user can add.
  * @constructor
  * @extends {Editor}
  * @extends {Pipeable}
@@ -59,19 +60,37 @@ function handleLogout() {
     this.render();
 }
 
+ContentEditor.prototype._addAttachmentList = function() {
+    var evts = AttachmentListView.EVENTS;
+
+    this._attachmentsList = this._attachmentsList || new AttachmentListView();
+    this._attachmentsList.setElement(this.getElementsByClass(this.classes.ATTACHMENT_LIST));
+    this._attachmentsList.render();
+
+    // If we don't need to keep track of the number of attachments on a post,
+    // then we don't need to continue.
+    if (!this.opts.maxAttachmentsPerPost || this._listeningToAttachments) {
+        return;
+    }
+    this._listeningToAttachments = true;
+    this._attachmentsList.on(evts.ADD, $.proxy(this._handleAddAttachment, this));
+    this._attachmentsList.on(evts.REMOVE, $.proxy(this._handleRemoveAttachment, this));
+};
+
 /**
  * Render the upload button (camera icon) that launches filepicker, and
  * render the contianer where photo upload thumbnails will live.
  * @private
  */
 ContentEditor.prototype._addUploadButton = function () {
+    var uploadEl = this.getElementsByClass(this.classes.EDITOR_UPLOAD);
+    if (!uploadEl.length) {
+        uploadEl = $('<div class="' + this.classes.EDITOR_UPLOAD + '" />');
+        this.getElementsByClass(this.classes.BTN_WRAPPER).prepend(uploadEl);
+    }
     this._uploadButton = this._uploadButton || this.createUploadButton();
-    this._attachmentsList = this._attachmentsList || new AttachmentListView();
-
-    this._uploadButton.setElement(this.getElementsByClass(this.classes.EDITOR_UPLOAD));
-    this._attachmentsList.setElement(this.getElementsByClass(this.classes.ATTACHMENT_LIST));
+    this._uploadButton.setElement(uploadEl);
     this._uploadButton.render();
-    this._attachmentsList.render();
     this._uploadButton.pipe(this._attachmentsList);
 };
 
@@ -92,6 +111,24 @@ ContentEditor.prototype._i18n = (function () {
 })();
 
 /**
+ * Handle the attachment added event from the AttachmentListView. If the current
+ * number of attachments are at the limit, hide the upload button so more
+ * cannot be added.
+ * @param [data] {Object}
+ * @param [data.count] {number}
+ * @private
+ */
+ContentEditor.prototype._handleAddAttachment = function(data) {
+    if (data.count < this.opts.maxAttachmentsPerPost) {
+        return;
+    }
+    this._hideUploadButton = true;
+    this._uploadButton.unpipe(this._attachmentsList);
+    this._uploadButton.destroy();
+    this._uploadButton = null;
+};
+
+/**
  * Post failure callback.
  * @private
  */
@@ -109,6 +146,22 @@ ContentEditor.prototype._handlePostFailure = function (err) {
 ContentEditor.prototype._handlePostSuccess = function () {
     this.reset();
     this._postButton.enable();
+};
+
+/**
+ * Handle the attachment removed event from the AttachmentListView. Determine
+ * whether to re-show the upload button based on the number of attachments that
+ * exist in the list view and how many are allowed.
+ * @param [data] {Object}
+ * @param [data.count] {number}
+ * @private
+ */
+ContentEditor.prototype._handleRemoveAttachment = function(data) {
+    if (data.count >= this.opts.maxAttachmentsPerPost) {
+        return;
+    }
+    this._hideUploadButton = false;
+    this._uploadButton || this._addUploadButton();
 };
 
 /** @override */
@@ -136,6 +189,7 @@ ContentEditor.prototype.classes = (function () {
     classes.POST_BTN = 'lf-content-editor-post';
     classes.ATTACHMENT_LIST = 'lf-attachment-list-view';
     classes.CONTENT_EDITOR = 'lf-content-editor';
+    classes.BTN_WRAPPER = 'lf-btn-wrapper';
     return classes;
 })();
 
@@ -170,7 +224,8 @@ ContentEditor.prototype.destroy = function () {
 ContentEditor.prototype.getTemplateContext = function () {
     var username = this._user && this._user.get('displayName') || '';
     return {
-        mediaEnabled: this.opts.mediaEnabled,
+        attachmentViewEnabled: this.opts.mediaEnabled,
+        mediaEnabled: this.opts.mediaEnabled && !this._hideUploadButton,
         strings: {
             post: this._i18n.POST,
             username: username
@@ -187,7 +242,8 @@ ContentEditor.prototype.render = function () {
     this._postButton = new Button(this._authCmd, {el: this.$postEl});
 
     if (this.opts.mediaEnabled) {
-        this._addUploadButton();
+        this._addAttachmentList();
+        this._hideUploadButton || this._addUploadButton();
     }
 };
 

@@ -21,3 +21,4 @@ app.use('/dev/css/fonts', express.static(lfBootstrapFonts));
 app.use('/', express.static(pubDir));
 
 app.listen(8089);
+console.log('Server started on port: 8089');
