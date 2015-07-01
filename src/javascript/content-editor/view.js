@@ -96,7 +96,7 @@ ContentEditor.prototype._i18n = (function () {
  * @private
  */
 ContentEditor.prototype._handlePostFailure = function (err) {
-    var isDuplicate = err.body.error_type === 'DuplicateCommentError';
+    var isDuplicate = err.error_type === 'DuplicateCommentError';
     var errMsg = isDuplicate ? this._i18n.ERRORS.DUPLICATE : this._i18n.ERRORS.GENERIC;
     this.showError(errMsg);
     this._postButton.enable();
