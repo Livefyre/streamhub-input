@@ -1,6 +1,7 @@
 var AttachmentView = require('streamhub-input/javascript/content-editor/attachment-view');
 var AttachmentListView = require('streamhub-input/javascript/content-editor/attachment-list-view');
 var Content = require('streamhub-sdk/content');
+var sinon = require('sinon');
 var View = require('streamhub-sdk/view');
 
 describe('streamhub-input/javascript/content-editor/attachment-list-view', function () {
@@ -21,6 +22,14 @@ describe('streamhub-input/javascript/content-editor/attachment-list-view', funct
             attachmentListView.add(content);
             expect(attachmentListView.views.length).toEqual(1);
             expect(attachmentListView.views[0] instanceof AttachmentView).toBeTruthy();
+        });
+
+        it('should emit an event', function() {
+            var stub = sinon.stub();
+            attachmentListView.on(AttachmentListView.EVENTS.ADD, stub);
+            attachmentListView.add(content);
+            expect(stub.callCount).toEqual(1);
+            attachmentListView.removeListener(AttachmentListView.EVENTS.ADD);
         });
     });
 
@@ -52,6 +61,17 @@ describe('streamhub-input/javascript/content-editor/attachment-list-view', funct
             view.$('.' + AttachmentListView.prototype.classes.DISCARD_X).click();
             expect(attachmentListView._handleRemove).toHaveBeenCalled();
             expect(attachmentListView.views.length).toEqual(0);
+        });
+
+        it('should emit an event', function() {
+            var stub = sinon.stub();
+            attachmentListView.on(AttachmentListView.EVENTS.REMOVE, stub);
+            attachmentListView.add(content);
+            var view = attachmentListView.views[0];
+            View.prototype.render.call(view);  // Hack b/c the image url won't ever load.
+            view.$('.' + AttachmentListView.prototype.classes.DISCARD_X).click();
+            expect(stub.callCount).toEqual(1);
+            attachmentListView.removeListener(AttachmentListView.EVENTS.REMOVE);
         });
     });
 
