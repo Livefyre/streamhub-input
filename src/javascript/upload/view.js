@@ -124,7 +124,7 @@ Upload.DEFAULT_OPTS = {
         'location': 'S3',
         'access': 'public'
     },
-    src: '//api.filepicker.io/v1/filepicker.js'
+    src: '//api.filepicker.io/v2/filepicker.js'
 };
 
 /**
