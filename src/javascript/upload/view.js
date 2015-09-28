@@ -124,6 +124,9 @@ Upload.DEFAULT_OPTS = {
         'location': 'S3',
         'access': 'public'
     },
+    convert: {
+        'rotate': 'exif'
+    },
     src: '//api.filepicker.io/v2/filepicker.js'
 };
 
@@ -148,9 +151,11 @@ Upload.prototype._processResponse = function (err, inkBlob) {
         }
 
         $.each(inkBlob, function (i, blob) {
-            var content = self._packageInput(blob);
-            contents.push(content);
-            self.writeToDestination(content);
+            picker.convert(blob, self.opts.convert, self.opts.store, function (convertedBlob) {
+                var content = self._packageInput(convertedBlob);
+                contents.push(content);
+                self.writeToDestination(content);
+            });
         });
     }
     return contents;
