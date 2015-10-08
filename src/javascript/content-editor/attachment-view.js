@@ -8,7 +8,7 @@ function AttachmentView () {
 }
 inherits(AttachmentView, View);
 
-/* Ensure thehat the image does not render with an unreasonable aspect ratio */
+/* Ensure that the image does not render with an unreasonable aspect ratio */
 AttachmentView.prototype._loadImage = function () {
     var image = new Image();
     image.className = this.classes.THUMBNAIL;
@@ -33,6 +33,17 @@ AttachmentView.prototype._handleImageLoaded = function (image) {
     return image;
 };
 
+/**
+ * Load a video by just appending the html into a div in the tray.
+ */
+AttachmentView.prototype._loadVideo = function () {
+    View.prototype.render.call(this);
+    var el = document.createElement('div');
+    el.innerHTML = this.opts.oembed.html;
+    this.$el.append(el).show();
+    return el;
+};
+
 /** @enum {string} */
 AttachmentView.prototype.classes = {
     THUMBNAIL: 'lf-attachment-thumbnail',
@@ -45,7 +56,16 @@ AttachmentView.prototype.elClass = 'lf-attachment';
 /** @override */
 AttachmentView.prototype.render = function () {
     this.$el.hide();
-    this._loadImage();
+    var loaders = {
+        photo: this._loadImage,
+        video: this._loadVideo
+    };
+    var type = this.opts.oembed.type;
+
+    if (type in loaders) {
+        return loaders[type].call(this);
+    }
+    throw 'Unknown oembed type: ' + type;
 };
 
 /** @override */

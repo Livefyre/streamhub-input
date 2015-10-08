@@ -3,13 +3,19 @@ var View = require('streamhub-sdk/view');
 
 describe('streamhub-input/javascript/content-editor/attachment-view', function () {
     var attachmentView;
-    var url = 'www.io.xxx';
+    var url = 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png';
+
     beforeEach(function () {
         attachmentView = new AttachmentView({
             oembed: {
-                url: url
+                url: url,
+                type: 'photo'
             }
         });
+    });
+
+    afterEach(function () {
+        attachmentView.destroy();
     });
 
     describe('#_loadImage', function () {

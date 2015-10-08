@@ -13,6 +13,7 @@ describe('streamhub-input/javascript/modal/launchable-modal', function () {
         var err;
         var SubView;
         var view;
+
         beforeEach(function () {
             SubView = function (opts) {
                 if (!opts || !opts.noTemplate) {
@@ -30,6 +31,10 @@ describe('streamhub-input/javascript/modal/launchable-modal', function () {
             data = 'stuff';
             err = 'error';
             view = new SubView();
+        });
+
+        afterEach(function () {
+            view.destroy();
         });
 
         it('preserves template() to be used for default rendering', function () {
@@ -73,6 +78,7 @@ describe('streamhub-input/javascript/modal/launchable-modal', function () {
             var modal = new ModalView();
             view.launchModal(modal);
             expect(view._modal).toEqual(modal);
+            modal.destroy()
         });
     });
 });

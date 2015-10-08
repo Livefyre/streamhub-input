@@ -22,6 +22,7 @@ describe('streamhub-input/javascript/upload/view', function () {
         var response;
         var uploadInput;
         var writable;
+
         beforeEach(function () {
             sandbox();
             response = [{//@type {Array.<inkBlob>}
@@ -29,7 +30,9 @@ describe('streamhub-input/javascript/upload/view', function () {
                 // filename:
                 // mimetype:
                 // size:
-                key: 'randomfilename'
+                mimetype: 'image/png',
+                key: 'lm4pob08T1GWegOV01Jz_08_img_3976_nat_at_rockys.jpg',
+                url: 'https://www.filepicker.io/api/file/P1xV1pV9QVmwoK4F5h7t'
                 // container:
                 // isWriteable:
                 // path:
@@ -41,10 +44,6 @@ describe('streamhub-input/javascript/upload/view', function () {
             writable._write = function () {};
             uploadInput.pipe(writable);
         });
-
-        afterEach(function () {
-            uploadInput.destroy();
-        })
 
         it('can launchModal(), then returnModal()', function () {
             expect(typeof(uploadInput.launchModal)).toBe('function');
@@ -72,24 +71,15 @@ describe('streamhub-input/javascript/upload/view', function () {
             expect(typeof(uploadInput.template(cxt))).toBe('string');
         });
 
-        it('Returns Array.<Content> when it _processResponse()s a successful response', function () {
-            var retVal = uploadInput._processResponse(undefined, response);
-            expect(retVal).toBeTruthy();
-            expect(typeof(retVal)).toBe('object');//Array, really
-            expect(typeof(retVal.forEach)).toBe('function');
-            expect(retVal.length).toBe(response.length);
-        });
-
         describe('and rendered', function () {
             var testString = "Test comment"
+
             beforeEach(function () {
                 uploadInput.render();
             });
 
-            it('can transform data into Content with _packageInput(data)', function () {
-                var retVal = uploadInput._packageInput(response[0]);
-                expect(retVal instanceof Content).toBe(true);
-                expect(retVal.attachments.length).toBeTruthy();
+            afterEach(function () {
+                uploadInput.destroy();
             });
 
             xit('can showError(msg) in its view', function () {

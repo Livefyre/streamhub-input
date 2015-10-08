@@ -18,6 +18,7 @@ describe('streamhub-input/javascript/content-editor/modal-view', function () {
 
     describe('when constructed', function () {
         var commentInput;
+
         beforeEach(function () {
             sandbox();
             commentInput = new ModalContentEditor({

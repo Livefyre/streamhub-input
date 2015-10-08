@@ -65,7 +65,7 @@ function handleLogout() {
  * @private
  */
 ContentEditor.prototype._addUploadButton = function () {
-    this._uploadButton = this._uploadButton || this.createUploadButton();
+    this._uploadButton = this._uploadButton || this.createUploadButton(this.opts);
     this._attachmentsList = this._attachmentsList || new AttachmentListView();
 
     this._uploadButton.setElement(this.getElementsByClass(this.classes.EDITOR_UPLOAD));

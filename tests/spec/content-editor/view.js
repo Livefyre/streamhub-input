@@ -19,6 +19,7 @@ describe('streamhub-input/javascript/content-editor/view', function () {
     describe('when constructed', function () {
         var commentInput;
         var writable;
+
         beforeEach(function () {
             sandbox();
             commentInput = new ContentEditor({
@@ -147,6 +148,10 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                     // Lazy man's mock
                     commentInput._authCmd = new Command(commentInput._postCmd);
                     commentInput.render();
+                });
+
+                afterEach(function () {
+                    commentInput.destroy();
                 });
 
                 it('does not trigger a post event when the user is not authenticated', function () {

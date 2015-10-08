@@ -30,11 +30,13 @@ require([
         });
         var editorButton = window.editorButton = new Input.ContentEditorButton({
             el: document.getElementById('editor-button'),
-            mediaEnabled: true
+            mediaEnabled: true,
+            mimetypes: ['image/*', 'video/mp4']
         });
         var contentEditor = window.editorButton = new Input.ContentEditor({
             el: document.getElementById('content-editor'),
-            mediaEnabled: true
+            mediaEnabled: true,
+            mimetypes: ['image/*', 'video/mp4']
         });
 
         uploadButton.render();

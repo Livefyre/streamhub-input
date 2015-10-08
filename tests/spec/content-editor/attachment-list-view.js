@@ -6,14 +6,20 @@ var View = require('streamhub-sdk/view');
 describe('streamhub-input/javascript/content-editor/attachment-list-view', function () {
     var attachmentListView;
     var content;
-    var url = 'www.io.xxx';
+    var url = 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png';
+
     beforeEach(function () {
         attachmentListView = new AttachmentListView();
         content = new Content();
         content.attachments.push({
-            url: url
+            url: url,
+            type: 'photo'
         });
         attachmentListView.render();
+    });
+
+    afterEach(function () {
+        attachmentListView.destroy();
     });
 
     describe('#add', function () {

@@ -51,7 +51,8 @@ ContentEditorButton.prototype.elClass += ' comment-btn';
  */
 ContentEditorButton.prototype.createInput = function (opts) {
     var input = new ModalContentEditor({
-        mediaEnabled: opts.mediaEnabled
+        mediaEnabled: opts.mediaEnabled,
+        mimetypes: opts.mimetypes
     });
     return input;
 }

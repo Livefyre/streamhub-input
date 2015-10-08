@@ -4,7 +4,10 @@ var AttachmentView = require('streamhub-input/javascript/content-editor/attachme
 
 'use strict';
 
-// docs
+/**
+ * @contructor
+ * @extends {ListView}
+ */
 function AttachmentListView() {
     ListView.apply(this, arguments);
 
