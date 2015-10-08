@@ -36,6 +36,11 @@
     "streamhub-sdk": "~2.12.0",
     "base64": "~0.4.0",
     "auth": "~0.2",
-    "view": "~1.3"
+    "view": "~1.3",
+    "event-emitter": "0.1",
+    "cajon": "~0.1.12",
+    "streamhub-ui": "0.1.3",
+    "streamhub-share": "0.1.5",
+    "mout": "0.11.0"
   }
 }
