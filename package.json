@@ -1,14 +1,14 @@
 {
   "name": "streamhub-input",
   "description": "Livefyre Streamhub Input",
-  "author": "Livefyre <joao@livefyre.com>",
+  "author": "Livefyre <dev@livefyre.com>",
   "contributors": {
-    "name": "Joao Martins",
-    "email": "joao@livefyre.com"
+    "name": "Livefyre",
+    "email": "dev@livefyre.com"
   },
   "version": "0.6.5",
   "scripts": {
-    "postinstall": "./node_modules/bower/bin/bower install",
+    "postinstall": "bower install",
     "start": "node ./dev/server.js",
     "build": "npm run-script clean-build && npm run-script build-non-min && ./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js && npm run-script fonts",
     "build-non-min": "./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js optimize=none out=./dist/streamhub-input.js",
