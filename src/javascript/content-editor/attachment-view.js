@@ -8,40 +8,36 @@ function AttachmentView () {
 }
 inherits(AttachmentView, View);
 
-/* Ensure that the image does not render with an unreasonable aspect ratio */
-AttachmentView.prototype._loadImage = function () {
+/*
+ * Ensure that the image does not render with an unreasonable aspect ratio
+ * @param {string} url
+ * @return {Image}
+ */
+AttachmentView.prototype._loadThumbnail = function (url) {
     var image = new Image();
     image.className = this.classes.THUMBNAIL;
     image.onload = this._handleImageLoaded.bind(this, image);
-    image.src = this.opts.oembed.url;
+    image.src = url;
     return image;
 };
 
 /*
  * Chose between displaying as a imge with fixed height and scaled width,
  * or a div with fixed height and width.
+ * @param {Image} image
+ * @return {Element}
  */
 AttachmentView.prototype._handleImageLoaded = function (image) {
+    var src = image.src;
     View.prototype.render.call(this);
     if (image.height / image.width < 0.6) {
         image = document.createElement('div');
         image.className = this.classes.THUMBNAIL_CONTAINED;
-        image.style.backgroundImage = 'url("' + this.opts.oembed.url +'")';
+        image.style.backgroundImage = 'url("' + src +'")';
     }
     this.$el.append(image);
     this.$el.show();
     return image;
-};
-
-/**
- * Load a video by just appending the html into a div in the tray.
- */
-AttachmentView.prototype._loadVideo = function () {
-    View.prototype.render.call(this);
-    var el = document.createElement('div');
-    el.innerHTML = this.opts.oembed.html;
-    this.$el.append(el).show();
-    return el;
 };
 
 /** @enum {string} */
@@ -57,13 +53,13 @@ AttachmentView.prototype.elClass = 'lf-attachment';
 AttachmentView.prototype.render = function () {
     this.$el.hide();
     var loaders = {
-        photo: this._loadImage,
-        video: this._loadVideo
+        photo: this.opts.oembed.url,
+        video: this.opts.oembed.thumbnail_url
     };
     var type = this.opts.oembed.type;
 
     if (type in loaders) {
-        return loaders[type].call(this);
+        return this._loadThumbnail(loaders[type])
     }
     throw 'Unknown oembed type: ' + type;
 };

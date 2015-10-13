@@ -185,9 +185,9 @@ Upload.prototype._postProcess = function (blob) {
             var attachment = {
                 type: 'video',
                 url: url,
-                link: url,
-                provider_name: 'Livefyre',
-                html: '<iframe frameborder="0" src="//media.fyre.co/video.html?key=' + blob.key + '" width="480" height="360"></iframe>'
+                thumbnail_url: 'http://zor.livefyre.com/wjs/v3.0/images/video-play.png',
+                thumbnail_width: 75,
+                thumbnail_height: 56
             };
 
             var content = new Content({body: ''});
