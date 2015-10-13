@@ -36,6 +36,7 @@ function Upload(opts) {
     if (opts.filepicker) {
         this._filepickerKey = opts.filepicker.key;
         this._cacheUrl = opts.filepicker.cache;
+        picker = opts.filepicker.instance || null;
     }
     this.name = opts.name || this.name;
 }
@@ -68,10 +69,9 @@ Upload.prototype.getTemplateContext = function () {
 
 /**
  * Loads the filepicker script if picker is undefined
- * @param {function()} cb
  * @private
  */
-Upload.prototype._initFilepicker = function () {
+Upload.prototype._initFilepicker = function() {
     if (picker) {
         return;
     }
@@ -165,7 +165,7 @@ Upload.prototype._postProcess = function (blob) {
     var converters = {
         image: function (blob, done) {
             picker.convert(blob, self.opts.convert, self.opts.store, function (convertedBlob) {
-                var url = this._cacheUrl + blob.key;
+                var url = self._cacheUrl + blob.key;
                 var attachment = {
                     type: 'photo',
                     url: url,
@@ -181,7 +181,7 @@ Upload.prototype._postProcess = function (blob) {
         },
 
         video: function (blob, done) {
-            var url = this._cacheUrl + blob.key;
+            var url = self._cacheUrl + blob.key;
             var attachment = {
                 type: 'video',
                 url: url,
@@ -210,7 +210,7 @@ Upload.prototype._postProcess = function (blob) {
  *      Called after a successful interaction
  * @override
  */
-Upload.prototype.launchModal = function(callback) {
+Upload.prototype.launchModal = function (callback) {
     var self = this;
     if (!picker) {
         this.once('pickerLoaded', this.launchModal.bind(this, callback));

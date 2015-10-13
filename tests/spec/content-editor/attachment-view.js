@@ -97,4 +97,17 @@ describe('streamhub-input/javascript/content-editor/attachment-view', function (
             expect(thumb.src).toBe(url);
         });
     });
+
+    it('throws an error if trying to render unknown oembed type', function () {
+        var div = document.createElement('div');
+        var view = new AttachmentView({
+            oembed: {
+                thumbnail_url: url,
+                type: 'broken'
+            }
+        });
+
+        view.setElement(div);
+        expect(view.render).toThrow();
+    });
 });
