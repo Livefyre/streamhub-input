@@ -1,3 +1,5 @@
+'use strict';
+
 var AttachmentView = require('streamhub-input/javascript/content-editor/attachment-view');
 var AttachmentListView = require('streamhub-input/javascript/content-editor/attachment-list-view');
 var Content = require('streamhub-sdk/content');

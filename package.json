@@ -32,7 +32,7 @@
     "http-server": "*",
     "ink-docstrap": "git://github.com/michaelward82/docstrap.git#line-number-alignment",
     "jsdoc": "git://github.com/jsdoc3/jsdoc.git",
-    "jshint": "~2.1.0",
+    "jshint": "2.8.0",
     "karma": "0.10.5",
     "karma-cajon": "*",
     "karma-chrome-launcher": "0.1.0",

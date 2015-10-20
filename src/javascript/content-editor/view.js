@@ -1,3 +1,5 @@
+'use strict';
+
 var $ = require('jquery');
 var AttachmentListView = require('streamhub-input/javascript/content-editor/attachment-list-view');
 var Auth = require('auth');
@@ -9,13 +11,11 @@ var contentEditorTemplate = require('hgn!streamhub-input/templates/content-edito
 var Editor = require('streamhub-editor/editor');
 var editorTemplate = require('hgn!streamhub-editor/templates/editor');
 var inherits = require('inherits');
-var Observer = require('observer');
+var observer = require('observer');
 var packageAttribute = require('streamhub-input/javascript/package-attribute');
 var Pipeable = require('streamhub-input/javascript/pipeable');
 var UploadButtonIcon = require('streamhub-input/javascript/upload/button-icon');
 var View = require('streamhub-sdk/view');
-
-'use strict';
 
 /**
  * A view that takes text input from a user and posts it to a collection/Writable.
@@ -31,33 +31,26 @@ function ContentEditor(opts) {
     opts = opts || {};
     Editor.call(this, opts);
     Pipeable.call(this, opts);
-    Observer(this);
+    observer(this);
 
     this._postCmd = new Command(this._handlePostBtnClick.bind(this));
     this._authCmd = new AuthRequiredCommand(this._postCmd);
 
     this._user = Auth.get('livefyre');
 
-    this.listenTo(Auth, 'login.livefyre', handleLogin.bind(this));
-    this.listenTo(Auth, 'logout', handleLogout.bind(this));
+    this.listenTo(Auth, 'login.livefyre', function handleLogin(livefyreUser) {
+        this._user = livefyreUser;
+        this.render();
+    }.bind(this));
+
+    this.listenTo(Auth, 'logout', function handleLogout() {
+        this._user = null;
+        this.render();
+    }.bind(this));
 }
 inherits(ContentEditor, Editor);
 inherits.parasitically(ContentEditor, Pipeable);
 
-/**
- * Set the user and rerender
- * @param {?User} livefyreUser
- */
-function handleLogin(livefyreUser) {
-    this._user = livefyreUser;
-    this.render();
-}
-
-/** Unset the user and rerender */
-function handleLogout() {
-    this._user = null;
-    this.render();
-}
 
 /**
  * Render the upload button (camera icon) that launches filepicker, and
@@ -156,9 +149,15 @@ ContentEditor.prototype.elTag = 'article';
 ContentEditor.prototype.destroy = function () {
     View.prototype.destroy.call(this);
     this.stopListening();
-    this._uploadButton && this._uploadButton.destroy();
+
+    if (this._uploadButton) {
+        this._uploadButton.destroy();
+    }
     this._uploadButton = null;
-    this._attachmentsList && this._attachmentsList.destroy();
+
+    if (this._attachmentsList) {
+        this._attachmentsList.destroy();
+    }
     this._attachmentsList = null;
 };
 
@@ -194,7 +193,9 @@ ContentEditor.prototype.render = function () {
 /** @override */
 ContentEditor.prototype.reset = function () {
     Editor.prototype.reset.call(this);
-    this._attachmentsList && this._attachmentsList.clearAttachments();
+    if (this._attachmentsList) {
+        this._attachmentsList.clearAttachments();
+    }
 };
 
 /** @override */

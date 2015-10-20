@@ -1,5 +1,6 @@
+'use strict';
+
 var AttachmentView = require('streamhub-input/javascript/content-editor/attachment-view');
-var View = require('streamhub-sdk/view');
 
 describe('streamhub-input/javascript/content-editor/attachment-view', function () {
     var attachmentView;
@@ -28,7 +29,7 @@ describe('streamhub-input/javascript/content-editor/attachment-view', function (
             var image = attachmentView._loadThumbnail(url);
             image.height = 40;
             image.width = 40;
-            var image = attachmentView._handleImageLoaded(image);
+            image = attachmentView._handleImageLoaded(image);
             expect(image.className).toEqual(attachmentView.classes.THUMBNAIL);
             expect(image.tagName).toEqual('IMG');
         });
@@ -37,7 +38,7 @@ describe('streamhub-input/javascript/content-editor/attachment-view', function (
             var image = attachmentView._loadThumbnail(url);
             image.height = 40;
             image.width = 1000;
-            var image = attachmentView._handleImageLoaded(image);
+            image = attachmentView._handleImageLoaded(image);
             expect(image.className).toEqual(attachmentView.classes.THUMBNAIL_CONTAINED);
             expect(image.tagName).toEqual('DIV');
         });

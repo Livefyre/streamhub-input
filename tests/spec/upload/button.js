@@ -1,12 +1,7 @@
 'use strict';
 
-var Auth = require('auth');
-var Button = require('streamhub-sdk/ui/button');
-var Command = require('streamhub-sdk/ui/command');
-var Content = require('streamhub-sdk/content');
+var $ = require('jquery');
 var InputButton = require('streamhub-input/javascript/button');
-var Passthrough = require('stream/passthrough');
-var Readable = require('stream/readable');
 var Upload = require('streamhub-input/javascript/upload/view');
 var UploadButton = require('streamhub-input/javascript/upload/button');
 var Writable = require('stream/writable');
@@ -25,7 +20,7 @@ describe('streamhub-input/javascript/upload/button', function () {
         var opts;
 
         var writable;
-        var testString = 'data sample'
+        var testString = 'data sample';
 
         beforeEach(function () {
             opts = $.extend({}, Upload.DEFAULT_OPTS);

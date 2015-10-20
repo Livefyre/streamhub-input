@@ -7,7 +7,6 @@ module.exports = function(config) {
       'lib/streamhub-sdk/tests/lib/function.bind.js', // Polyfill for Phantom that must be loaded
       {pattern: 'package.json', included: false},
       {pattern: 'lib/**/*.js', included: false},
-      {pattern: 'lib/livefyre-theme-styler/src/styles/*.css', included: false},
       {pattern: 'src/**/*.js', included: false},
       {pattern: 'src/styles/*', included: false},
       {pattern: 'lib/**/*.mustache', included: false},

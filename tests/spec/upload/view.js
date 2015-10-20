@@ -1,17 +1,10 @@
 'use strict';
 
-var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
-var Command = require('streamhub-sdk/ui/command');
-var Content = require('streamhub-sdk/content');
-var debug = require('streamhub-sdk/debug');
-var inherits = require('inherits');
-var jasmineJquery = require('jasmine-jquery');//For sandbox()
-var LaunchableModal = require('streamhub-input/javascript/modal/launchable-modal');
-var ModalInputCommand= require('streamhub-input/javascript/modal/modal-input-command');
+var $ = require('jquery');
 var Upload = require('streamhub-input/javascript/upload/view');
-var util = require('streamhub-sdk/util');
-var View = require('view');
 var Writable = require('stream/writable');
+
+require('jasmine-jquery'); //For sandbox()
 
 describe('streamhub-input/javascript/upload/view', function () {
     var uploadInput;
@@ -58,14 +51,14 @@ describe('streamhub-input/javascript/upload/view', function () {
                 cache: 'http://foo.bar/',
                 key: '123abc',
                 instance: {
-                    pickAndStore: function (pick, store, success, error) {
+                    pickAndStore: function (pick, store, success) {
                         picks = true;
                         success(response);
                     },
 
                     convert: function (blob, convert, store, success) {
                         converts = true;
-                        success(response);
+                        success(response[0]);
                     }
                 }
             };
@@ -97,7 +90,7 @@ describe('streamhub-input/javascript/upload/view', function () {
                 cache: 'http://foo.bar/',
                 key: '123abc',
                 instance: {
-                    pickAndStore: function (pick, store, success, error) {
+                    pickAndStore: function (pick, store, success) {
                         picks = true;
                         success(response);
                     }
@@ -133,7 +126,7 @@ describe('streamhub-input/javascript/upload/view', function () {
                 cache: 'http://foo.bar/',
                 key: '123abc',
                 instance: {
-                    pickAndStore: function (pick, store, success, error) {
+                    pickAndStore: function (pick, store, success) {
                         success(response);
                     }
                 }
@@ -146,6 +139,7 @@ describe('streamhub-input/javascript/upload/view', function () {
 
     describe('when constructed', function () {
         var opts = Upload.DEFAULT_OPTS;
+        var response;
 
         beforeEach(function () {
             window.filepicker = null;
@@ -186,8 +180,6 @@ describe('streamhub-input/javascript/upload/view', function () {
         });
 
         describe('and rendered', function () {
-            var testString = "Test comment"
-
             beforeEach(function () {
                 uploadInput.render();
             });

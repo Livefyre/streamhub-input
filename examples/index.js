@@ -12,9 +12,9 @@ require([
     $(function () {
         var opts = {
             "network": "livefyre.com",
-            "siteId": "290596",
-            "articleId": "136",
-            "environment": "qa-ext.livefyre.com"
+            "siteId": "286470",
+            "articleId": "video_test_1",
+            "environment": "fy.re"
         };
 
         var listView = window.listView = new ContentListView({

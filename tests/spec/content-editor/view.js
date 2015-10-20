@@ -1,15 +1,11 @@
 'use strict';
 
-var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
+var $ = require('jquery');
 var Command = require('streamhub-sdk/ui/command');
-var debug = require('streamhub-sdk/debug');
 var ContentEditor = require('streamhub-input/javascript/content-editor/view');
-var inherits = require('inherits');
-var jasmineJquery = require('jasmine-jquery');//For sandbox()
-var ModalInputCommand= require('streamhub-input/javascript/modal/modal-input-command');
-var util = require('streamhub-sdk/util');
-var View = require('view');
 var Writable = require('stream/writable');
+
+require('jasmine-jquery');
 
 describe('streamhub-input/javascript/content-editor/view', function () {
     it('is an constructor', function () {
@@ -53,7 +49,7 @@ describe('streamhub-input/javascript/content-editor/view', function () {
         });
 
         describe('and rendered', function () {
-            var testString = "Test comment"
+            var testString = "Test comment";
             beforeEach(function () {
                 commentInput.render();
             });
@@ -108,8 +104,10 @@ describe('streamhub-input/javascript/content-editor/view', function () {
             it('sets the user\'s display name when there is a user', function () {
                 var name = 'Batman';
                 commentInput._user = {
-                    get: function () { return name }
-                }
+                    get: function () {
+                        return name;
+                    }
+                };
                 commentInput.render();
                 expect(commentInput.$('.lf-name').html()).toEqual(name);
             });
@@ -132,7 +130,7 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                 });
 
                 it('should auto-pipe', function () {
-                    var spy = spyOn(writable, 'write');
+                    spyOn(writable, 'write');
                     commentInput.writeToDestination('Batman', 'Batman');
                     expect(writable.write).toHaveBeenCalledWith('Batman', 'Batman');
                 });

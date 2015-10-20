@@ -1,7 +1,7 @@
+'use strict';
+
 var inherits = require('inherits');
 var View = require('streamhub-sdk/view');
-
-'use strict';
 
 function AttachmentView () {
     View.apply(this, arguments);
@@ -59,9 +59,9 @@ AttachmentView.prototype.render = function () {
     var type = this.opts.oembed.type;
 
     if (type in loaders) {
-        return this._loadThumbnail(loaders[type])
+        return this._loadThumbnail(loaders[type]);
     }
-    throw 'Unknown oembed type: ' + type;
+    throw new Error('Unknown oembed type: ' + type);
 };
 
 /** @override */

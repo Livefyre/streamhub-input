@@ -1,7 +1,7 @@
+'use strict';
+
 var Command = require('streamhub-sdk/ui/command');
 var inherits = require('inherits');
-
-'use strict';
 
 /**
  * A command that, when executed, shows the modal version of an Input view. Requires that

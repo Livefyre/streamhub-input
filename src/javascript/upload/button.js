@@ -1,10 +1,10 @@
+'use strict';
+
 var inherits = require('inherits');
 var InputButton = require('streamhub-input/javascript/button');
 var ModalInputCommand = require('streamhub-input/javascript/modal/modal-input-command');
 var Upload = require('streamhub-input/javascript/upload/view');
 var $ = require('jquery');
-
-'use strict';
 
 /**
  * @param [opts] {Object}

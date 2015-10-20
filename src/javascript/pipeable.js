@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * An input specific implementation of a readable that actively writes new content to a destination.
  * @param [opts] {Object}
