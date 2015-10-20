@@ -3,6 +3,7 @@
 var $ = require('jquery');
 var Command = require('streamhub-sdk/ui/command');
 var ContentEditor = require('streamhub-input/javascript/content-editor/view');
+var sinon = require('sinon');
 var Writable = require('stream/writable');
 
 require('jasmine-jquery');
@@ -181,7 +182,8 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                     i18n : {
                         emptyText: testString
                     },
-                    mediaEnabled: true
+                    mediaEnabled: true,
+                    maxAttachmentsPerPost: 1
                 };
 
                 commentInput = new ContentEditor(opts);
@@ -202,6 +204,23 @@ describe('streamhub-input/javascript/content-editor/view', function () {
 
             it('renders an attachment list', function () {
                 expect(commentInput.$el.has(commentInput._attachmentsList.$el)).toBeTruthy();
+            });
+
+            it('removes the upload button when attachments are added to the attachment list', function() {
+                var spy = sinon.spy(commentInput._uploadButton, 'destroy');
+                commentInput._handleAddAttachment({ count: 1 });
+                expect(spy.callCount).toEqual(1);
+                expect(commentInput.$el.find('.' + commentInput.classes.EDITOR_UPLOAD).length).toBeFalsy();
+                spy.restore();
+            });
+
+            it('adds the upload button when attachments are removed from the attachment list', function() {
+                var spy = sinon.spy(commentInput, '_addUploadButton');
+                commentInput._handleAddAttachment({ count: 1 });
+                commentInput._handleRemoveAttachment({ count: 0 });
+                expect(spy.callCount).toEqual(1);
+                expect(commentInput.$el.find('.' + commentInput.classes.EDITOR_UPLOAD).length).toEqual(1);
+                spy.restore();
             });
         });
     });

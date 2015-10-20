@@ -49,6 +49,14 @@ AttachmentView.prototype.classes = {
 /** @override */
 AttachmentView.prototype.elClass = 'lf-attachment';
 
+/**
+ * Return the oembed
+ * @return {Object}
+ */
+AttachmentView.prototype.getOembed = function () {
+    return this.opts.oembed;
+};
+
 /** @override */
 AttachmentView.prototype.render = function () {
     this.$el.hide();

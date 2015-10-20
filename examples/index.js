@@ -12,9 +12,9 @@ require([
     $(function () {
         var opts = {
             "network": "livefyre.com",
-            "siteId": "286470",
-            "articleId": "video_test_1",
-            "environment": "fy.re"
+            "siteId": "290596",
+            "articleId": "136",
+            "environment": "qa-ext.livefyre.com"
         };
 
         var listView = window.listView = new ContentListView({
@@ -31,11 +31,13 @@ require([
         var editorButton = window.editorButton = new Input.ContentEditorButton({
             el: document.getElementById('editor-button'),
             mediaEnabled: true,
+            maxAttachmentsPerPost: 1,
             mimetypes: ['image/*', 'video/mp4']
         });
         var contentEditor = window.editorButton = new Input.ContentEditor({
             el: document.getElementById('content-editor'),
             mediaEnabled: true,
+            maxAttachmentsPerPost: 1,
             mimetypes: ['image/*', 'video/mp4']
         });
 
