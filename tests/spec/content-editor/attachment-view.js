@@ -62,7 +62,7 @@ describe('streamhub-input/javascript/content-editor/attachment-view', function (
 
         waitsFor(function () {
             return photoView.$('.lf-attachment-thumbnail').length > 0;
-        }, 'Photo should be rendered');
+        }, 'Photo should be rendered', 10000);
 
         runs(function () {
             var thumb = photoView.$('.lf-attachment-thumbnail')[0];
@@ -90,7 +90,7 @@ describe('streamhub-input/javascript/content-editor/attachment-view', function (
 
         waitsFor(function () {
             return videoView.$('.lf-attachment-thumbnail').length > 0;
-        }, 'Video thumb should be rendered');
+        }, 'Video thumb should be rendered', 10000);
 
         runs(function () {
             var thumb = videoView.$('.lf-attachment-thumbnail')[0];
