@@ -12,7 +12,8 @@ module.exports = function(config) {
       {pattern: 'lib/**/*.mustache', included: false},
       {pattern: 'src/**/*.mustache', included: false},
       {pattern: 'tests/spec/**/*.js', included: false},
-      'tests/tests-main.js'
+      'tests/tests-main.js',
+      {pattern: 'dist/*.css', included: false}
     ],
     browsers: ['PhantomJS'],
     colors: true,
