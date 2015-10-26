@@ -38,7 +38,8 @@ require([
             el: document.getElementById('content-editor'),
             mediaEnabled: true,
             maxAttachmentsPerPost: 1,
-            mimetypes: ['image/*', 'video/mp4']
+            mimetypes: ['image/*', 'video/mp4'],
+            showTitle: true
         });
 
         uploadButton.render();

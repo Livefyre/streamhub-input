@@ -8,7 +8,7 @@ var Button = require('streamhub-sdk/ui/button');
 var Command = require('streamhub-sdk/ui/command');
 var Content = require('streamhub-sdk/content');
 var contentEditorTemplate = require('hgn!streamhub-input/templates/content-editor');
-var Editor = require('streamhub-editor/editor');
+var Editor = require('streamhub-editor');
 var editorTemplate = require('hgn!streamhub-editor/templates/editor');
 var inherits = require('inherits');
 var observer = require('observer');
@@ -223,6 +223,7 @@ ContentEditor.prototype.destroy = function () {
 ContentEditor.prototype.getTemplateContext = function () {
     var username = this._user && this._user.get('displayName') || '';
     return {
+        showTitle: this._showTitle,
         attachmentViewEnabled: this.opts.mediaEnabled,
         mediaEnabled: this.opts.mediaEnabled && !this._hideUploadButton,
         strings: {
@@ -259,6 +260,11 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
     var newContent = new Content();
     newContent.body = ev.body;
     newContent.attachments = ev.attachments;
+
+    if (ev.title) {
+        newContent.title = ev.title;
+    }
+
     this._postButton.disable();
     this.writeToDestination(newContent, function(err) {
         if (err) {
