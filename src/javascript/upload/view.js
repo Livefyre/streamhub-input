@@ -171,7 +171,6 @@ Upload.prototype._postProcess = function (blob) {
                     url: url,
                     link: url,
                     provider_name: 'Livefyre'
-                    //TODO (joao) images dimensions?!!!!
                 };
 
                 var content = new Content({body: ''});
@@ -181,10 +180,9 @@ Upload.prototype._postProcess = function (blob) {
         },
 
         video: function (blob, done) {
-            var url = self._cacheUrl + blob.key;
             var attachment = {
                 type: 'video',
-                url: url,
+                url: self._cacheUrl + blob.key,
                 thumbnail_url: 'http://zor.livefyre.com/wjs/v3.0/images/video-play.png',
                 thumbnail_width: 75,
                 thumbnail_height: 56,
