@@ -187,7 +187,8 @@ Upload.prototype._postProcess = function (blob) {
                 url: url,
                 thumbnail_url: 'http://zor.livefyre.com/wjs/v3.0/images/video-play.png',
                 thumbnail_width: 75,
-                thumbnail_height: 56
+                thumbnail_height: 56,
+                provider_name: 'Livefyre'
             };
 
             var content = new Content({body: ''});
