@@ -78,7 +78,7 @@ ContentEditor.prototype._addAttachmentList = function() {
 ContentEditor.prototype._addUploadButton = function () {
     var uploadEl = this.getElementsByClass(this.classes.EDITOR_UPLOAD);
     if (!uploadEl.length) {
-        uploadEl = $(document.createElement('div')).addClass(this.classes.EDITOR_UPLOAD);
+        uploadEl = $('<div />').addClass(this.classes.EDITOR_UPLOAD);
         this.getElementsByClass(this.classes.BTN_WRAPPER).prepend(uploadEl);
     }
     this._uploadButton = this._uploadButton || this.createUploadButton();
@@ -212,6 +212,11 @@ ContentEditor.prototype.destroy = function () {
     if (this._attachmentsList) {
         this._attachmentsList.destroy();
     }
+
+    if (this._postButton) {
+        this._postButton.destroy();
+    }
+
     this._attachmentsList = null;
 };
 
