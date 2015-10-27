@@ -1,11 +1,11 @@
 {
   "name": "streamhub-input",
-  "version": "0.6.5",
+  "version": "0.7.0",
   "main": [
     "./src/main.js"
   ],
   "dependencies": {
-    "cajon": "git://github.com/requirejs/cajon.git#~0.1.11",
+    "cajon": "git://github.com/requirejs/cajon.git#0.1.12",
     "event-emitter": "git://github.com/Livefyre/event-emitter.git#~0.0.1",
     "inherits": "git://github.com/Livefyre/inherits.git",
     "jquery": "~1.10.1",
@@ -14,11 +14,11 @@
     "requirejs": "2.1.9",
     "requirejs-hogan-plugin": "*",
     "require-less": "git://github.com/gobengo/require-less.git#deponcss",
-    "rework": "gobengo/rework#~0.21.0",
+    "rework": "gobengo/rework#0.21.0",
     "stream": "git://github.com/Livefyre/stream.git#~0.1",
-    "streamhub-editor": "git://github.com/Livefyre/streamhub-editor.git#~1.1.0",
-    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#~2.12.0",
-    "view": "git://github.com/Livefyre/view.git#~1.3",
+    "streamhub-editor": "git://github.com/Livefyre/streamhub-editor.git#1.3.0",
+    "streamhub-sdk": "git://github.com/Livefyre/streamhub-sdk.git#2.17.1",
+    "view": "git://github.com/Livefyre/view.git#1.4",
     "livefyre-theme-styler": "git://github.com/livefyre/livefyre-theme-styler.git#1.1.0",
     "node-tiny-uuid": "git://github.com/RiveraGroup/node-tiny-uuid.git#ea7f741c9ad912d8ad2201b25fe9f5d945206386"
   },
@@ -28,14 +28,21 @@
     "jasmine-jquery": "1.6.0",
     "almond": "~0.2.5",
     "auth-delegates": "Livefyre/auth-delegates#~0.4.4-beta",
+    "sinonjs": "1.7.3",
     "streamhub-wall": "git://github.com/Livefyre/streamhub-wall.git",
     "livefyre-auth": "Livefyre/livefyre-auth"
   },
   "resolutions": {
     "livefyre-bootstrap": "1.1.0",
-    "streamhub-sdk": "~2.12.0",
     "base64": "~0.4.0",
     "auth": "~0.2",
-    "view": "~1.3"
+    "event-emitter": "0.1",
+    "mout": "0.11.0",
+    "streamhub-share": "0.1.5",
+    "view": "1.4",
+    "streamhub-sdk": "2.17.1",
+    "streamhub-editor": "1.3.0",
+    "cajon": "0.1.12",
+    "streamhub-ui": "0.1.3"
   }
 }

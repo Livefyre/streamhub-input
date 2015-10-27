@@ -8,10 +8,12 @@ module.exports = function(config) {
       {pattern: 'package.json', included: false},
       {pattern: 'lib/**/*.js', included: false},
       {pattern: 'src/**/*.js', included: false},
+      {pattern: 'src/styles/*', included: false},
       {pattern: 'lib/**/*.mustache', included: false},
       {pattern: 'src/**/*.mustache', included: false},
       {pattern: 'tests/spec/**/*.js', included: false},
-      'tests/tests-main.js'
+      'tests/tests-main.js',
+      {pattern: 'dist/streamhub-input.min.css', included: false}
     ],
     browsers: ['PhantomJS'],
     colors: true,

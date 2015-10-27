@@ -1,10 +1,10 @@
+'use strict';
+
 var inherits = require('inherits');
 var InputButton = require('streamhub-input/javascript/button');
 var ModalContentEditor = require('streamhub-input/javascript/content-editor/modal-view');
 var ModalInputCommand = require('streamhub-input/javascript/modal/modal-input-command');
 var $ = require('jquery');
-
-'use strict';
 
 /**
  *
@@ -12,6 +12,7 @@ var $ = require('jquery');
  * @param [opts.mediaEnabled] {boolean} Are media uploads allowed?
  * @param [opts.modal] {ModalView} Optional modal to use for launching
  * @param [opts.input] {Input} Input view to show in the modal
+ * @param [opts.maxAttachmentsPerPost] {number} Number of media uploads a user can add.
  * @constructor
  * @extends {InputButton}
  */
@@ -51,9 +52,11 @@ ContentEditorButton.prototype.elClass += ' comment-btn';
  */
 ContentEditorButton.prototype.createInput = function (opts) {
     var input = new ModalContentEditor({
-        mediaEnabled: opts.mediaEnabled
+        mediaEnabled: opts.mediaEnabled,
+        mimetypes: opts.mimetypes,
+        maxAttachmentsPerPost: opts.maxAttachmentsPerPost
     });
     return input;
-}
+};
 
 module.exports = ContentEditorButton;

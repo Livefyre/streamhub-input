@@ -1,5 +1,8 @@
 {
   "undef": true,
   "unused": true,
-  "predef": [ "require", "module" ]
+  "predef": ["requirejs", "require", "module", "define", "sandbox"],
+  "jasmine": true,
+  "node": true,
+  "browser": true
 }

@@ -35,10 +35,15 @@ describe('streamhub-input/javascript/modal/modal-input-command', function () {
         var clbk;
         var inputCmd;
         var view;
+
         beforeEach(function () {
             clbk = jasmine.createSpy('callback');
             view = new LaunchableView();
             inputCmd = new ModalInputCommand(view);
+        });
+
+        afterEach(function () {
+            view.destroy();
         });
 
         it('!.canExecute() if the view is taken away', function () {

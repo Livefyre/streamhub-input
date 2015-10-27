@@ -1,6 +1,8 @@
 Streamhub-Input
 ===============
 
+[![Circle CI](https://circleci.com/gh/Livefyre/streamhub-input.svg?style=svg)](https://circleci.com/gh/Livefyre/streamhub-input)
+
 A simple comment editor and image filepicker for use with the [Livefyre Streamhub-SDK](//github.com/Livefyre/streamhub-sdk "Streamhub-SDK repository") and apps such as the [Livefyre Media Wall](//github.com/Livefyre/streamhub-wall)
 
 ## Getting Started

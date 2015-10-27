@@ -1,3 +1,5 @@
+'use strict';
+
 var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
 var Button = require('streamhub-sdk/ui/button');
 var inherits = require('inherits');
@@ -5,8 +7,6 @@ var packageAttribute = require('streamhub-input/javascript/package-attribute');
 var ThemeStyler = require('livefyre-theme-styler');
 var themableCss = require('text!streamhub-input/styles/theme.css');
 var uuid = require('node-uuid');
-
-'use strict';
 
 /**
  * @param command {Command} Command to execute.
@@ -48,7 +48,9 @@ var uuid = require('node-uuid');
     this._stylePrefix = opts.stylePrefix ||
         ['[', this.prefixAttribute, '="', this._uuid, '"]'].join('');
 
-    opts.destination && this.pipe(opts.destination);
+    if (opts.destination) {
+        this.pipe(opts.destination);
+    }
 
     if (opts.authRequired !== false) {
         command = new AuthRequiredCommand(command);
@@ -102,7 +104,9 @@ InputButton.prototype.setElement = function (el) {
  * @param {Writable} writable
  */
 InputButton.prototype.pipe = function (writeable) {
-    this._input && this._input.pipe(writeable);
+    if (this._input) {
+        this._input.pipe(writeable);
+    }
 };
 
 /**
@@ -110,7 +114,9 @@ InputButton.prototype.pipe = function (writeable) {
  * @param {Writable} writable
  */
 InputButton.prototype.unpipe = function (writeable) {
-    this._input && this._input.unpipe(writeable);
+    if (this._input) {
+        this._input.unpipe(writeable);
+    }
 };
 
 module.exports = InputButton;
