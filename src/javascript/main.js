@@ -1,5 +1,5 @@
 // Package the CSS
-var INPUT_STYLE = require('less!streamhub-input/styles/streamhub-input');
+require('less!streamhub-input/styles/streamhub-input');
 
 module.exports = {
     ContentEditor: require('streamhub-input/javascript/content-editor/view'),

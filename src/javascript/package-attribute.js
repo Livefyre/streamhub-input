@@ -1,3 +1,5 @@
+'use strict';
+
 var packageJson = require('json!streamhub-input/../package.json');
 var packageAttribute = 'data-lf-package';
 var packageAttributeValue = packageName(packageJson);

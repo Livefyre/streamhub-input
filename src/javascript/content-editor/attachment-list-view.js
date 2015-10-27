@@ -1,20 +1,26 @@
-var inherits = require('inherits');
-var ListView = require('streamhub-sdk/views/list-view');
-var AttachmentView = require('streamhub-input/javascript/content-editor/attachment-view');
-
 'use strict';
 
-// docs
-function AttachmentListView() {
-    ListView.apply(this, arguments);
+var $ = require('jquery');
+var AttachmentView = require('streamhub-input/javascript/content-editor/attachment-view');
+var CompositeView = require('view/composite-view');
+var inherits = require('inherits');
+var Writable = require('stream/writable');
 
-    /**
-     * View ids -> views
-     * @type {object}
-     */
-    this._viewMap = {};
+/**
+ * @contructor
+ * @extends {ListView}
+ */
+function AttachmentListView() {
+    CompositeView.apply(this, arguments);
 }
-inherits(AttachmentListView, ListView);
+inherits(AttachmentListView, CompositeView);
+
+
+/** @enum {string} */
+AttachmentListView.EVENTS = {
+    ADD: 'addAttachment',
+    REMOVE: 'removeAttachment'
+};
 
 /** @enum {string} */
 AttachmentListView.prototype.classes = {
@@ -32,10 +38,24 @@ AttachmentListView.prototype.events = (function () {
     return events;
 })();
 
+/**
+ * @param {Event} ev
+ * @private
+ */
 AttachmentListView.prototype._handleRemove = function (ev) {
-    var id = ev.target.parentNode.getAttribute(this.classes.DATA_ID);
-    this.remove(this._viewMap[id]);
-    this._viewMap[id] = null;
+    var id = Number(ev.target.parentNode.getAttribute(this.classes.DATA_ID));
+    var childView;
+    for (var i = 0; i < this._childViews.length; i++) {
+        if (this._childViews[i].$el.data('lf-id') === id) {
+            childView = this._childViews[i];
+            break;
+        }
+    }
+
+    if (childView) {
+        this.remove(childView);
+        this.emit(AttachmentListView.EVENTS.REMOVE, {count: this._childViews.length});
+    }
 };
 
 /** @override */
@@ -44,26 +64,26 @@ AttachmentListView.prototype.add = function (content) {
         oembed: content.attachments[0]
     });
     newView.$el.attr(this.classes.DATA_ID, newView.uid);
-    this._viewMap[newView.uid] = newView;
 
-    return ListView.prototype.add.call(this, newView);
+    newView = CompositeView.prototype.add.call(this, newView, {render: true});
+    this.emit(AttachmentListView.EVENTS.ADD, {count: this._childViews.length});
+    return newView;
+};
+
+/**
+ * Fill in method because this is supposed to be writable
+ * @param {View} view
+ */
+AttachmentListView.prototype.write = function (view) {
+    this.add(view);
 };
 
 /**
  * Clear all currently displayed attachments
  */
 AttachmentListView.prototype.clearAttachments = function () {
-    while (this.views.length) {
-        this.remove(this.views[0]);
-    }
-    this._viewMap = {};
-};
-
-/** @override */
-AttachmentListView.prototype.render = function () {
-    ListView.prototype.render.call(this);
-    for (var i = 0; i < this.views.length; i++) {
-        ListView.prototype._insert.call(this, this.views[i]);
+    while (this._childViews.length) {
+        this.remove(this._childViews[0]);
     }
 };
 
@@ -72,11 +92,9 @@ AttachmentListView.prototype.render = function () {
  * @return {Array.<Oembed>}
  */
 AttachmentListView.prototype.getAttachments = function () {
-    var attachments = [];
-    for (var i = 0; i < this.views.length; i++) {
-        attachments.push(this.views[i].opts.oembed);
-    }
-    return attachments;
+    return $.map(this._childViews, function (val) {
+        return val.getOembed();
+    });
 };
 
 module.exports = AttachmentListView;

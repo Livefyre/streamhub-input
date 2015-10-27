@@ -1,7 +1,7 @@
+'use strict';
+
 var ModalView = require('streamhub-sdk/modal');
 var packageAttribute = require('streamhub-input/javascript/package-attribute');
-
-'use strict';
 
 /**
  * A view that can be displayed and interacted with in an otherwise generic modal.
@@ -29,7 +29,9 @@ LaunchableModal.prototype.launchModal = function(modal) {
  * Called when the modal view has competed its task and can be closed/hidden.
  */
 LaunchableModal.prototype.returnModal = function () {
-    this._showing && this._modal.$el.trigger('hideModal.hub');  // Will _modal.hide()
+    if (this._showing) {
+        this._modal.$el.trigger('hideModal.hub');  // Will _modal.hide()
+    }
     this._showing = false;
 };
 

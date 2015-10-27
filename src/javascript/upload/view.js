@@ -1,3 +1,5 @@
+'use strict';
+
 var $ = require('jquery');
 var Content = require('streamhub-sdk/content');
 var inherits = require('inherits');
@@ -5,8 +7,6 @@ var LaunchableModal = require('streamhub-input/javascript/modal/launchable-modal
 var log = require('streamhub-sdk/debug')('streamhub-input/javascript/upload/view');
 var Pipeable = require('streamhub-input/javascript/pipeable');
 var View = require('streamhub-sdk/view');
-
-'use strict';
 
 /**
  * The reference to window.filepicker is stored here once loaded.
@@ -28,7 +28,7 @@ var picker = null;
  * @extends {View}
  */
 function Upload(opts) {
-    opts = $.extend({}, Upload.DEFAULT_OPTS, opts);
+    opts = $.extend(true, {}, Upload.DEFAULT_OPTS, opts);
     View.call(this, opts);
     LaunchableModal.call(this);
     Pipeable.call(this, opts);
@@ -36,6 +36,7 @@ function Upload(opts) {
     if (opts.filepicker) {
         this._filepickerKey = opts.filepicker.key;
         this._cacheUrl = opts.filepicker.cache;
+        picker = opts.filepicker.instance || null;
     }
     this.name = opts.name || this.name;
 }
@@ -68,10 +69,9 @@ Upload.prototype.getTemplateContext = function () {
 
 /**
  * Loads the filepicker script if picker is undefined
- * @param {function()} cb
  * @private
  */
-Upload.prototype._initFilepicker = function () {
+Upload.prototype._initFilepicker = function() {
     if (picker) {
         return;
     }
@@ -115,7 +115,7 @@ Upload.DEFAULT_OPTS = {
     packageAs: 'content',
     pick: {
         'container': 'picker',
-        'maxSize': 4*1024*1024, // allows files < 4MB
+        'maxSize': 10*1024*1024, // allows files < 10MB
         'mimetypes': ['image/*'],
         'multiple': false,
         'services': ['COMPUTER', 'WEBCAM', 'IMAGE_SEARCH', 'FACEBOOK', 'INSTAGRAM', 'FLICKR', 'PICASA', 'BOX', 'DROPBOX', 'GOOGLE_DRIVE']
@@ -143,22 +143,64 @@ Upload.prototype._processResponse = function (err, inkBlob) {
         return;
     }
 
-    var contents = [];
     var self = this;
     if (inkBlob) {
         if (!inkBlob.length) {
             inkBlob = [inkBlob];
         }
 
-        $.each(inkBlob, function (i, blob) {
-            picker.convert(blob, self.opts.convert, self.opts.store, function (convertedBlob) {
-                var content = self._packageInput(convertedBlob);
-                contents.push(content);
-                self.writeToDestination(content);
-            });
+        $.each(inkBlob, function (index, blob) {
+            self._postProcess(blob);
         });
     }
-    return contents;
+};
+
+/**
+ * @param {Object} blob
+ * @private
+ */
+Upload.prototype._postProcess = function (blob) {
+    var self = this;
+
+    var converters = {
+        image: function (blob, done) {
+            picker.convert(blob, self.opts.convert, self.opts.store, function (convertedBlob) {
+                var url = self._cacheUrl + convertedBlob.key;
+                var attachment = {
+                    type: 'photo',
+                    url: url,
+                    link: url,
+                    provider_name: 'Livefyre'
+                };
+
+                var content = new Content({body: ''});
+                content.attachments.push(attachment);
+                done(content);
+            });
+        },
+
+        video: function (blob, done) {
+            var attachment = {
+                type: 'video',
+                url: self._cacheUrl + blob.key,
+                thumbnail_url: 'http://zor.livefyre.com/wjs/v3.0/images/video-play.png',
+                thumbnail_width: 75,
+                thumbnail_height: 56,
+                provider_name: 'Livefyre'
+            };
+
+            var content = new Content({body: ''});
+            content.attachments.push(attachment);
+            done(content);
+        }
+    };
+
+    var contentType = blob.mimetype.split('/')[0];
+
+    if (contentType in converters) {
+        return converters[contentType](blob, $.proxy(this.writeToDestination, this));
+    }
+    throw 'Unknown content type: ' + contentType;
 };
 
 /**
@@ -167,7 +209,7 @@ Upload.prototype._processResponse = function (err, inkBlob) {
  *      Called after a successful interaction
  * @override
  */
-Upload.prototype.launchModal = function(callback) {
+Upload.prototype.launchModal = function (callback) {
     var self = this;
     if (!picker) {
         this.once('pickerLoaded', this.launchModal.bind(this, callback));
@@ -188,27 +230,6 @@ Upload.prototype.launchModal = function(callback) {
     }
 
     picker.pickAndStore(this.opts.pick, this.opts.store, successFn, errorFn);
-};
-
-/**
- * Creates and returns a Content object based on the input.
- * @param input {Object} Usually the data retrieved from getInput().
- * @returns {Content}
- * @protected
- * @override
- */
-Upload.prototype._packageInput = function (input) {
-    var url = this._cacheUrl + input.key;
-    var attachment = {
-        type: 'photo',
-        url: url,
-        link: url,
-        provider_name: this.name
-        //TODO (joao) images dimensions?!!!!
-    };
-    var content = new Content({body: ''});
-    content.attachments.push(attachment);
-    return content;
 };
 
 /** @override */

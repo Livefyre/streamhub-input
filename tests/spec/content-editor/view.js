@@ -1,15 +1,12 @@
 'use strict';
 
-var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
+var $ = require('jquery');
 var Command = require('streamhub-sdk/ui/command');
-var debug = require('streamhub-sdk/debug');
 var ContentEditor = require('streamhub-input/javascript/content-editor/view');
-var inherits = require('inherits');
-var jasmineJquery = require('jasmine-jquery');//For sandbox()
-var ModalInputCommand= require('streamhub-input/javascript/modal/modal-input-command');
-var util = require('streamhub-sdk/util');
-var View = require('view');
+var sinon = require('sinon');
 var Writable = require('stream/writable');
+
+require('jasmine-jquery');
 
 describe('streamhub-input/javascript/content-editor/view', function () {
     it('is an constructor', function () {
@@ -19,6 +16,7 @@ describe('streamhub-input/javascript/content-editor/view', function () {
     describe('when constructed', function () {
         var commentInput;
         var writable;
+
         beforeEach(function () {
             sandbox();
             commentInput = new ContentEditor({
@@ -52,7 +50,7 @@ describe('streamhub-input/javascript/content-editor/view', function () {
         });
 
         describe('and rendered', function () {
-            var testString = "Test comment"
+            var testString = "Test comment";
             beforeEach(function () {
                 commentInput.render();
             });
@@ -107,8 +105,10 @@ describe('streamhub-input/javascript/content-editor/view', function () {
             it('sets the user\'s display name when there is a user', function () {
                 var name = 'Batman';
                 commentInput._user = {
-                    get: function () { return name }
-                }
+                    get: function () {
+                        return name;
+                    }
+                };
                 commentInput.render();
                 expect(commentInput.$('.lf-name').html()).toEqual(name);
             });
@@ -131,7 +131,7 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                 });
 
                 it('should auto-pipe', function () {
-                    var spy = spyOn(writable, 'write');
+                    spyOn(writable, 'write');
                     commentInput.writeToDestination('Batman', 'Batman');
                     expect(writable.write).toHaveBeenCalledWith('Batman', 'Batman');
                 });
@@ -147,6 +147,10 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                     // Lazy man's mock
                     commentInput._authCmd = new Command(commentInput._postCmd);
                     commentInput.render();
+                });
+
+                afterEach(function () {
+                    commentInput.destroy();
                 });
 
                 it('does not trigger a post event when the user is not authenticated', function () {
@@ -178,7 +182,8 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                     i18n : {
                         emptyText: testString
                     },
-                    mediaEnabled: true
+                    mediaEnabled: true,
+                    maxAttachmentsPerPost: 1
                 };
 
                 commentInput = new ContentEditor(opts);
@@ -199,6 +204,23 @@ describe('streamhub-input/javascript/content-editor/view', function () {
 
             it('renders an attachment list', function () {
                 expect(commentInput.$el.has(commentInput._attachmentsList.$el)).toBeTruthy();
+            });
+
+            it('removes the upload button when attachments are added to the attachment list', function() {
+                var spy = sinon.spy(commentInput._uploadButton, 'destroy');
+                commentInput._handleAddAttachment({ count: 1 });
+                expect(spy.callCount).toEqual(1);
+                expect(commentInput.$el.find('.' + commentInput.classes.EDITOR_UPLOAD).length).toBeFalsy();
+                spy.restore();
+            });
+
+            it('adds the upload button when attachments are removed from the attachment list', function() {
+                var spy = sinon.spy(commentInput, '_addUploadButton');
+                commentInput._handleAddAttachment({ count: 1 });
+                commentInput._handleRemoveAttachment({ count: 0 });
+                expect(spy.callCount).toEqual(1);
+                expect(commentInput.$el.find('.' + commentInput.classes.EDITOR_UPLOAD).length).toEqual(1);
+                spy.restore();
             });
         });
     });

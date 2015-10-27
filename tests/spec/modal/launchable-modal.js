@@ -3,16 +3,15 @@
 var inherits = require('inherits');
 var LaunchableModal = require('streamhub-input/javascript/modal/launchable-modal');
 var ModalView = require('streamhub-sdk/modal');
-var util = require('streamhub-sdk/util');
 var View = require('view');
 
 describe('streamhub-input/javascript/modal/launchable-modal', function () {
     describe('inherits.parasitically() by a View and', function () {
-        var clbk;
         var data;
         var err;
         var SubView;
         var view;
+
         beforeEach(function () {
             SubView = function (opts) {
                 if (!opts || !opts.noTemplate) {
@@ -30,6 +29,10 @@ describe('streamhub-input/javascript/modal/launchable-modal', function () {
             data = 'stuff';
             err = 'error';
             view = new SubView();
+        });
+
+        afterEach(function () {
+            view.destroy();
         });
 
         it('preserves template() to be used for default rendering', function () {
@@ -61,7 +64,7 @@ describe('streamhub-input/javascript/modal/launchable-modal', function () {
         });
 
         it('hide()s the modal when returnModal', function () {
-            view.launchModal()
+            view.launchModal();
             expect(view._modal).toBeTruthy();
 
             spyOn(view._modal, 'hide').andCallThrough();
@@ -73,6 +76,7 @@ describe('streamhub-input/javascript/modal/launchable-modal', function () {
             var modal = new ModalView();
             view.launchModal(modal);
             expect(view._modal).toEqual(modal);
+            modal.destroy();
         });
     });
 });
