@@ -117,8 +117,7 @@ Upload.DEFAULT_OPTS = {
         'container': 'picker',
         'maxSize': 10*1024*1024, // allows files < 10MB
         'mimetypes': ['image/*'],
-        'multiple': false,
-        'services': ['COMPUTER', 'WEBCAM', 'IMAGE_SEARCH', 'FACEBOOK', 'INSTAGRAM', 'FLICKR', 'PICASA', 'BOX', 'DROPBOX', 'GOOGLE_DRIVE']
+        'multiple': false
     },
     store: {
         'location': 'S3',
