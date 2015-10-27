@@ -16,7 +16,7 @@ node_modules: package.json
 	npm install
 	touch $@
 
-test: dist
+test: build
 	npm test
 
 clean:
