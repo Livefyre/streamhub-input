@@ -43,6 +43,9 @@ require.config({
     name: 'streamhub-editor/templates',
     location: 'lib/streamhub-editor/src/templates'
   },{
+    name: 'streamhub-editor/styles',
+    location: 'lib/streamhub-editor/src/styles'
+  },{
     name: 'streamhub-sdk',
     location: 'lib/streamhub-sdk/src'
   },{

@@ -1,4 +1,4 @@
-.PHONY: all build
+.PHONY: all build dist
 
 ENV=dev
 
@@ -16,7 +16,7 @@ node_modules: package.json
 	npm install
 	touch $@
 
-test: build
+test: dist
 	npm test
 
 clean:
