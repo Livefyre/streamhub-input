@@ -13,7 +13,7 @@ module.exports = function(config) {
       {pattern: 'src/**/*.mustache', included: false},
       {pattern: 'tests/spec/**/*.js', included: false},
       'tests/tests-main.js',
-      {pattern: 'dist/*.css', included: false}
+      {pattern: 'dist/streamhub-input.min.css', included: false}
     ],
     browsers: ['PhantomJS'],
     colors: true,
