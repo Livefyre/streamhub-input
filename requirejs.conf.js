@@ -17,7 +17,8 @@ require.config({
     blanket: 'lib/blanket/dist/qunit/blanket',
     'blanket-jasmine': 'lib/blanket/dist/jasmine/blanket_jasmine',
     'mout': 'lib/mout/src',
-    'node-uuid': 'lib/node-tiny-uuid/index'
+    'node-uuid': 'lib/node-tiny-uuid/index',
+    sinon: 'lib/sinonjs/sinon'
   },
   packages: [{
     name: 'stream',
@@ -41,6 +42,9 @@ require.config({
   },{
     name: 'streamhub-editor/templates',
     location: 'lib/streamhub-editor/src/templates'
+  },{
+    name: 'streamhub-editor/styles',
+    location: 'lib/streamhub-editor/src/styles'
   },{
     name: 'streamhub-sdk',
     location: 'lib/streamhub-sdk/src'
@@ -122,6 +126,9 @@ require.config({
     },
     'jasmine-jquery': {
         deps: ['jquery']
+    },
+    sinon: {
+        exports: 'sinon'
     }
   },
   css: {

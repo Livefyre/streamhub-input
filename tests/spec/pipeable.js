@@ -1,7 +1,7 @@
+'use strict';
+
 var Pipeable = require('streamhub-input/javascript/pipeable');
 var Writable = require('stream/writable');
-
-'use strict';
 
 describe('streamhub-input/javascript/pipeable', function () {
     it('can pipe, unpipe, and writeToDestination', function () {
@@ -18,7 +18,9 @@ describe('streamhub-input/javascript/pipeable', function () {
         pipeable.unpipe();
         expect(pipeable._destination).toEqual(null);
 
-        expect(function () { pipeable.writeToDestination('chunk', 'cb') }).toThrow();
+        expect(function () {
+            pipeable.writeToDestination('chunk', 'cb');
+        }).toThrow();
         expect(writable.write.callCount).toEqual(1);  // Not called again
     });
 

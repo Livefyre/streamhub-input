@@ -1,59 +1,166 @@
 'use strict';
 
-var AuthRequiredCommand = require('streamhub-sdk/ui/auth-required-command');
-var Command = require('streamhub-sdk/ui/command');
-var Content = require('streamhub-sdk/content');
-var debug = require('streamhub-sdk/debug');
-var inherits = require('inherits');
-var jasmineJquery = require('jasmine-jquery');//For sandbox()
-var LaunchableModal = require('streamhub-input/javascript/modal/launchable-modal');
-var ModalInputCommand= require('streamhub-input/javascript/modal/modal-input-command');
+var $ = require('jquery');
 var Upload = require('streamhub-input/javascript/upload/view');
-var util = require('streamhub-sdk/util');
-var View = require('view');
 var Writable = require('stream/writable');
 
+require('jasmine-jquery'); //For sandbox()
+
 describe('streamhub-input/javascript/upload/view', function () {
+    var uploadInput;
+    var writable;
+
     it('is an constructor that subclasses View and implements Input and LaunchableModal', function () {
         expect(typeof(Upload)).toBe('function');
     });
 
-    describe('when constructed', function () {
-        var response;
-        var uploadInput;
-        var writable;
+    it('loads filepicker on modal launch', function () {
+        uploadInput = new Upload(Upload.DEFAULT_OPTS);
+
+        runs(function () {
+            uploadInput.launchModal();
+        });
+
+        waitsFor(function () {
+            return !!window.filepicker;
+        });
+
+        runs(function () {
+            expect(window.filepicker).not.toBe(undefined);
+        });
+    });
+
+    describe('handles conversions of media', function () {
+        var opts;
+
         beforeEach(function () {
+            opts = $.extend({}, Upload.DEFAULT_OPTS);
+        });
+
+        it('stores and converts photos', function () {
+            var writes = [];
+            var converts;
+            var picks;
+            var response = [{
+                mimetype: 'image/png',
+                key: 'lm4pob08T1GWegOV01Jz_08_img_3976_nat_at_rockys.jpg',
+                url: 'https://www.filepicker.io/api/file/P1xV1pV9QVmwoK4F5h7t'
+            }];
+
+            opts.filepicker = {
+                cache: 'http://foo.bar/',
+                key: '123abc',
+                instance: {
+                    pickAndStore: function (pick, store, success) {
+                        picks = true;
+                        success(response);
+                    },
+
+                    convert: function (blob, convert, store, success) {
+                        converts = true;
+                        success(response[0]);
+                    }
+                }
+            };
+            uploadInput = new Upload(opts);
+            writable = new Writable();
+            writable._write = function (content) {
+                writes.push(content);
+            };
+            uploadInput.pipe(writable);
+            uploadInput.launchModal();
+
+            expect(converts).toBe(true);
+            expect(picks).toBe(true);
+            expect(writes.length).toBe(1);
+            expect(writes[0].attachments.length).toBe(1);
+            expect(writes[0].attachments[0].url).toBe('http://foo.bar/lm4pob08T1GWegOV01Jz_08_img_3976_nat_at_rockys.jpg');
+        });
+
+        it('stores videos', function () {
+            var writes = [];
+            var picks;
+            var response = [{
+                mimetype: 'video/mp4',
+                key: 'foo-bar.mp4',
+                url: 'https://www.filepicker.io/api/file/P1xV1pV9QVmwoK4F5h7t'
+            }];
+
+            opts.filepicker = {
+                cache: 'http://foo.bar/',
+                key: '123abc',
+                instance: {
+                    pickAndStore: function (pick, store, success) {
+                        picks = true;
+                        success(response);
+                    }
+                }
+            };
+
+            uploadInput = new Upload(opts);
+            writable = new Writable();
+            writable._write = function (content) {
+                writes.push(content);
+            };
+            uploadInput.pipe(writable);
+            uploadInput.launchModal();
+
+            expect(picks).toBe(true);
+            expect(writes.length).toBe(1);
+            expect(writes[0].attachments.length).toBe(1);
+            expect(writes[0].attachments[0].url).toBe('http://foo.bar/foo-bar.mp4');
+            expect(writes[0].attachments[0].thumbnail_url).toBe('http://zor.livefyre.com/wjs/v3.0/images/video-play.png');
+            expect(writes[0].attachments[0].thumbnail_width).toBe(75);
+            expect(writes[0].attachments[0].thumbnail_height).toBe(56);
+            expect(writes[0].attachments[0].type).toBe('video');
+        });
+
+        it('throws an error for unknown oembed types', function () {
+            var response = [{
+                mimetype: 'some/type',
+                key: 'foo-bar.xss',
+                url: 'https://www.filepicker.io/api/file/P1xV1pV9QVmwoK4F5h7t'
+            }];
+
+            opts.filepicker = {
+                cache: 'http://foo.bar/',
+                key: '123abc',
+                instance: {
+                    pickAndStore: function (pick, store, success) {
+                        success(response);
+                    }
+                }
+            };
+
+            uploadInput = new Upload(opts);
+            expect(uploadInput.launchModal).toThrow();
+        });
+    });
+
+    describe('when constructed', function () {
+        var opts = Upload.DEFAULT_OPTS;
+        var response;
+
+        beforeEach(function () {
+            window.filepicker = null;
             sandbox();
             response = [{//@type {Array.<inkBlob>}
                 // url:
                 // filename:
                 // mimetype:
                 // size:
-                key: 'randomfilename'
+                mimetype: 'image/png',
+                key: 'lm4pob08T1GWegOV01Jz_08_img_3976_nat_at_rockys.jpg',
+                url: 'https://www.filepicker.io/api/file/P1xV1pV9QVmwoK4F5h7t'
                 // container:
                 // isWriteable:
                 // path:
             }];
-            var opts = Upload.DEFAULT_OPTS;
             opts.el = $('#sandbox')[0];
             uploadInput = new Upload(opts);
             writable = new Writable();
             writable._write = function () {};
             uploadInput.pipe(writable);
-        });
-
-        afterEach(function () {
-            uploadInput.destroy();
-        })
-
-        it('can launchModal(), then returnModal()', function () {
-            expect(typeof(uploadInput.launchModal)).toBe('function');
-            expect(typeof(uploadInput.returnModal)).toBe('function');
-
-            expect(function () {
-                uploadInput.launchModal();
-                uploadInput.returnModal();
-            }).not.toThrow();
         });
 
         it('has a elTag of "iframe"', function () {
@@ -72,24 +179,13 @@ describe('streamhub-input/javascript/upload/view', function () {
             expect(typeof(uploadInput.template(cxt))).toBe('string');
         });
 
-        it('Returns Array.<Content> when it _processResponse()s a successful response', function () {
-            var retVal = uploadInput._processResponse(undefined, response);
-            expect(retVal).toBeTruthy();
-            expect(typeof(retVal)).toBe('object');//Array, really
-            expect(typeof(retVal.forEach)).toBe('function');
-            expect(retVal.length).toBe(response.length);
-        });
-
         describe('and rendered', function () {
-            var testString = "Test comment"
             beforeEach(function () {
                 uploadInput.render();
             });
 
-            it('can transform data into Content with _packageInput(data)', function () {
-                var retVal = uploadInput._packageInput(response[0]);
-                expect(retVal instanceof Content).toBe(true);
-                expect(retVal.attachments.length).toBeTruthy();
+            afterEach(function () {
+                uploadInput.destroy();
             });
 
             xit('can showError(msg) in its view', function () {

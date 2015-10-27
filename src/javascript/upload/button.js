@@ -1,10 +1,10 @@
+'use strict';
+
 var inherits = require('inherits');
 var InputButton = require('streamhub-input/javascript/button');
 var ModalInputCommand = require('streamhub-input/javascript/modal/modal-input-command');
 var Upload = require('streamhub-input/javascript/upload/view');
 var $ = require('jquery');
-
-'use strict';
 
 /**
  * @param [opts] {Object}
@@ -14,7 +14,9 @@ var $ = require('jquery');
 function UploadButton(opts) {
     opts = opts || {};
     this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
-    var input = new Upload();
+
+    var inputOpts = opts.mimetypes ? {pick: {mimetypes: opts.mimetypes}} : {};
+    var input = new Upload(inputOpts);
     var command = new ModalInputCommand(input, {
         modal: opts.modal
     });
@@ -52,5 +54,18 @@ UploadButton.prototype.template = require('hgn!streamhub-input/templates/upload-
  * @type {string}
  */
 UploadButton.prototype.elClass += ' hub-upload-btn';
+
+/** @override */
+UploadButton.prototype.destroy = function () {
+    InputButton.prototype.destroy.call(this);
+
+    if (this.opts.modal) {
+        this.opts.modal.destroy();
+    }
+
+    if (this.opts.input) {
+        this.opts.input.destroy();
+    }
+};
 
 module.exports = UploadButton;

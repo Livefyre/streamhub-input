@@ -1,7 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
 var Auth = require('streamhub-sdk/auth');
-var Button = require('streamhub-sdk/ui/button');
 var CommentButton = require('streamhub-input/javascript/content-editor/button');
 var InputButton = require('streamhub-input/javascript/button');
 var Writable = require('stream/writable');
@@ -17,7 +17,7 @@ describe('streamhub-input/javascript/content-editor/button', function () {
     describe('when constructed', function () {
         var cmtBtn;
         var writable;
-        var testString = 'data sample'
+        var testString = 'data sample';
         beforeEach(function () {
             cmtBtn = new CommentButton();
             writable = new Writable();

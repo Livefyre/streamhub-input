@@ -1,4 +1,4 @@
-.PHONY: all build
+.PHONY: all build dist
 
 ENV=dev
 
