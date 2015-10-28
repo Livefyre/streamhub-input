@@ -80,7 +80,7 @@ describe('streamhub-input/javascript/content-editor/attachment-view', function (
             videoView = new AttachmentView({
                 oembed: {
                     thumbnail_url: url,
-                    type: 'video'
+                    type: 'video_promise'
                 }
             });
 

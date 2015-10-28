@@ -26,7 +26,8 @@ require([
 
         createAuthButton(livefyreAuth, document.getElementById('auth-button'));
         var uploadButton = window.uploadButton = new Input.UploadButton({
-            el: document.getElementById('upload-button')
+            el: document.getElementById('upload-button'),
+            mimetypes: ['image/*', 'video/mp4']
         });
         var editorButton = window.editorButton = new Input.ContentEditorButton({
             el: document.getElementById('editor-button'),

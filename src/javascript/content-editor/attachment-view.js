@@ -62,7 +62,7 @@ AttachmentView.prototype.render = function () {
     this.$el.hide();
     var loaders = {
         photo: this.opts.oembed.url,
-        video: this.opts.oembed.thumbnail_url
+        video_promise: this.opts.oembed.thumbnail_url
     };
     var type = this.opts.oembed.type;
 
