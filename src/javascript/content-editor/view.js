@@ -81,7 +81,7 @@ ContentEditor.prototype._addUploadButton = function () {
         uploadEl = $('<div />').addClass(this.classes.EDITOR_UPLOAD);
         this.getElementsByClass(this.classes.BTN_WRAPPER).prepend(uploadEl);
     }
-    this._uploadButton = this._uploadButton || this.createUploadButton();
+    this._uploadButton = this._uploadButton || this.createUploadButton(this.opts);
     this._uploadButton.setElement(uploadEl);
     this._uploadButton.render();
     this._uploadButton.pipe(this._attachmentsList);
