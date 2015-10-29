@@ -13,7 +13,7 @@ require([
         var opts = {
             "network": "livefyre.com",
             "siteId": "290596",
-            "articleId": "136",
+            "articleId": "304",
             "environment": "qa-ext.livefyre.com"
         };
 
