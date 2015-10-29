@@ -6,7 +6,7 @@
     "name": "Livefyre",
     "email": "dev@livefyre.com"
   },
-  "version": "0.7.1",
+  "version": "0.7.2",
   "scripts": {
     "postinstall": "bower install",
     "start": "node ./dev/server.js",
