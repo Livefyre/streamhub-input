@@ -81,7 +81,7 @@ ContentEditor.prototype._addUploadButton = function () {
         uploadEl = $('<div />').addClass(this.classes.EDITOR_UPLOAD);
         this.getElementsByClass(this.classes.BTN_WRAPPER).prepend(uploadEl);
     }
-    this._uploadButton = this._uploadButton || this.createUploadButton();
+    this._uploadButton = this._uploadButton || this.createUploadButton(this.opts);
     this._uploadButton.setElement(uploadEl);
     this._uploadButton.render();
     this._uploadButton.pipe(this._attachmentsList);
@@ -262,6 +262,7 @@ ContentEditor.prototype.reset = function () {
 
 /** @override */
 ContentEditor.prototype.sendPostEvent = function (ev) {
+    var self = this;
     var newContent = new Content();
     newContent.body = ev.body;
     newContent.attachments = ev.attachments;
@@ -277,6 +278,8 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
         }
         ev.success();
     });
+
+    this._uploadButton || this._addUploadButton();
 };
 
 /** @override */

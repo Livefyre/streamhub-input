@@ -98,14 +98,14 @@ Upload.prototype._initFilepicker = function() {
  * @type {!string}
  * @private
  */
-Upload.prototype._filepickerKey = 'AtvGm2B6RR9mDKb8bImIHz';
+Upload.prototype._filepickerKey = 'AYNlO8P2PT6qnCfo9eCw2z';
 
 /**
  * The URL where uploads are cached
  * @type {!string}
  * @private
  */
-Upload.prototype._cacheUrl = 'http://dazfoe7f6de09.cloudfront.net/';
+Upload.prototype._cacheUrl = 'http://media.fyre.co/';
 
 /**
  * The default options for using FilePicker and pickAndStore
@@ -115,7 +115,7 @@ Upload.DEFAULT_OPTS = {
     packageAs: 'content',
     pick: {
         'container': 'picker',
-        'maxSize': 10*1024*1024, // allows files < 10MB
+        'maxSize': 25*1024*1024, // allows files < 25MB
         'mimetypes': ['image/*'],
         'multiple': false
     },
@@ -180,7 +180,7 @@ Upload.prototype._postProcess = function (blob) {
 
         video: function (blob, done) {
             var attachment = {
-                type: 'video',
+                type: 'video_promise',
                 url: self._cacheUrl + blob.key,
                 thumbnail_url: 'http://zor.livefyre.com/wjs/v3.0/images/video-play.png',
                 thumbnail_width: 75,

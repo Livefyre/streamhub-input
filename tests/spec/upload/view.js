@@ -112,7 +112,7 @@ describe('streamhub-input/javascript/upload/view', function () {
             expect(writes[0].attachments[0].thumbnail_url).toBe('http://zor.livefyre.com/wjs/v3.0/images/video-play.png');
             expect(writes[0].attachments[0].thumbnail_width).toBe(75);
             expect(writes[0].attachments[0].thumbnail_height).toBe(56);
-            expect(writes[0].attachments[0].type).toBe('video');
+            expect(writes[0].attachments[0].type).toBe('video_promise');
         });
 
         it('throws an error for unknown oembed types', function () {
