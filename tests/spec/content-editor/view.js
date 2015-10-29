@@ -223,12 +223,19 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                 spy.restore();
             });
 
-            it('reenables the upload button after submit', function () {
-                var spy = sinon.spy(commentInput, '_addUploadButton');
+            it('reenables the upload button and resets attachments after submit', function () {
+                var uploadSpy = sinon.spy(commentInput, '_addUploadButton');
+                var attachmentSpy = sinon.spy(commentInput, '_addAttachmentList');
+                var stub = sinon.stub(commentInput, 'writeToDestination', function (content, cb) {
+                    cb();
+                });
                 commentInput._handleAddAttachment({ count: 1 });
-                commentInput.sendPostEvent({body: 'text'});
-                expect(spy.callCount).toEqual(1);
-                spy.restore();
+                commentInput.sendPostEvent({body: 'text', success: function () {}});
+                expect(uploadSpy.callCount).toEqual(1);
+                expect(attachmentSpy.callCount).toEqual(1);
+                stub.restore();
+                attachmentSpy.restore();
+                uploadSpy.restore();
             });
         });
     });

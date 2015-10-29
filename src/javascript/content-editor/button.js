@@ -54,7 +54,8 @@ ContentEditorButton.prototype.createInput = function (opts) {
     var input = new ModalContentEditor({
         mediaEnabled: opts.mediaEnabled,
         mimetypes: opts.mimetypes,
-        maxAttachmentsPerPost: opts.maxAttachmentsPerPost
+        maxAttachmentsPerPost: opts.maxAttachmentsPerPost,
+        showTitle: opts.showTitle
     });
     return input;
 };

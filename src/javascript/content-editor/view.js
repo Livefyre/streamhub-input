@@ -277,9 +277,11 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
             return ev.failure(err);
         }
         ev.success();
+        self._uploadButton || self._addUploadButton();
+        self._attachmentsList.destroy();
+        self._attachmentsList = null;
+        self._addAttachmentList();
     });
-
-    this._uploadButton || this._addUploadButton();
 };
 
 /** @override */
