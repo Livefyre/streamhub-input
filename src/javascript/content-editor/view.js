@@ -262,6 +262,7 @@ ContentEditor.prototype.reset = function () {
 
 /** @override */
 ContentEditor.prototype.sendPostEvent = function (ev) {
+    var self = this;
     var newContent = new Content();
     newContent.body = ev.body;
     newContent.attachments = ev.attachments;
@@ -277,6 +278,8 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
         }
         ev.success();
     });
+
+    this._uploadButton || this._addUploadButton();
 };
 
 /** @override */

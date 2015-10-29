@@ -222,6 +222,14 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                 expect(commentInput.$el.find('.' + commentInput.classes.EDITOR_UPLOAD).length).toEqual(1);
                 spy.restore();
             });
+
+            it('reenables the upload button after submit', function () {
+                var spy = sinon.spy(commentInput, '_addUploadButton');
+                commentInput._handleAddAttachment({ count: 1 });
+                commentInput.sendPostEvent({body: 'text'});
+                expect(spy.callCount).toEqual(1);
+                spy.restore();
+            });
         });
     });
 });
