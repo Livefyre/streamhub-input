@@ -72,6 +72,7 @@ describe('streamhub-input/javascript/content-editor/view', function () {
 
                 commentInput.reset();
                 expect(commentInput.$textareaEl.val()).toBe('');
+                expect(commentInput.$el.find('.lf-editor-upload').length).toBe(1);
             });
 
             it('reset()s after successfully submitting a comment', function () {

@@ -258,6 +258,7 @@ ContentEditor.prototype.reset = function () {
     if (this._attachmentsList) {
         this._attachmentsList.clearAttachments();
     }
+    this._hideUploadButton || this._addUploadButton();
 };
 
 /** @override */
