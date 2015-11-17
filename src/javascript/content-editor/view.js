@@ -100,6 +100,8 @@ ContentEditor.prototype._i18n = (function () {
     var strings = $.extend(true, {}, Editor.prototype._i18n);
     strings.PLACEHOLDERTEXT = 'What would you like to say?';
     strings.POST = 'Post Your Comment';
+    strings.POST_MODAL_TITLE = strings.POST;
+    strings.POST_MODAL_BUTTON = strings.POST;
     strings.ERRORS.ATTACHMENTS_REQUIRED = 'An attachment is required';
     return strings;
 })();
@@ -239,7 +241,8 @@ ContentEditor.prototype.getTemplateContext = function () {
         attachmentViewEnabled: this.opts.mediaEnabled,
         mediaEnabled: this.opts.mediaEnabled && !this._hideUploadButton,
         strings: {
-            post: this._i18n.POST,
+            post: this._i18n.POST_MODAL_BUTTON,
+            postModalTitle: this._i18n.POST_MODAL_TITLE,
             username: username
         }
     };

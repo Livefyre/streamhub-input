@@ -55,8 +55,9 @@ ContentEditorButton.prototype.createInput = function (opts) {
         mediaEnabled: opts.mediaEnabled,
         mimetypes: opts.mimetypes,
         maxAttachmentsPerPost: opts.maxAttachmentsPerPost,
+        showTitle: opts.showTitle,
         mediaRequired: opts.mediaRequired,
-        showTitle: opts.showTitle
+        _i18n: opts._i18n
     });
     return input;
 };
