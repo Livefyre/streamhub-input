@@ -55,6 +55,7 @@ ContentEditorButton.prototype.createInput = function (opts) {
         mediaEnabled: opts.mediaEnabled,
         mimetypes: opts.mimetypes,
         maxAttachmentsPerPost: opts.maxAttachmentsPerPost,
+        mediaRequired: opts.mediaRequired,
         showTitle: opts.showTitle
     });
     return input;

@@ -40,7 +40,8 @@ require([
             mediaEnabled: true,
             maxAttachmentsPerPost: 1,
             mimetypes: ['image/*', 'video/mp4'],
-            showTitle: true
+            showTitle: true,
+            mediaRequired: true
         });
 
         uploadButton.render();
