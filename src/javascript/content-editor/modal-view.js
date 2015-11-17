@@ -15,6 +15,7 @@ var $ = require('jquery');
  */
 function ModalContentEditor(opts) {
     opts = opts || {};
+    this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
     ContentEditor.call(this, opts);
     LaunchableModal.call(this);
 }

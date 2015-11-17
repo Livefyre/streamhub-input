@@ -100,6 +100,9 @@ ContentEditor.prototype._i18n = (function () {
     var strings = $.extend(true, {}, Editor.prototype._i18n);
     strings.PLACEHOLDERTEXT = 'What would you like to say?';
     strings.POST = 'Post Your Comment';
+    strings.POST_MODAL_TITLE = strings.POST;
+    strings.POST_MODAL_BUTTON = strings.POST;
+    strings.ERRORS.ATTACHMENTS_REQUIRED = 'An attachment is required';
     return strings;
 })();
 
@@ -158,11 +161,17 @@ ContentEditor.prototype._handleRemoveAttachment = function(data) {
 };
 
 /** @override */
-ContentEditor.prototype._validate = function(data) {
+ContentEditor.prototype.validate = function(data) {
     var valid = !!(data.body || (data.attachments && data.attachments.length));
     if (!valid) {
         this.showError(this._i18n.ERRORS.BODY);
     }
+
+    if (this.opts.mediaRequired && !data.attachments.length) {
+        valid = false;
+        this.showError(this._i18n.ERRORS.ATTACHMENTS_REQUIRED);
+    }
+
     return valid;
 };
 
@@ -232,7 +241,8 @@ ContentEditor.prototype.getTemplateContext = function () {
         attachmentViewEnabled: this.opts.mediaEnabled,
         mediaEnabled: this.opts.mediaEnabled && !this._hideUploadButton,
         strings: {
-            post: this._i18n.POST,
+            post: this._i18n.POST_MODAL_BUTTON,
+            postModalTitle: this._i18n.POST_MODAL_TITLE,
             username: username
         }
     };
@@ -258,6 +268,7 @@ ContentEditor.prototype.reset = function () {
     if (this._attachmentsList) {
         this._attachmentsList.clearAttachments();
     }
+    this._hideUploadButton || this._addUploadButton();
 };
 
 /** @override */
