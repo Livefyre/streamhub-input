@@ -100,6 +100,7 @@ ContentEditor.prototype._i18n = (function () {
     var strings = $.extend(true, {}, Editor.prototype._i18n);
     strings.PLACEHOLDERTEXT = 'What would you like to say?';
     strings.POST = 'Post Your Comment';
+    strings.ERRORS.ATTACHMENTS_REQUIRED = 'An attachment is required';
     return strings;
 })();
 
@@ -158,11 +159,17 @@ ContentEditor.prototype._handleRemoveAttachment = function(data) {
 };
 
 /** @override */
-ContentEditor.prototype._validate = function(data) {
+ContentEditor.prototype.validate = function(data) {
     var valid = !!(data.body || (data.attachments && data.attachments.length));
     if (!valid) {
         this.showError(this._i18n.ERRORS.BODY);
     }
+
+    if (this.opts.mediaRequired && !data.attachments.length) {
+        valid = false;
+        this.showError(this._i18n.ERRORS.ATTACHMENTS_REQUIRED);
+    }
+
     return valid;
 };
 

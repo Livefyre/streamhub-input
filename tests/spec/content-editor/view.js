@@ -61,9 +61,9 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                 expect(commentInput.buildPostEventObj().body.indexOf(testString) !== -1).toBeTruthy();
             });
 
-            it('can _validate(data) data', function () {
-                expect(commentInput._validate({})).toBe(false);
-                expect(commentInput._validate({body: testString, attachments: []})).toBe(true);
+            it('can validate(data) data', function () {
+                expect(commentInput.validate({})).toBe(false);
+                expect(commentInput.validate({body: testString, attachments: []})).toBe(true);
             });
 
             it('can reset() its view and does so after submitting a comment', function () {
@@ -184,7 +184,8 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                         emptyText: testString
                     },
                     mediaEnabled: true,
-                    maxAttachmentsPerPost: 1
+                    maxAttachmentsPerPost: 1,
+                    mediaRequired: true
                 };
 
                 commentInput = new ContentEditor(opts);
@@ -221,6 +222,16 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                 commentInput._handleRemoveAttachment({ count: 0 });
                 expect(spy.callCount).toEqual(1);
                 expect(commentInput.$el.find('.' + commentInput.classes.EDITOR_UPLOAD).length).toEqual(1);
+                spy.restore();
+            });
+
+            it('if mediaRequired is true, validates empty posts', function () {
+                var spy = sinon.spy(commentInput, 'showError');
+                commentInput.$titleEl.val('abc');
+                commentInput.$el.find('.lf-editor-post-btn').click();
+
+                expect(spy.callCount).toEqual(1);
+                expect(spy.lastCall.args[0]).toEqual('An attachment is required');
                 spy.restore();
             });
 
