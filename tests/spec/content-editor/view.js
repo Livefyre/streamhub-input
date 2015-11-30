@@ -245,6 +245,7 @@ describe('streamhub-input/javascript/content-editor/view', function () {
                 commentInput.sendPostEvent({body: 'text', success: function () {}});
                 expect(uploadSpy.callCount).toEqual(1);
                 expect(attachmentSpy.callCount).toEqual(1);
+                expect(commentInput._hideUploadButton).toEqual(false);
                 stub.restore();
                 attachmentSpy.restore();
                 uploadSpy.restore();
