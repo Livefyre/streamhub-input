@@ -18,7 +18,8 @@ require.config({
     'blanket-jasmine': 'lib/blanket/dist/jasmine/blanket_jasmine',
     'mout': 'lib/mout/src',
     'node-uuid': 'lib/node-tiny-uuid/index',
-    sinon: 'lib/sinonjs/sinon'
+    sinon: 'lib/sinonjs/sinon',
+    rsvp: 'lib/rsvp/rsvp'
   },
   packages: [{
     name: 'stream',

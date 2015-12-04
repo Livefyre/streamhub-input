@@ -289,7 +289,7 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
         }
         ev.success();
 
-        self._attachmentsList.destroy();
+        self._attachmentsList && self._attachmentsList.destroy();
         self._attachmentsList = null;
         self._addAttachmentList();
 
