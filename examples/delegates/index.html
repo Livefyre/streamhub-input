@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/dev/css/streamhub-input.css">
+
+    <!-- ListView styles et el. -->
+
+    <link rel="stylesheet" type="text/css" href="/lib/streamhub-sdk/src/css/style.css">
+    <style>
+    #listView {
+        width:500px;
+        float: left;
+    }
+    </style>
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+</head>
+    <body>
+        <div>
+            <button id="auth-button">Log in</button>
+        </div>
+        <div>
+            <button id="editor-button"></button>
+        </div>
+        <div>
+            <button id="upload-button"></button>
+        </div>
+        <div id="content-editor"></div>
+        <div id="listView"></div>
+
+        <script src="../../lib/cajon/cajon.js" type="text/javascript"></script>
+        <script src="/requirejs.conf.js" type="text/javascript"></script>
+        <script>
+        requirejs.config({
+            baseUrl: '../../',
+            deps: ['examples/delegates/index']
+        });
+        </script>
+    </body>
+</html>
