@@ -10,27 +10,28 @@ var packageAttributeValue = packageName(packageJson);
  * data-lf-package="streamhub-wall#3.0.0"
  */
 exports.decorate = function (el) {
-    var currentVal = (el.getAttribute(packageAttribute) || '').trim();
-    var currentPackageAttrs = currentVal.split(' ');
-    var newVal;
-    // Add this package attribute value if it's not already there
-    if (currentPackageAttrs.indexOf(packageAttributeValue) === -1) {
-        currentPackageAttrs.push(packageAttributeValue);
-        newVal = currentPackageAttrs.join(' ');
-        el.setAttribute(packageAttribute, newVal);
-    }
+  var currentVal = (el.getAttribute(packageAttribute) || '').trim();
+  var currentPackageAttrs = currentVal.split(' ');
+  var newVal;
+
+  // Add this package attribute value if it's not already there
+  if (currentPackageAttrs.indexOf(packageAttributeValue) === -1) {
+    currentPackageAttrs.push(packageAttributeValue);
+    newVal = currentPackageAttrs.join(' ');
+    el.setAttribute(packageAttribute, newVal);
+  }
 };
 
 exports.undecorate = function (el) {
-    var currentVal = el.getAttribute(packageAttribute) || '';
-    var newVal = currentVal.replace(packageAttributeValue, '');
-    el.setAttribute(packageAttribute, newVal);
+  var currentVal = el.getAttribute(packageAttribute) || '';
+  var newVal = currentVal.replace(packageAttributeValue, '');
+  el.setAttribute(packageAttribute, newVal);
 };
 
 exports.decorateModal = function modalWithPackageSelector(modal) {
-    modal.$el.on('showing', setHasPackageAttribute.bind({}, modal, true));
-    modal.$el.on('hiding', setHasPackageAttribute.bind({}, modal, false));
-    return modal;
+  modal.$el.on('showing', setHasPackageAttribute.bind({}, modal, true));
+  modal.$el.on('hiding', setHasPackageAttribute.bind({}, modal, false));
+  return modal;
 };
 
 /**
@@ -39,16 +40,16 @@ exports.decorateModal = function modalWithPackageSelector(modal) {
  * @param {jQuery.Element} $el
  */
 exports.wrapWithStylePrefix = function ($el) {
-    var wrapperEl = document.createElement('div');
-    exports.decorate(wrapperEl);
-    $el.wrap(wrapperEl);
+  var wrapperEl = document.createElement('div');
+  exports.decorate(wrapperEl);
+  $el.wrap(wrapperEl);
 };
 
 
 function setHasPackageAttribute(modal, shouldHaveAttr) {
-    exports[shouldHaveAttr ? 'decorate' : 'undecorate'](modal.parentNode);
+  exports[shouldHaveAttr ? 'decorate' : 'undecorate'](modal.parentNode);
 }
 
 function packageName(packageJson) {
-    return packageJson.name + '#' + packageJson.version;
+  return packageJson.name + '#' + packageJson.version;
 }

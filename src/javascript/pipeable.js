@@ -7,22 +7,22 @@
  *      will receive this input. it is recommended that this is specified.
  */
 function Pipeable(opts) {
-    opts = opts || {};
-    this._destination = opts.destination || null;
+  opts = opts || {};
+  this._destination = opts.destination || null;
 }
 
 /**
  * @param {Writable} writable
  */
 Pipeable.prototype.pipe = function (writable) {
-    this._destination = writable;
+  this._destination = writable;
 };
 
 /**
  * Set the destination to null
  */
 Pipeable.prototype.unpipe = function () {
-    this._destination = null;
+  this._destination = null;
 };
 
 /**
@@ -30,10 +30,10 @@ Pipeable.prototype.unpipe = function () {
  * @param {function(?Error, Object)} cb
  */
 Pipeable.prototype.writeToDestination = function (data, cb) {
-    if (!this._destination) {
-        throw 'No destination to write to';
-    }
-    this._destination.write(data, cb);
+  if (!this._destination) {
+    throw 'No destination to write to';
+  }
+  this._destination.write(data, cb);
 };
 
 module.exports = Pipeable;

@@ -12,27 +12,27 @@ var inherits = require('inherits');
  * @extends {Command}
  */
 function ModalInputCommand(view, opts) {
-    opts = opts || {};
-    if (!view) {
-        throw 'Can\'t instantiate a ModalInputCommand without specifying a view';
-    }
-    function cmd() {
-        view.launchModal(opts.modal);
-    }
+  opts = opts || {};
+  if (!view) {
+    throw 'Can\'t instantiate a ModalInputCommand without specifying a view';
+  }
+  function cmd() {
+    view.launchModal(opts.modal);
+  }
 
-    /**
-     * The Input instance that will be launched into a modal
-     * @type {!Input}
-     */
-    this.view = view;
+  /**
+   * The Input instance that will be launched into a modal
+   * @type {!Input}
+   */
+  this.view = view;
 
-    Command.call(this, cmd, opts);
+  Command.call(this, cmd, opts);
 }
 inherits(ModalInputCommand, Command);
 
 /** @override */
 ModalInputCommand.prototype.canExecute = function () {
-    return (this.view) ? true : false;
+  return (this.view) ? true : false;
 };
 
 module.exports = ModalInputCommand;

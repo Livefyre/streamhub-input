@@ -16,7 +16,7 @@ node_modules: package.json
 	npm install
 	touch $@
 
-test: build
+test: build lint
 	npm test
 
 clean:
@@ -30,7 +30,7 @@ server: build
 	npm start
 
 lint: build
-	npm run hint
+	npm run lint
 
 deploy: dist
 	./node_modules/.bin/lfcdn -e $(ENV)

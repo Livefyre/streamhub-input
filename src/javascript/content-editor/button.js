@@ -17,27 +17,27 @@ var $ = require('jquery');
  * @extends {InputButton}
  */
 function ContentEditorButton(opts) {
-    opts = opts || {};
-    this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
+  opts = opts || {};
+  this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
 
-    opts.input = opts.input || this.createInput(opts);
+  opts.input = opts.input || this.createInput(opts);
 
-    var command = new ModalInputCommand(opts.input, {
-        modal: opts.modal
-    });
+  var command = new ModalInputCommand(opts.input, {
+    modal: opts.modal
+  });
 
-    InputButton.call(this, command, opts);
+  InputButton.call(this, command, opts);
 }
 inherits(ContentEditorButton, InputButton);
 
 /** @enum {string} */
 ContentEditorButton.prototype._i18n = {
-    POST: "What's on your mind?"
+  POST: 'What\'s on your mind?'
 };
 
 /** @override */
 ContentEditorButton.prototype.template = function () {
-    return this._i18n.POST;
+  return this._i18n.POST;
 };
 
 /**
@@ -51,15 +51,15 @@ ContentEditorButton.prototype.elClass += ' comment-btn';
  * when the button is clicked
  */
 ContentEditorButton.prototype.createInput = function (opts) {
-    var input = new ModalContentEditor({
-        mediaEnabled: opts.mediaEnabled,
-        mimetypes: opts.mimetypes,
-        maxAttachmentsPerPost: opts.maxAttachmentsPerPost,
-        showTitle: opts.showTitle,
-        mediaRequired: opts.mediaRequired,
-        _i18n: opts._i18n
-    });
-    return input;
+  var input = new ModalContentEditor({
+    mediaEnabled: opts.mediaEnabled,
+    mimetypes: opts.mimetypes,
+    maxAttachmentsPerPost: opts.maxAttachmentsPerPost,
+    showTitle: opts.showTitle,
+    mediaRequired: opts.mediaRequired,
+    _i18n: opts._i18n
+  });
+  return input;
 };
 
 module.exports = ContentEditorButton;
