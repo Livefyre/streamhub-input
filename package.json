@@ -48,7 +48,7 @@
     "less": "1.7.0",
     "less-middleware": "0.1.15",
     "lfcdn": "git+ssh://git@github.com:Livefyre/lfcdn",
-    "phantomjs": "1.9.19",
+    "phantomjs": "1.9.2-2",
     "requirejs": "2.1.9",
     "rework": "git://github.com/gobengo/rework"
   },

@@ -106,6 +106,7 @@ ContentEditor.prototype._i18n = (function () {
   strings.POST_MODAL_TITLE = strings.POST;
   strings.POST_MODAL_BUTTON = strings.POST;
   strings.ERRORS.ATTACHMENTS_REQUIRED = 'An attachment is required';
+  strings.ERRORS.TITLE_REQUIRED = 'A title is required';
   return strings;
 })();
 
@@ -165,9 +166,14 @@ ContentEditor.prototype._handleRemoveAttachment = function (data) {
 
 /** @override */
 ContentEditor.prototype.validate = function (data) {
-  var valid = !!(data.body || (data.attachments && data.attachments.length));
+  var valid = !!(this.validateBody(data.body) || (data.attachments && data.attachments.length));
   if (!valid) {
     this.showError(this._i18n.ERRORS.BODY);
+  }
+
+  if (this.opts.titleRequired && !data.title) {
+    valid = false;
+    this.showError(this._i18n.ERRORS.TITLE_REQUIRED);
   }
 
   if (this.opts.mediaRequired && !data.attachments.length) {
