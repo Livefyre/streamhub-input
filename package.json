@@ -6,7 +6,7 @@
     "name": "Livefyre",
     "email": "dev@livefyre.com"
   },
-  "version": "0.7.4",
+  "version": "0.7.5",
   "scripts": {
     "postinstall": "bower install",
     "start": "node ./dev/server.js",
@@ -14,7 +14,7 @@
     "build-non-min": "./node_modules/requirejs/bin/r.js -o ./tools/build.conf.js optimize=none out=./dist/streamhub-input.js",
     "build-css": "mkdir -p dist && ./node_modules/less/bin/lessc --include-path=lib/ --clean-css src/styles/streamhub-input.less dist/streamhub-input.min.css",
     "clean-build": "rm -rf dist && mkdir -p dist",
-    "hint": "./node_modules/jshint/bin/jshint src/ tests/; echo",
+    "lint": "./node_modules/.bin/lfeslint",
     "test": "npm run-script build && ./node_modules/karma/bin/karma start tests/karma.conf.js --singleRun --reporters dots",
     "testw": "./node_modules/karma/bin/karma start tests/karma.conf.js",
     "test-ci": "./node_modules/karma/bin/karma start tests/karma.conf.js --singleRun --reporters dots,junit,coverage  && npm run send-to-coveralls",
@@ -32,7 +32,7 @@
     "http-server": "*",
     "ink-docstrap": "git://github.com/michaelward82/docstrap.git#line-number-alignment",
     "jsdoc": "git://github.com/jsdoc3/jsdoc.git",
-    "jshint": "2.8.0",
+    "lfeslint": "git+ssh://git@github.com/Livefyre/lfeslint.git",
     "karma": "0.10.5",
     "karma-cajon": "*",
     "karma-chrome-launcher": "0.1.0",
@@ -51,5 +51,9 @@
     "phantomjs": "1.9.2-2",
     "requirejs": "2.1.9",
     "rework": "git://github.com/gobengo/rework"
+  },
+  "lfeslint": {
+    "ignore": ["lib/**", "tools/build.conf.js"],
+    "global": ["requirejs", "Livefyre", "jasmine", "expect", "spyOn", "sandbox", "runs", "waitsFor", "define"]
   }
 }

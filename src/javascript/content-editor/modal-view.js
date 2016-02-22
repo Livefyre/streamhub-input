@@ -14,39 +14,39 @@ var $ = require('jquery');
  * @extends {LaunchableModal}
  */
 function ModalContentEditor(opts) {
-    opts = opts || {};
-    this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
-    ContentEditor.call(this, opts);
-    LaunchableModal.call(this);
+  opts = opts || {};
+  this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
+  ContentEditor.call(this, opts);
+  LaunchableModal.call(this);
 }
 inherits(ModalContentEditor, ContentEditor);
 inherits.parasitically(ContentEditor, LaunchableModal);
 
 /** @override */
 ModalContentEditor.prototype.classes = {
-    EDITOR_SECTION: 'lf-content-editor'
+  EDITOR_SECTION: 'lf-content-editor'
 };
 $.extend(ModalContentEditor.prototype.classes, ContentEditor.prototype.classes);
 
 /** @override */
 ModalContentEditor.prototype.template = function (context) {
-    return modalTemplate(context, {
-        contentEditor: contentEditorTemplate.template,
-        editor: editorTemplate.template
-    });
+  return modalTemplate(context, {
+    contentEditor: contentEditorTemplate.template,
+    editor: editorTemplate.template
+  });
 };
 
 /** @override */
 ModalContentEditor.prototype._handlePostSuccess = function () {
-    ContentEditor.prototype._handlePostSuccess.call(this);
-    this.returnModal();
+  ContentEditor.prototype._handlePostSuccess.call(this);
+  this.returnModal();
 };
 
 /** @override */
 ModalContentEditor.prototype.render = function () {
-    ContentEditor.prototype.render.call(this);
-    var classes = ModalContentEditor.prototype.classes.EDITOR_SECTION;
-    this.$errorContainer = this.getElementsByClass(classes);
+  ContentEditor.prototype.render.call(this);
+  var classes = ModalContentEditor.prototype.classes.EDITOR_SECTION;
+  this.$errorContainer = this.getElementsByClass(classes);
 };
 
 module.exports = ModalContentEditor;

@@ -5,22 +5,22 @@
  * of the module
  */
 module.exports = function (packageJson, rework, css) {
-    var prefix = attrSelector('data-lf-package', packageName(packageJson));
+  var prefix = attrSelector('data-lf-package', packageName(packageJson));
 
-    console.log('prefixing css');
-    var prefixedCss = rework(css)
+  console.log('prefixing css');
+  var prefixedCss = rework(css)
         .use(rework.prefixSelectors(prefix))
         .toString();
-    return prefixedCss;
+  return prefixedCss;
 };
 
 function attrSelector(attr, value) {
-    var selector = '[{attr}~="{value}"]'
+  var selector = '[{attr}~="{value}"]'
         .replace('{attr}', attr)
         .replace('{value}', value);
-    return selector;
+  return selector;
 }
 
 function packageName(packageJson) {
-    return packageJson.name + '#' + packageJson.version;
+  return packageJson.name + '#' + packageJson.version;
 }

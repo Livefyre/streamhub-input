@@ -12,38 +12,38 @@ var $ = require('jquery');
  * @extends {InputButton}
  */
 function UploadButton(opts) {
-    opts = opts || {};
-    this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
+  opts = opts || {};
+  this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
 
-    var inputOpts = opts.mimetypes ? {pick: {mimetypes: opts.mimetypes}} : {};
-    var input = new Upload(inputOpts);
-    var command = new ModalInputCommand(input, {
-        modal: opts.modal
-    });
+  var inputOpts = opts.mimetypes ? {pick: {mimetypes: opts.mimetypes}} : {};
+  var input = new Upload(inputOpts);
+  var command = new ModalInputCommand(input, {
+    modal: opts.modal
+  });
 
-    InputButton.call(this, command, {
-        authRequired: opts.authRequired,
-        destination: opts.destination,
-        el: opts.el,
-        input: opts.input || input,
-        stylePrefix: opts.stylePrefix,
-        styles: opts.styles
-    });
+  InputButton.call(this, command, {
+    authRequired: opts.authRequired,
+    destination: opts.destination,
+    el: opts.el,
+    input: opts.input || input,
+    stylePrefix: opts.stylePrefix,
+    styles: opts.styles
+  });
 }
 inherits(UploadButton, InputButton);
 
 /** @enum {string} */
 UploadButton.prototype._i18n = {
-    POST_PHOTO: "What's on your mind?"
+  POST_PHOTO: 'What\'s on your mind?'
 };
 
 /** @override */
 UploadButton.prototype.getTemplateContext = function () {
-    return {
-        strings: {
-            post: this._i18n.POST_PHOTO
-        }
-    };
+  return {
+    strings: {
+      post: this._i18n.POST_PHOTO
+    }
+  };
 };
 
 /** @override */
@@ -57,15 +57,15 @@ UploadButton.prototype.elClass += ' hub-upload-btn';
 
 /** @override */
 UploadButton.prototype.destroy = function () {
-    InputButton.prototype.destroy.call(this);
+  InputButton.prototype.destroy.call(this);
 
-    if (this.opts.modal) {
-        this.opts.modal.destroy();
-    }
+  if (this.opts.modal) {
+    this.opts.modal.destroy();
+  }
 
-    if (this.opts.input) {
-        this.opts.input.destroy();
-    }
+  if (this.opts.input) {
+    this.opts.input.destroy();
+  }
 };
 
 module.exports = UploadButton;

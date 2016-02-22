@@ -28,17 +28,17 @@ var picker = null;
  * @extends {View}
  */
 function Upload(opts) {
-    opts = $.extend(true, {}, Upload.DEFAULT_OPTS, opts);
-    View.call(this, opts);
-    LaunchableModal.call(this);
-    Pipeable.call(this, opts);
+  opts = $.extend(true, {}, Upload.DEFAULT_OPTS, opts);
+  View.call(this, opts);
+  LaunchableModal.call(this);
+  Pipeable.call(this, opts);
 
-    if (opts.filepicker) {
-        this._filepickerKey = opts.filepicker.key;
-        this._cacheUrl = opts.filepicker.cache;
-        picker = opts.filepicker.instance || null;
-    }
-    this.name = opts.name || this.name;
+  if (opts.filepicker) {
+    this._filepickerKey = opts.filepicker.key;
+    this._cacheUrl = opts.filepicker.cache;
+    picker = opts.filepicker.instance || null;
+  }
+  this.name = opts.name || this.name;
 }
 inherits(Upload, View);
 inherits.parasitically(Upload, LaunchableModal);
@@ -62,35 +62,35 @@ Upload.prototype.template = require('hgn!streamhub-input/templates/upload');
  * @returns {!Object}
  */
 Upload.prototype.getTemplateContext = function () {
-    return {
-        container: this.opts.pick.container
-    };
+  return {
+    container: this.opts.pick.container
+  };
 };
 
 /**
  * Loads the filepicker script if picker is undefined
  * @private
  */
-Upload.prototype._initFilepicker = function() {
-    if (picker) {
-        return;
+Upload.prototype._initFilepicker = function () {
+  if (picker) {
+    return;
+  }
+
+  var protocol = window.location.protocol !== 'https:' ? 'http:' : 'https:';
+  var src = protocol + this.opts.src;
+  $.getScript(src, scriptLoadCallback);
+
+  var self = this;
+  function scriptLoadCallback(script, status) {
+    if (status !== 'success') {
+      picker = false;
+      throw 'There was an error loading ' + src;
     }
 
-    var protocol = window.location.protocol !== 'https:' ? 'http:' : 'https:';
-    var src = protocol + this.opts.src;
-    $.getScript(src, scriptLoadCallback);
-
-    var self = this;
-    function scriptLoadCallback(script, status) {
-        if (status !== 'success') {
-            picker = false;
-            throw 'There was an error loading ' + src;
-        }
-
-        picker = window.filepicker;
-        picker.setKey(self._filepickerKey);
-        self.emit('pickerLoaded');
-    }
+    picker = window.filepicker;
+    picker.setKey(self._filepickerKey);
+    self.emit('pickerLoaded');
+  }
 };
 
 /**
@@ -112,21 +112,21 @@ Upload.prototype._cacheUrl = 'http://media.fyre.co/';
  * @type {!Object}
  */
 Upload.DEFAULT_OPTS = {
-    packageAs: 'content',
-    pick: {
-        'container': 'picker',
-        'maxSize': 25*1024*1024, // allows files < 25MB
-        'mimetypes': ['image/*'],
-        'multiple': false
-    },
-    store: {
-        'location': 'S3',
-        'access': 'public'
-    },
-    convert: {
-        'rotate': 'exif'
-    },
-    src: '//api.filepicker.io/v2/filepicker.js'
+  packageAs: 'content',
+  pick: {
+    'container': 'picker',
+    'maxSize': 25*1024*1024, // allows files < 25MB
+    'mimetypes': ['image/*'],
+    'multiple': false
+  },
+  store: {
+    'location': 'S3',
+    'access': 'public'
+  },
+  convert: {
+    'rotate': 'exif'
+  },
+  src: '//api.filepicker.io/v2/filepicker.js'
 };
 
 /**
@@ -135,23 +135,24 @@ Upload.DEFAULT_OPTS = {
  * @param [inkBlob] {Object}
  */
 Upload.prototype._processResponse = function (err, inkBlob) {
-    if (err) {
-        if (err.code !== 101) {//101 when dialog closed using x-box.
-            this.showError('There was an error storing the file.');
-        }
-        return;
+  if (err) {
+    // 101 when dialog closed using x-box.
+    if (err.code !== 101) {
+      this.showError('There was an error storing the file.');
+    }
+    return;
+  }
+
+  var self = this;
+  if (inkBlob) {
+    if (!inkBlob.length) {
+      inkBlob = [inkBlob];
     }
 
-    var self = this;
-    if (inkBlob) {
-        if (!inkBlob.length) {
-            inkBlob = [inkBlob];
-        }
-
-        $.each(inkBlob, function (index, blob) {
-            self._postProcess(blob);
-        });
-    }
+    $.each(inkBlob, function (index, blob) {
+      self._postProcess(blob);
+    });
+  }
 };
 
 /**
@@ -159,47 +160,47 @@ Upload.prototype._processResponse = function (err, inkBlob) {
  * @private
  */
 Upload.prototype._postProcess = function (blob) {
-    var self = this;
+  var self = this;
 
-    var converters = {
-        image: function (blob, done) {
-            picker.convert(blob, self.opts.convert, self.opts.store, function (convertedBlob) {
-                var url = self._cacheUrl + convertedBlob.key;
-                var attachment = {
-                    type: 'photo',
-                    url: url,
-                    link: url,
-                    provider_name: 'Livefyre'
-                };
+  var converters = {
+    image: function (blob, done) {
+      picker.convert(blob, self.opts.convert, self.opts.store, function (convertedBlob) {
+        var url = self._cacheUrl + convertedBlob.key;
+        var attachment = {
+          type: 'photo',
+          url: url,
+          link: url,
+          provider_name: 'Livefyre'
+        };
 
-                var content = new Content({body: ''});
-                content.attachments.push(attachment);
-                done(content);
-            });
-        },
+        var content = new Content({body: ''});
+        content.attachments.push(attachment);
+        done(content);
+      });
+    },
 
-        video: function (blob, done) {
-            var attachment = {
-                type: 'video_promise',
-                url: self._cacheUrl + blob.key,
-                thumbnail_url: 'http://zor.livefyre.com/wjs/v3.0/images/video-play.png',
-                thumbnail_width: 75,
-                thumbnail_height: 56,
-                provider_name: 'Livefyre'
-            };
+    video: function (blob, done) {
+      var attachment = {
+        type: 'video_promise',
+        url: self._cacheUrl + blob.key,
+        thumbnail_url: 'http://zor.livefyre.com/wjs/v3.0/images/video-play.png',
+        thumbnail_width: 75,
+        thumbnail_height: 56,
+        provider_name: 'Livefyre'
+      };
 
-            var content = new Content({body: ''});
-            content.attachments.push(attachment);
-            done(content);
-        }
-    };
-
-    var contentType = blob.mimetype.split('/')[0];
-
-    if (contentType in converters) {
-        return converters[contentType](blob, $.proxy(this.writeToDestination, this));
+      var content = new Content({body: ''});
+      content.attachments.push(attachment);
+      done(content);
     }
-    throw 'Unknown content type: ' + contentType;
+  };
+
+  var contentType = blob.mimetype.split('/')[0];
+
+  if (contentType in converters) {
+    return converters[contentType](blob, $.proxy(this.writeToDestination, this));
+  }
+  throw 'Unknown content type: ' + contentType;
 };
 
 /**
@@ -209,32 +210,32 @@ Upload.prototype._postProcess = function (blob) {
  * @override
  */
 Upload.prototype.launchModal = function (callback) {
-    var self = this;
-    if (!picker) {
-        this.once('pickerLoaded', this.launchModal.bind(this, callback));
-        return this._initFilepicker();
-    }
+  var self = this;
+  if (!picker) {
+    this.once('pickerLoaded', this.launchModal.bind(this, callback));
+    return this._initFilepicker();
+  }
 
-    LaunchableModal.prototype.launchModal.apply(this, arguments);
+  LaunchableModal.prototype.launchModal.apply(this, arguments);
 
-    function errBack(err, data) {
-        self._processResponse(err, data);
-        self.returnModal();
-    }
-    function successFn(inkBlob) {
-        errBack(null, inkBlob);
-    }
-    function errorFn(err) {
-        errBack(err);
-    }
+  function errBack(err, data) {
+    self._processResponse(err, data);
+    self.returnModal();
+  }
+  function successFn(inkBlob) {
+    errBack(null, inkBlob);
+  }
+  function errorFn(err) {
+    errBack(err);
+  }
 
-    picker.pickAndStore(this.opts.pick, this.opts.store, successFn, errorFn);
+  picker.pickAndStore(this.opts.pick, this.opts.store, successFn, errorFn);
 };
 
 /** @override */
 Upload.prototype.showError = function (msg) {
-    //TODO (joao) Real implementation
-    log(msg);
+  // TODO (joao) Real implementation
+  log(msg);
 };
 
 module.exports = Upload;

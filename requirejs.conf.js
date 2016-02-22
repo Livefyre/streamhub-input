@@ -103,32 +103,32 @@ require.config({
     name: 'livefyre-theme-styler',
     location: 'lib/livefyre-theme-styler/src'
   },{
-    name: "livefyre-bootstrap",
-    location: "lib/livefyre-bootstrap/src"
+    name: 'livefyre-bootstrap',
+    location: 'lib/livefyre-bootstrap/src'
   }],
   shim: {
     rework: {
-          exports: 'rework'
+      exports: 'rework'
     },
     jquery: {
-        exports: '$'
+      exports: '$'
     },
     jasmine: {
-        exports: 'jasmine'
+      exports: 'jasmine'
     },
     'jasmine-html': {
-        deps: ['jasmine'],
-        exports: 'jasmine'
+      deps: ['jasmine'],
+      exports: 'jasmine'
     },
     'blanket-jasmine': {
-        exports: 'blanket',
-        deps: ['jasmine']
+      exports: 'blanket',
+      deps: ['jasmine']
     },
     'jasmine-jquery': {
-        deps: ['jquery']
+      deps: ['jquery']
     },
     sinon: {
-        exports: 'sinon'
+      exports: 'sinon'
     }
   },
   css: {
@@ -143,7 +143,7 @@ require.config({
     paths: ['lib'],
     relativeUrls: true,
     modifyVars: {
-      "@icon-font-path": "\"http://cdn.livefyre.com/libs/livefyre-bootstrap/v1.1.0/fonts/\""
+      '@icon-font-path': '"http://cdn.livefyre.com/libs/livefyre-bootstrap/v1.1.0/fonts/"'
     }
   }
 });

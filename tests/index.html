@@ -14,6 +14,7 @@
 
                 var jasmineEnv = jasmine.getEnv();
                 jasmineEnv.updateInterval = 1000;
+
                 // Copy jasmine globals
                 ['spyOn', 'waitsFor', 'waits', 'runs', 'expect'].forEach(function (key) {
                     window[key] = function () {

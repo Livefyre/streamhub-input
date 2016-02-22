@@ -5,7 +5,7 @@ auth = authOptional;
 
 if (typeof Livefyre !== 'undefined' &&
     typeof Livefyre['auth'] === 'object') {
-    auth = Livefyre['auth'];
+  auth = Livefyre['auth'];
 }
 
 module.exports = auth;

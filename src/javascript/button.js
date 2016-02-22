@@ -20,45 +20,45 @@ var uuid = require('node-uuid');
  * @constructor
  * @extends {Button}
  */
- function InputButton(command, opts) {
-    opts = opts || {};
+function InputButton(command, opts) {
+  opts = opts || {};
 
-    /**
-     * @type {?Pipeable}
-     */
-    this._input = opts.input || null;
+  /**
+   * @type {?Pipeable}
+   */
+  this._input = opts.input || null;
 
-    /**
-     * Create a UUID for this instance. Used specifically for multiple instances
-     * so that there aren't conflicts.
-     * @type {string}
-     * @private
-     */
-    this._uuid = uuid();
+  /**
+   * Create a UUID for this instance. Used specifically for multiple instances
+   * so that there aren't conflicts.
+   * @type {string}
+   * @private
+   */
+  this._uuid = uuid();
 
-    /**
-     * The style prefix to provide to the theme styler.
-     * NOTE: The second option does not include a space intentionally so that
-     *       the code that removes the :host selector in the theme styler will
-     *       remove it and will keep this prefix as the top-level selector.
-     *       e.g. [attr=value] :host.lf-input-button {} becomes
-     *            [attr=value].lf-input-button {}
-     * @type {string}
-     */
-    this._stylePrefix = opts.stylePrefix ||
+  /**
+   * The style prefix to provide to the theme styler.
+   * NOTE: The second option does not include a space intentionally so that
+   *       the code that removes the :host selector in the theme styler will
+   *       remove it and will keep this prefix as the top-level selector.
+   *       e.g. [attr=value] :host.lf-input-button {} becomes
+   *            [attr=value].lf-input-button {}
+   * @type {string}
+   */
+  this._stylePrefix = opts.stylePrefix ||
         ['[', this.prefixAttribute, '="', this._uuid, '"]'].join('');
 
-    if (opts.destination) {
-        this.pipe(opts.destination);
-    }
+  if (opts.destination) {
+    this.pipe(opts.destination);
+  }
 
-    if (opts.authRequired !== false) {
-        command = new AuthRequiredCommand(command);
-    }
+  if (opts.authRequired !== false) {
+    command = new AuthRequiredCommand(command);
+  }
 
-    Button.call(this, command, opts);
+  Button.call(this, command, opts);
 
-    this._applyTheme(opts.styles);
+  this._applyTheme(opts.styles);
 }
 inherits(InputButton, Button);
 
@@ -82,21 +82,21 @@ InputButton.prototype.prefixAttribute = 'lf-input-uuid';
  * @private
  */
 InputButton.prototype._applyTheme = function (theme) {
-    this._themeStyler = this._themeStyler || new ThemeStyler({
-        css: themableCss,
-        prefix: this._stylePrefix
-    });
-    this._themeStyler.applyTheme(theme);
+  this._themeStyler = this._themeStyler || new ThemeStyler({
+    css: themableCss,
+    prefix: this._stylePrefix
+  });
+  this._themeStyler.applyTheme(theme);
 };
 
 /** @override */
 InputButton.prototype.setElement = function (el) {
-    if (this.$el) {
-        this.$el.unwrap();
-    }
-    Button.prototype.setElement.call(this, el);
-    packageAttribute.wrapWithStylePrefix(this.$el);
-    this.$el.attr(this.prefixAttribute, this._uuid);
+  if (this.$el) {
+    this.$el.unwrap();
+  }
+  Button.prototype.setElement.call(this, el);
+  packageAttribute.wrapWithStylePrefix(this.$el);
+  this.$el.attr(this.prefixAttribute, this._uuid);
 };
 
 /**
@@ -104,9 +104,9 @@ InputButton.prototype.setElement = function (el) {
  * @param {Writable} writable
  */
 InputButton.prototype.pipe = function (writeable) {
-    if (this._input) {
-        this._input.pipe(writeable);
-    }
+  if (this._input) {
+    this._input.pipe(writeable);
+  }
 };
 
 /**
@@ -114,9 +114,9 @@ InputButton.prototype.pipe = function (writeable) {
  * @param {Writable} writable
  */
 InputButton.prototype.unpipe = function (writeable) {
-    if (this._input) {
-        this._input.unpipe(writeable);
-    }
+  if (this._input) {
+    this._input.unpipe(writeable);
+  }
 };
 
 module.exports = InputButton;

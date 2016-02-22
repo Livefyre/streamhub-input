@@ -1,4 +1,4 @@
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
     basePath: '..',
     frameworks: ['jasmine', 'cajon'],
@@ -18,6 +18,6 @@ module.exports = function(config) {
     browsers: ['PhantomJS'],
     colors: true,
     singleRun: true,
-    reporters: ['dots', 'progress'],
+    reporters: ['dots', 'progress']
   });
 };

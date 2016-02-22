@@ -8,19 +8,19 @@
   baseUrl: '..',
   buildCSS: true,
   separateCSS: true,
-  name: "streamhub-input",
+  name: 'streamhub-input',
   include: [
     'almond'
   ],
   stubModules: ['text', 'hgn', 'json', 'less/less'],
   exclude: ['css/normalize', 'less/normalize'],
-  out: "../dist/streamhub-input.min.js",
+  out: '../dist/streamhub-input.min.js',
   pragmasOnSave: {
     excludeHogan: true,
     excludeRequireCss: true
   },
   cjsTranslate: true,
-  optimize: "uglify2",
+  optimize: 'uglify2',
   preserveLicenseComments: false,
   uglify2: {
     compress: {
@@ -33,11 +33,10 @@
     endFile: 'wrap-end.frag'
   },
   generateSourceMaps: true,
-  onBuildRead: function(moduleName, path, contents) {
+  onBuildRead: function (moduleName, path, contents) {
     switch (moduleName) {
-      case "jquery":
-      // case "base64":
-        contents = "define([], function(require, exports, module) {" + contents + "});";
+      case 'jquery':
+        contents = 'define([], function(require, exports, module) {' + contents + '});';
     }
     return contents;
   }

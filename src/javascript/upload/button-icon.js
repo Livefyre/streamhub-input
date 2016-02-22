@@ -11,8 +11,8 @@ var UploadButton = require('streamhub-input/javascript/upload/button');
  * @extends {UploadButton}
  */
 function UploadButtonIcon(opts) {
-    opts = opts || {};
-    UploadButton.call(this, opts);
+  opts = opts || {};
+  UploadButton.call(this, opts);
 }
 inherits(UploadButtonIcon, UploadButton);
 
