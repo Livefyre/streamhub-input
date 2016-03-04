@@ -61,7 +61,8 @@
     min-width: 85%;
 }
 
-.hub-modal-input-wrapper {
+.hub-modal-input-wrapper,
+.hub-modal-success-wrapper {
     .box-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
     background-clip: padding-box;
     background-color: #ffffff;
@@ -190,4 +191,28 @@
 .lf-attachment-thumbnail {
     max-height: 200px;
     width: 100px;
+}
+
+.hub-modal-success-wrapper {
+    text-align: center;
+
+    h1 {
+        color: #333;
+        font-size: 34px;
+        font-weight: normal;
+        line-height: 40px;
+        margin-bottom: 0;
+    }
+    p {
+        color: #66686f;
+        font-size: 16px;
+        line-height: 24px;
+        margin: 15px 0 30px;
+    }
+    .lf-input-btn {
+        font-size: 12px;
+        line-height: 12px;
+        padding: 10px 38px;
+        width: auto;
+    }
 }

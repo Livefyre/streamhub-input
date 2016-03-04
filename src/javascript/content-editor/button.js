@@ -52,12 +52,13 @@ ContentEditorButton.prototype.elClass += ' comment-btn';
  */
 ContentEditorButton.prototype.createInput = function (opts) {
   var input = new ModalContentEditor({
+    _i18n: opts._i18n,
+    disableSuccessModal: opts.disableSuccessModal,
+    maxAttachmentsPerPost: opts.maxAttachmentsPerPost,
     mediaEnabled: opts.mediaEnabled,
     mimetypes: opts.mimetypes,
-    maxAttachmentsPerPost: opts.maxAttachmentsPerPost,
-    showTitle: opts.showTitle,
     mediaRequired: opts.mediaRequired,
-    _i18n: opts._i18n
+    showTitle: opts.showTitle
   });
   return input;
 };

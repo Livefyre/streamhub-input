@@ -220,7 +220,10 @@ Upload.prototype.launchModal = function (callback) {
 
   function errBack(err, data) {
     self._processResponse(err, data);
-    self.returnModal();
+
+    self.opts.disableSuccessModal ?
+      self.returnModal() :
+      self.showSuccess(self.opts, $.proxy(self.returnModal, self));
   }
   function successFn(inkBlob) {
     errBack(null, inkBlob);
