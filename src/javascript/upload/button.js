@@ -17,6 +17,7 @@ function UploadButton(opts) {
 
   var inputOpts = opts.mimetypes ? {pick: {mimetypes: opts.mimetypes}} : {};
   inputOpts._i18n = this._i18n;
+  inputOpts.disableSuccessModal = opts.disableSuccessModal;
 
   var input = new Upload(inputOpts);
   var command = new ModalInputCommand(input, {

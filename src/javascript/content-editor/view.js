@@ -11,6 +11,7 @@ var contentEditorTemplate = require('hgn!streamhub-input/templates/content-edito
 var Editor = require('streamhub-editor');
 var editorTemplate = require('hgn!streamhub-editor/templates/editor');
 var inherits = require('inherits');
+var merge = require('mout/object/merge');
 var observer = require('observer');
 var packageAttribute = require('streamhub-input/javascript/package-attribute');
 var Pipeable = require('streamhub-input/javascript/pipeable');
@@ -81,7 +82,9 @@ ContentEditor.prototype._addUploadButton = function () {
     uploadEl = $('<div />').addClass(this.classes.EDITOR_UPLOAD);
     this.getElementsByClass(this.classes.BTN_WRAPPER).prepend(uploadEl);
   }
-  this._uploadButton = this._uploadButton || this.createUploadButton(this.opts);
+  this._uploadButton = this._uploadButton || this.createUploadButton(merge(this.opts, {
+    disableSuccessModal: true
+  }));
   this._uploadButton.setElement(uploadEl);
   this._uploadButton.render();
   this._uploadButton.pipe(this._attachmentsList);
@@ -289,7 +292,7 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
     }
     ev.success();
 
-    self._attachmentsList.destroy();
+    self._attachmentsList && self._attachmentsList.destroy();
     self._attachmentsList = null;
     self._addAttachmentList();
 
