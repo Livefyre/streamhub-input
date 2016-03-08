@@ -15,6 +15,7 @@ describe('streamhub-input/javascript/content-editor/modal-view', function () {
     beforeEach(function () {
       sandbox();
       commentInput = new ModalContentEditor({
+        disableSuccessModal: true,
         el: $('#sandbox')[0]
       });
     });

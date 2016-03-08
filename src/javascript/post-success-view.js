@@ -31,7 +31,7 @@ function PostSuccessView(opts, closeCallback) {
    * @type {function()}
    * @private
    */
-  this._closeCallback = closeCallback || function() {};
+  this._closeCallback = closeCallback || function () {};
 }
 inherits(PostSuccessView, View);
 
