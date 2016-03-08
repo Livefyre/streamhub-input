@@ -1,4 +1,4 @@
-.PHONY: all build dist
+.PHONY: all build dist test
 
 ENV=dev
 
@@ -17,8 +17,8 @@ dist: node_modules tools/build.conf.js requirejs.conf.js src/styles/streamhub-in
 
 install: build
 
-lint: build
-	npm run lint
+lint:
+	./node_modules/.bin/lfeslint
 
 # if package.json changes, install
 node_modules: package.json
@@ -32,5 +32,5 @@ run: server
 server: build
 	npm start
 
-test: lint
-	npm test
+test: build lint
+	./node_modules/karma/bin/karma start tests/karma.conf.js --singleRun --reporters dots
