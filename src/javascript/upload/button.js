@@ -16,6 +16,9 @@ function UploadButton(opts) {
   this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
 
   var inputOpts = opts.mimetypes ? {pick: {mimetypes: opts.mimetypes}} : {};
+  inputOpts._i18n = this._i18n;
+  inputOpts.disableSuccessModal = opts.disableSuccessModal;
+
   var input = new Upload(inputOpts);
   var command = new ModalInputCommand(input, {
     modal: opts.modal

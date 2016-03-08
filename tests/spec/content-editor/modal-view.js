@@ -2,6 +2,7 @@
 
 var $ = require('jquery');
 var ModalContentEditor = require('streamhub-input/javascript/content-editor/modal-view');
+var SuccessView = require('streamhub-input/javascript/post-success-view');
 require('jasmine-jquery');
 
 describe('streamhub-input/javascript/content-editor/modal-view', function () {
@@ -43,8 +44,24 @@ describe('streamhub-input/javascript/content-editor/modal-view', function () {
       spyOn(commentInput, 'returnModal').andCallThrough();
       spyOn(commentInput, 'reset');
 
+      commentInput.opts.disableSuccessModal = true;
       commentInput._handlePostSuccess();
 
+      expect(commentInput.returnModal).toHaveBeenCalled();
+      expect(commentInput.reset).toHaveBeenCalled();
+    });
+
+    it('shows a success view instead of closing', function () {
+      commentInput.render();
+      spyOn(commentInput, 'returnModal').andCallThrough();
+      spyOn(commentInput, 'reset');
+      spyOn(SuccessView.prototype, 'render').andCallThrough();
+
+      commentInput._handlePostSuccess();
+      expect(SuccessView.prototype.render).toHaveBeenCalled();
+      expect(commentInput.returnModal).not.toHaveBeenCalled();
+
+      commentInput._success.$el.find('button').click();
       expect(commentInput.returnModal).toHaveBeenCalled();
       expect(commentInput.reset).toHaveBeenCalled();
     });

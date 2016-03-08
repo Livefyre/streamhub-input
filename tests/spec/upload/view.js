@@ -1,6 +1,7 @@
 'use strict';
 
 var $ = require('jquery');
+var SuccessView = require('streamhub-input/javascript/post-success-view');
 var Upload = require('streamhub-input/javascript/upload/view');
 var Writable = require('stream/writable');
 
@@ -28,6 +29,46 @@ describe('streamhub-input/javascript/upload/view', function () {
     runs(function () {
       expect(window.filepicker).not.toBe(undefined);
     });
+  });
+
+  it('shows the success view', function () {
+    var writes = [];
+    var response = [{
+      mimetype: 'image/png',
+      key: 'lm4pob08T1GWegOV01Jz_08_img_3976_nat_at_rockys.jpg',
+      url: 'https://www.filepicker.io/api/file/P1xV1pV9QVmwoK4F5h7t'
+    }];
+
+    var opts = {};
+    opts.filepicker = {
+      cache: 'http://foo.bar/',
+      key: '123abc',
+      instance: {
+        pickAndStore: function (pick, store, success) {
+          success(response);
+        },
+        convert: function (blob, convert, store, success) {
+          success(response[0]);
+        }
+      }
+    };
+    uploadInput = new Upload(opts);
+    writable = new Writable();
+    writable._write = function (content) {
+      writes.push(content);
+    };
+    uploadInput.pipe(writable);
+
+    spyOn(uploadInput, 'returnModal').andCallThrough();
+    spyOn(SuccessView.prototype, 'render').andCallThrough();
+
+    uploadInput.launchModal();
+
+    expect(SuccessView.prototype.render).toHaveBeenCalled();
+    expect(uploadInput.returnModal).not.toHaveBeenCalled();
+
+    uploadInput._success.$el.find('button').click();
+    expect(uploadInput.returnModal).toHaveBeenCalled();
   });
 
   describe('handles conversions of media', function () {

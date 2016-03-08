@@ -2,6 +2,7 @@
 
 var ModalView = require('streamhub-sdk/modal');
 var packageAttribute = require('streamhub-input/javascript/package-attribute');
+var PostSuccessView = require('streamhub-input/javascript/post-success-view');
 
 /**
  * A view that can be displayed and interacted with in an otherwise generic modal.
@@ -33,6 +34,21 @@ LaunchableModal.prototype.returnModal = function () {
     this._modal.$el.trigger('hideModal.hub');  // Will _modal.hide()
   }
   this._showing = false;
+};
+
+/**
+ * Show the success view.
+ * @param {Object} opts - Configuration options.
+ * @param {function()=} closeCallback - Close callback to call when `done`
+ *   button is clicked.
+ */
+LaunchableModal.prototype.showSuccess = function (opts, closeCallback) {
+  if (!this._success) {
+    this._success = new PostSuccessView(opts, closeCallback);
+    this._success.render();
+  }
+  this._success.delegateEvents();
+  this.$el.replaceWith(this._success.el);
 };
 
 module.exports = LaunchableModal;

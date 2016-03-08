@@ -39,7 +39,10 @@ ModalContentEditor.prototype.template = function (context) {
 /** @override */
 ModalContentEditor.prototype._handlePostSuccess = function () {
   ContentEditor.prototype._handlePostSuccess.call(this);
-  this.returnModal();
+
+  this.opts.disableSuccessModal ?
+    this.returnModal() :
+    this.showSuccess(this.opts, $.proxy(this.returnModal, this));
 };
 
 /** @override */
