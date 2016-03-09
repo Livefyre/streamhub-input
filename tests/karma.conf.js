@@ -13,8 +13,12 @@ module.exports = function (config) {
       {pattern: 'src/**/*.mustache', included: false},
       {pattern: 'tests/spec/**/*.js', included: false},
       'tests/tests-main.js',
-      {pattern: 'dist/streamhub-input.min.css', included: false}
+      {pattern: 'dist/streamhub-input.min.css', included: false},
+      {pattern: 'https://api.filepicker.io/v2/filepicker.js', included: false}
     ],
+    proxies: {
+      '/https://api.filepicker.io/v2/filepicker.js': 'https://api.filepicker.io/v2/filepicker.js'
+    },
     browsers: ['PhantomJS'],
     colors: true,
     singleRun: true,
