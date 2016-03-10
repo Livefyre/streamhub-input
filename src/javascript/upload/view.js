@@ -126,7 +126,7 @@ Upload.DEFAULT_OPTS = {
   convert: {
     'rotate': 'exif'
   },
-  src: '//api.filepicker.io/v2/filepicker.js'
+  src: 'https://api.filepicker.io/v2/filepicker.js'
 };
 
 /**
