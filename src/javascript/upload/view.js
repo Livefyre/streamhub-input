@@ -76,9 +76,8 @@ Upload.prototype._initFilepicker = function () {
     return;
   }
 
-  var protocol = window.location.protocol !== 'https:' ? 'http:' : 'https:';
-  var src = protocol + this.opts.src;
-  $.getScript(src, scriptLoadCallback);
+  var src = this.opts.src;
+  $.getScript(this.opts.src, scriptLoadCallback);
 
   var self = this;
   function scriptLoadCallback(script, status) {
