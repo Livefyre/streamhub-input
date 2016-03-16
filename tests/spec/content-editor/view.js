@@ -230,7 +230,7 @@ describe('streamhub-input/javascript/content-editor/view', function () {
         commentInput.$titleEl.val('abc');
         commentInput.$el.find('.lf-editor-post-btn').click();
 
-        expect(spy.callCount).toEqual(1);
+        expect(spy.callCount).toEqual(2);
         expect(spy.lastCall.args[0]).toEqual('An attachment is required');
         spy.restore();
       });
