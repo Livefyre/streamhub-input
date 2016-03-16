@@ -46,10 +46,28 @@ ModalContentEditor.prototype._handlePostSuccess = function () {
 };
 
 /** @override */
+ModalContentEditor.prototype.launchModal = function (modal) {
+  LaunchableModal.prototype.launchModal.call(this, modal);
+
+  // Listen for the hidden event on the modal and save the contents of the
+  // editor for later. This fixes a bug in IE where the contents of the body
+  // are gone when trying to add it back.
+  this._modal.$el.on('hidden', $.proxy(function () {
+    this._savedBody = this.$textareaEl && this.$textareaEl.val();
+    this._savedTitle = this.$titleEl && this.$titleEl.val();
+  }, this));
+};
+
+/** @override */
 ModalContentEditor.prototype.render = function () {
   ContentEditor.prototype.render.call(this);
-  var classes = ModalContentEditor.prototype.classes.EDITOR_SECTION;
-  this.$errorContainer = this.getElementsByClass(classes);
+  this.$errorContainer = this.getElementsByClass(this.classes.EDITOR_SECTION);
+
+  // Use the saved body and title values. This is the other half of the bug
+  // fix for IE where we take the saved values of the body and title elements
+  // and put it back into the element values.
+  this._savedBody && this.$textareaEl.val(this._savedBody);
+  this._savedTitle && this.$titleEl.val(this._savedTitle);
 };
 
 module.exports = ModalContentEditor;
