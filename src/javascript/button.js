@@ -22,6 +22,7 @@ var uuid = require('node-uuid');
  */
 function InputButton(command, opts) {
   opts = opts || {};
+  opts.insightsVerb = opts.insightsVerb || 'PostButtonClick';
 
   /**
    * @type {?Pipeable}
