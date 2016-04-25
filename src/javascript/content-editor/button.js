@@ -20,6 +20,7 @@ function ContentEditorButton(opts) {
   opts = opts || {};
   this._i18n = $.extend(true, {}, this._i18n, (opts._i18n || {}));
 
+  opts.insightsVerb = opts.insightsVerb || 'PostButtonClick';
   opts.input = opts.input || this.createInput(opts);
 
   var command = new ModalInputCommand(opts.input, {
@@ -51,7 +52,7 @@ ContentEditorButton.prototype.elClass += ' comment-btn';
  * when the button is clicked
  */
 ContentEditorButton.prototype.createInput = function (opts) {
-  var input = new ModalContentEditor({
+  return new ModalContentEditor({
     _i18n: opts._i18n,
     disableSuccessModal: opts.disableSuccessModal,
     maxAttachmentsPerPost: opts.maxAttachmentsPerPost,
@@ -60,7 +61,6 @@ ContentEditorButton.prototype.createInput = function (opts) {
     mediaRequired: opts.mediaRequired,
     showTitle: opts.showTitle
   });
-  return input;
 };
 
 module.exports = ContentEditorButton;

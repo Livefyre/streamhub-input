@@ -31,7 +31,7 @@ LaunchableModal.prototype.launchModal = function (modal) {
  */
 LaunchableModal.prototype.returnModal = function () {
   if (this._showing) {
-    this._modal.$el.trigger('hideModal.hub');  // Will _modal.hide()
+    this._modal.$el.trigger('hideModal.hub', this);  // Will _modal.hide()
   }
   this._showing = false;
 };

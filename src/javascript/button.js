@@ -22,7 +22,9 @@ var uuid = require('node-uuid');
  */
 function InputButton(command, opts) {
   opts = opts || {};
-  opts.insightsVerb = opts.insightsVerb || 'PostButtonClick';
+  opts.insightsVerb = opts.insightsVerb === null
+    ? null
+    : opts.insightsVerb || 'InputButtonClick';
 
   /**
    * @type {?Pipeable}

@@ -297,6 +297,17 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
       return ev.failure(err);
     }
     ev.success();
+    self._modal.$el.trigger('insights:local', {
+      type: 'Posted',
+      content: {
+        type: 'Content',
+        id: newContent.id,
+        attachment: newContent.attachments,
+        content: newContent.body,
+        contentGenerator: 'livefyre.com',
+        isFeatured: false
+      }
+    });
 
     self._attachmentsList && self._attachmentsList.destroy();
     self._attachmentsList = null;
@@ -304,6 +315,18 @@ ContentEditor.prototype.sendPostEvent = function (ev) {
 
     self._hideUploadButton = false;
     self._addUploadButton();
+  });
+
+  this._postButton.$el.trigger('insights:local', {
+    type: 'Post',
+    content: {
+      type: 'PostMessage',
+      id: null,
+      attachment: ev.attachments,
+      content: ev.body,
+      contentGenerator: 'livefyre.com',
+      isFeatured: false
+    }
   });
 };
 
