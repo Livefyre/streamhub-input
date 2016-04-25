@@ -29,6 +29,9 @@ function UploadButton(opts) {
     destination: opts.destination,
     el: opts.el,
     input: opts.input || input,
+    // TODO: This is temporary until we define what our insights verb will be
+    // for the upload button. Passing null will make it so NO event is fired.
+    insightsVerb: null,
     stylePrefix: opts.stylePrefix,
     styles: opts.styles
   });
