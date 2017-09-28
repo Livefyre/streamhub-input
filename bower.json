@@ -1,6 +1,6 @@
 {
   "name": "streamhub-input",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "main": [
     "./src/main.js"
   ],
@@ -29,7 +29,6 @@
     "almond": "~0.2.5",
     "auth-delegates": "Livefyre/auth-delegates#~0.4.4-beta",
     "sinonjs": "1.7.3",
-    "streamhub-wall": "git://github.com/Livefyre/streamhub-wall.git",
     "livefyre-auth": "Livefyre/livefyre-auth"
   },
   "resolutions": {

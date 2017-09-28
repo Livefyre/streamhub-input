@@ -2,7 +2,7 @@
 
 var inherits = require('inherits');
 var LaunchableModal = require('streamhub-input/javascript/modal/launchable-modal');
-var ModalInputCommand= require('streamhub-input/javascript/modal/modal-input-command');
+var ModalInputCommand = require('streamhub-input/javascript/modal/modal-input-command');
 var ModalView = require('streamhub-sdk/modal');
 var View = require('view');
 

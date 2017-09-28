@@ -23,86 +23,86 @@ require.config({
   packages: [{
     name: 'stream',
     location: 'lib/stream/src'
-  },{
+  }, {
     name: 'auth',
     location: 'lib/auth/src'
-  },{
+  }, {
     name: 'auth-delegates',
     location: 'lib/auth-delegates/src'
-  },{
+  }, {
     name: 'debug',
     location: 'lib/debug',
     main: 'debug'
-  },{
+  }, {
     name: 'livefyre-auth',
     location: 'lib/livefyre-auth/src'
-  },{
+  }, {
     name: 'streamhub-editor',
     location: 'lib/streamhub-editor/src/javascript'
-  },{
+  }, {
     name: 'streamhub-editor/templates',
     location: 'lib/streamhub-editor/src/templates'
-  },{
+  }, {
     name: 'streamhub-editor/styles',
     location: 'lib/streamhub-editor/src/styles'
-  },{
+  }, {
     name: 'streamhub-sdk',
     location: 'lib/streamhub-sdk/src'
-  },{
+  }, {
     name: 'streamhub-sdk/auth',
     location: 'lib/streamhub-sdk/src/auth'
-  },{
+  }, {
     name: 'streamhub-sdk/ui/',
     location: 'lib/streamhub-sdk/src/ui'
-  },{
+  }, {
     name: 'streamhub-sdk/collection',
     location: 'lib/streamhub-sdk/src/collection'
-  },{
+  }, {
     name: 'streamhub-sdk/content',
     location: 'lib/streamhub-sdk/src/content'
-  },{
+  }, {
     name: 'streamhub-sdk/modal',
     location: 'lib/streamhub-sdk/src/modal'
-  },{
+  }, {
     name: 'streamhub-sdk/jquery',
     location: 'lib/streamhub-sdk/src',
     main: 'jquery'
-  },{
+  }, {
     name: 'streamhub-input',
     location: 'src',
     main: 'javascript/main'
-  },{
+  }, {
     name: 'streamhub-wall',
     location: 'lib/streamhub-wall/src'
-  },{
+  }, {
     name: 'streamhub-ui',
     location: 'lib/streamhub-ui/src'
-  },{
+  }, {
     name: 'streamhub-share',
     location: 'lib/streamhub-share/src',
     main: 'share-button'
-  },{
+  }, {
     name: 'tests',
     location: 'tests'
-  },{
+  }, {
     name: 'view',
     location: 'lib/view/src',
     main: 'view'
-  },{
+  }, {
     name: 'auth-delegates',
     location: 'lib/auth-delegates/src'
-  },{
+  }, {
     name: 'css',
     location: 'lib/require-css',
     main: 'css'
-  },{
+  }, {
     name: 'less',
     location: 'lib/require-less',
     main: 'less'
-  },{
+  }, {
     name: 'livefyre-theme-styler',
     location: 'lib/livefyre-theme-styler/src'
-  },{
+  }, {
     name: 'livefyre-bootstrap',
     location: 'lib/livefyre-bootstrap/src'
   }],

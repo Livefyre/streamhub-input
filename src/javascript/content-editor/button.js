@@ -55,6 +55,7 @@ ContentEditorButton.prototype.createInput = function (opts) {
     _i18n: opts._i18n,
     disableSuccessModal: opts.disableSuccessModal,
     maxAttachmentsPerPost: opts.maxAttachmentsPerPost,
+    maxSize: opts.maxSize,
     mediaEnabled: opts.mediaEnabled,
     mimetypes: opts.mimetypes,
     mediaRequired: opts.mediaRequired,

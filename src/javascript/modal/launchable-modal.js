@@ -22,7 +22,7 @@ LaunchableModal.prototype.launchModal = function (modal) {
     this._modal = modal || new ModalView();
     packageAttribute.decorateModal(this._modal);
   }
-  this._modal.show(this, true);  // Will .render() and stack
+  this._modal.show(this, true); // Will .render() and stack
   this._showing = true;
 };
 
@@ -31,7 +31,7 @@ LaunchableModal.prototype.launchModal = function (modal) {
  */
 LaunchableModal.prototype.returnModal = function () {
   if (this._showing) {
-    this._modal.$el.trigger('hideModal.hub');  // Will _modal.hide()
+    this._modal.$el.trigger('hideModal.hub'); // Will _modal.hide()
   }
   this._showing = false;
 };

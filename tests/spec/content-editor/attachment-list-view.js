@@ -54,7 +54,7 @@ describe('streamhub-input/javascript/content-editor/attachment-list-view', funct
       attachmentListView.on(AttachmentListView.EVENTS.REMOVE, stub);
       attachmentListView.add(content);
       var view = attachmentListView._childViews[0];
-      View.prototype.render.call(view);  // Hack b/c the image url won't ever load.
+      View.prototype.render.call(view); // Hack b/c the image url won't ever load.
       view.$('.' + AttachmentListView.prototype.classes.DISCARD_X).click();
       expect(stub.callCount).toEqual(1);
       attachmentListView.removeListener(AttachmentListView.EVENTS.REMOVE);
@@ -76,7 +76,7 @@ describe('streamhub-input/javascript/content-editor/attachment-list-view', funct
       attachmentListView.delegateEvents();
       attachmentListView.add(content);
       var view = attachmentListView._childViews[0];
-      View.prototype.render.call(view);  // Hack b/c the image url won't ever load.
+      View.prototype.render.call(view); // Hack b/c the image url won't ever load.
       view.$('.' + AttachmentListView.prototype.classes.DISCARD_X).click();
       expect(attachmentListView._handleRemove).toHaveBeenCalled();
       expect(attachmentListView._childViews.length).toEqual(0);

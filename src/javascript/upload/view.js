@@ -114,7 +114,7 @@ Upload.DEFAULT_OPTS = {
   packageAs: 'content',
   pick: {
     'container': 'picker',
-    'maxSize': 25*1024*1024, // allows files < 25MB
+    'maxSize': 25 * 1024 * 1024, // allows files < 25MB
     'mimetypes': ['image/*'],
     'multiple': false
   },
@@ -162,6 +162,16 @@ Upload.prototype._postProcess = function (blob) {
   var self = this;
 
   var converters = {
+    audio: function (blob, done) {
+      var content = new Content({body: ''});
+      content.attachments.push({
+        type: 'audio_promise',
+        url: self._cacheUrl + blob.key,
+        provider_name: 'Livefyre'
+      });
+      done(content);
+    },
+
     image: function (blob, done) {
       picker.convert(blob, self.opts.convert, self.opts.store, function (convertedBlob) {
         var url = self._cacheUrl + convertedBlob.key;
