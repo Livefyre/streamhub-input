@@ -1,10 +1,10 @@
 'use strict';
 
+var $ = require('jquery');
 var inherits = require('inherits');
 var InputButton = require('streamhub-input/javascript/button');
 var ModalInputCommand = require('streamhub-input/javascript/modal/modal-input-command');
 var Upload = require('streamhub-input/javascript/upload/view');
-var $ = require('jquery');
 
 /**
  * @param [opts] {Object}
@@ -18,6 +18,10 @@ function UploadButton(opts) {
   var inputOpts = opts.mimetypes ? {pick: {mimetypes: opts.mimetypes}} : {};
   inputOpts._i18n = this._i18n;
   inputOpts.disableSuccessModal = opts.disableSuccessModal;
+
+  if (opts.maxSize) {
+    inputOpts = $.extend(true, {}, inputOpts, {pick: {maxSize: opts.maxSize}});
+  }
 
   var input = new Upload(inputOpts);
   var command = new ModalInputCommand(input, {

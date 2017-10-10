@@ -21,7 +21,7 @@ describe('streamhub-input/javascript/pipeable', function () {
     expect(function () {
       pipeable.writeToDestination('chunk', 'cb');
     }).toThrow();
-    expect(writable.write.callCount).toEqual(1);  // Not called again
+    expect(writable.write.callCount).toEqual(1); // Not called again
   });
 
   it('can be constructed with a destination', function () {

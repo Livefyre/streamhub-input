@@ -47,7 +47,7 @@ describe('streamhub-input/javascript/button', function () {
     writable._write = function () {};
 
     inputButton = new InputButton(null, opts);
-    inputButton.pipe(writable);  // no error
+    inputButton.pipe(writable); // no error
   });
 
   it('wraps the command in a auth required command by default', function () {

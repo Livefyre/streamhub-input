@@ -32,7 +32,7 @@ inherits(ModalInputCommand, Command);
 
 /** @override */
 ModalInputCommand.prototype.canExecute = function () {
-  return (this.view) ? true : false;
+  return !!(this.view);
 };
 
 module.exports = ModalInputCommand;
