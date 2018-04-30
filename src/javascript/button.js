@@ -6,7 +6,7 @@ var inherits = require('inherits');
 var packageAttribute = require('streamhub-input/javascript/package-attribute');
 var ThemeStyler = require('livefyre-theme-styler');
 var themableCss = require('text!streamhub-input/styles/theme.css');
-var uuid = require('node-uuid');
+var UUID = require('uuid');
 
 /**
  * @param command {Command} Command to execute.
@@ -35,7 +35,7 @@ function InputButton(command, opts) {
    * @type {string}
    * @private
    */
-  this._uuid = uuid();
+  this._uuid = (new UUID(4)).toString();
 
   /**
    * The style prefix to provide to the theme styler.
