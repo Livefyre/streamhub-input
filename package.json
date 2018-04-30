@@ -6,7 +6,7 @@
     "name": "Livefyre",
     "email": "dev@livefyre.com"
   },
-  "version": "0.11.0",
+  "version": "0.12.0",
   "scripts": {
     "postinstall": "bower install",
     "start": "node ./dev/server.js",
@@ -32,7 +32,6 @@
     "http-server": "*",
     "ink-docstrap": "git://github.com/michaelward82/docstrap.git#line-number-alignment",
     "jsdoc": "git://github.com/jsdoc3/jsdoc.git",
-    "lfeslint": "git+ssh://git@github.com/Livefyre/lfeslint.git",
     "karma": "0.10.5",
     "karma-cajon": "*",
     "karma-chrome-launcher": "0.1.0",
@@ -48,6 +47,7 @@
     "less": "1.7.0",
     "less-middleware": "0.1.15",
     "lfcdn": "git+ssh://git@github.com:Livefyre/lfcdn",
+    "lfeslint": "git+ssh://git@github.com/Livefyre/lfeslint.git",
     "phantomjs": "1.9.19",
     "requirejs": "2.1.9",
     "rework": "git://github.com/gobengo/rework"
