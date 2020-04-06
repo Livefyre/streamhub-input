@@ -10,7 +10,7 @@
     "inherits": "git://github.com/Livefyre/inherits.git",
     "jquery": "~1.10.1",
     "livefyre-bootstrap": "git://github.com/Livefyre/livefyre-bootstrap.git#1.5.7",
-    "livefyre-theme-styler": "git://github.com/livefyre/livefyre-theme-styler.git#1.1.0",
+    "livefyre-theme-styler": "git://github.com/livefyre/livefyre-theme-styler.git#1.4.1",
     "observer": "git://github.com/Livefyre/Observer.git#0.1.0",
     "pure-uuid": "1.5.2",
     "require-less": "git://github.com/gobengo/require-less.git#deponcss",
@@ -32,6 +32,7 @@
     "sinonjs": "1.17.1"
   },
   "resolutions": {
+    "livefyre-theme-styler": "1.4.1",
     "livefyre-bootstrap": "1.5.7",
     "base64": "~0.4.0",
     "auth": "~0.4.2",
